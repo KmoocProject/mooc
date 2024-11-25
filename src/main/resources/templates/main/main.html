@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: white;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .logo img {
+            height: 40px;
+        }
+
+        .menu a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #333;
+        }
+
+        .user-actions a {
+            margin: 0 10px;
+            text-decoration: none;
+            color: #007BFF;
+        }
+
+        .user-actions select {
+            margin-left: 10px;
+        }
+
+        .banner {
+            background-color: #ffffff;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-content h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .banner-content p {
+            margin-bottom: 15px;
+        }
+
+        .banner-content ul {
+            margin-bottom: 15px;
+        }
+
+        .banner-content .tags button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: white;
+            color: #003399;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .banner-carousel button {
+            background-color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notice {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .search {
+            padding: 20px;
+            background-color: #003399;
+            color: white;
+            text-align: center;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            padding: 10px;
+            width: 300px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .categories button {
+            margin: 5px;
+            padding: 5px 15px;
+            border: none;
+            background-color: white;
+            color: #003399;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+            .navbar {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 10px 20px;
+                background-color: #fff;
+                border-bottom: 1px solid #ddd;
+            }
+
+            .menu-icon {
+                position: relative;
+            }
+
+            .dropdown-btn {
+                background: none;
+                border: 1px solid #ddd;
+                padding: 5px 10px;
+                border-radius: 5px;
+                cursor: pointer;
+                font-size: 14px;
+                position: relative;
+                z-index: 1;
+            }
+
+            .dropdown-menu {
+                position: absolute;
+                top: 35px;
+                left: 0;
+                background-color: #fff;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                list-style: none;
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                display: none; /* Initially hidden */
+                width: 150px;
+                z-index: 10;
+            }
+
+            .dropdown-menu li {
+                padding: 10px;
+                font-size: 14px;
+            }
+
+            .dropdown-menu li a {
+                text-decoration: none;
+                color: #000;
+                display: block;
+            }
+
+            .dropdown-menu li:hover {
+                background-color: #f5f5f5;
+            }
+
+            .dropdown:hover .dropdown-menu {
+                display: block; /* Show menu on hover */
+            }
+
+            .menu-list {
+                display: flex;
+                list-style: none;
+                gap: 20px;
+            }
+
+            .menu-list a {
+                text-decoration: none;
+                color: #000;
+                font-size: 14px;
+            }
+
+            .menu-list a:hover {
+                color: #007BFF;
+            }
+
+            .search-login {
+                display: flex;
+                align-items: center;
+                gap: 15px;
+                font-size: 14px;
+            }
+
+            .search-icon {
+                cursor: pointer;
+            }
+
+            .search-login a {
+                text-decoration: none;
+                color: #000;
+            }
+
+            .search-login a:hover {
+                color: #007BFF;
+            }
+
+        /* Main Banner Style */
+        .main-banner {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .main-banner img.active {
+            opacity: 1;
+        }
+
+    </style>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>K-MOOC</title>
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <img src="/images/logo.png" alt="K-MOOC 로고">
+    </div>
+    <nav class="navbar">
+        <div class="menu-icon dropdown">
+            <button class="dropdown-btn">&#9776; 강좌</button>
+            <ul class="dropdown-menu">
+                <li><a href="#">온라인 강좌</a></li>
+                <li><a href="#">오프라인 강좌</a></li>
+                <li><a href="#">자격증 강좌</a></li>
+                <li><a href="#">취업 준비 강좌</a></li>
+            </ul>
+        </div>
+        <ul class="menu-list">
+            <li><a href="#">상시강좌</a></li>
+            <li><a href="#">학점은행</a></li>
+            <li><a href="#">커뮤니티</a></li>
+        </ul>
+    </nav>
+    <div class="user-actions">
+        <a href="#">로그인</a>
+        <a href="#">회원가입</a>
+    </div>
+</header>
+
+<section class="banner">
+    <div class="main-banner" id="mainBanner">
+        <img src="/images/mainbanner3.png" class="active">
+        <img src="/images/mainbanner1.png">
+        <div class="banner-dots" id="bannerDots"></div>
+    </div>
+</section>
+
+<section class="notice">
+    <span class="notice-text">국가평생교육진흥원 중장기 발전계획 개선을 위한 대국민 의견수렴 설문조사</span>
+    <span class="notice-date">2024.11.12</span>
+</section>
+
+<section class="search">
+    <div class="search-box">
+        <input type="text" placeholder="배우고 싶은 강좌를 찾아보세요.">
+        <button>검색</button>
+    </div>
+    <div class="categories">
+        <button>인공지능</button>
+        <button>디자인</button>
+        <button>프로그래밍</button>
+        <button>영어</button>
+        <button>통계</button>
+        <button>위대한수업</button>
+    </div>
+</section>
+
+<script>
+    const images = document.querySelectorAll('.main-banner img');
+    const dotsContainer = document.getElementById('bannerDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+
+    // Generate indicator dots
+    images.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.addEventListener('click', () => showSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.banner-dots span');
+    updateDots();
+
+    // Slide navigation function
+    function showSlide(index) {
+        images[currentIndex].classList.remove('active');
+        dots[currentIndex].classList.remove('active');
+        currentIndex = (index + images.length) % images.length;
+        images[currentIndex].classList.add('active');
+        dots[currentIndex].classList.add('active');
+    }
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Auto slide
+    function autoSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    let slideInterval = setInterval(autoSlide, 3000);
+
+    // Prev/Next button event listeners
+    prevBtn.addEventListener('click', () => {
+        clearInterval(slideInterval);
+        showSlide(currentIndex - 1);
+        slideInterval = setInterval(autoSlide, 3000);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        clearInterval(slideInterval);
+        showSlide(currentIndex + 1);
+        slideInterval = setInterval(autoSlide, 3000);
+    });
+</script>
+</body>
+</html>
