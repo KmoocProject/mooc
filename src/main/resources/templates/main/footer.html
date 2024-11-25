@@ -2,113 +2,167 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
-      layout:decorate="~{main/main.html}"
+      layout:decorate="~{/main/main.html}"
 >
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
     <style>
         /* 푸터 스타일 */
-        footer {
-            background-color: #333; /* 어두운 배경 */
-            color: #fff; /* 흰색 텍스트 */
-            padding: 20px 0;
-            font-size: 0.9em;
-        }
-
-        .footer-container {
-            display: flex;
-            justify-content: space-around;
-            align-items: flex-start;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            flex-wrap: wrap;
-        }
-
-        .footer-container div {
-            flex: 1;
-            margin: 10px;
-        }
-
-        .footer-about h3, .footer-links h4, .footer-contact h4 {
-            font-size: 1.2em;
-            margin-bottom: 10px;
-        }
-
-        .footer-about p {
+        .footer {
+            background-color: #000;
+            color: #fff;
+            padding: 20px 40px;
+            font-size: 14px;
             line-height: 1.6;
         }
 
-        .footer-links ul {
+        .footer-top {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #444;
+            padding-bottom: 10px;
+            margin-bottom: 10px;
+        }
+
+        .footer-links {
             list-style: none;
             padding: 0;
+            margin: 0;
+            display: flex;
+            gap: 15px;
         }
 
-        .footer-links ul li {
-            margin-bottom: 5px;
-        }
-
-        .footer-links ul li a {
+        .footer-links a {
             color: #fff;
             text-decoration: none;
-            transition: color 0.3s;
         }
 
-        .footer-links ul li a:hover {
-            color: #f4c542; /* 하이라이트 색상 */
-        }
-
-        .footer-contact p {
-            margin: 5px 0;
-        }
-
-        .footer-contact a {
-            color: #f4c542;
-            text-decoration: none;
-        }
-
-        .footer-contact a:hover {
+        .footer-links a:hover {
             text-decoration: underline;
         }
 
+        .footer-logos img {
+            height: 24px;
+            margin-left: 10px;
+        }
+
+        .footer-middle {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .footer-menu {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .footer-menu a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .footer-menu a:hover {
+            text-decoration: underline;
+        }
+
+        .contact-info p {
+            margin: 5px 0;
+        }
+
         .footer-bottom {
-            text-align: center;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
             border-top: 1px solid #444;
             padding-top: 10px;
-            margin-top: 20px;
-            font-size: 0.8em;
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+        }
+
+        .social-icons a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .social-icons a:hover {
+            text-decoration: underline;
+        }
+
+        .family-site {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .family-site select {
+            background-color: #222;
+            color: #fff;
+            border: 1px solid #444;
+            padding: 5px;
+            border-radius: 4px;
+            outline: none;
         }
 
     </style>
 </head>
 <body>
 <div layout:fragment="footer">
-    <footer>
-        <div class="footer-container">
-            <div class="footer-about">
-                <h3>K-MOOC</h3>
-                <p>한국형 온라인 공개강좌(K-MOOC)는 최고의 무료 강좌를 제공합니다. 온라인 학습을 통해 더 많은 기회를 얻어보세요.</p>
-            </div>
-            <div class="footer-links">
-                <h4>빠른 링크</h4>
-                <ul>
-                    <li><a href="#home">홈</a></li>
-                    <li><a href="#courses">강좌</a></li>
-                    <li><a href="#about">소개</a></li>
-                    <li><a href="#contact">문의</a></li>
-                </ul>
-            </div>
-            <div class="footer-contact">
-                <h4>문의하기</h4>
-                <p>이메일: <a href="mailto:info@kmooc.kr">info@kmooc.kr</a></p>
-                <p>전화: 1234-5678</p>
-            </div>
+<footer class="footer">
+    <div class="footer-top">
+        <ul class="footer-links">
+            <li><a href="#">개인정보처리방침</a></li>
+            <li><a href="#">이용약관</a></li>
+            <li><a href="#">저작권보호 정책</a></li>
+            <li><a href="#">이수증검증</a></li>
+            <li><a href="#">원격도우미</a></li>
+        </ul>
+        <div class="footer-logos">
+            <img src="logo1.png" alt="교육부 로고">
+            <img src="logo2.png" alt="국가평생교육진흥원 로고">
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 K-MOOC. All rights reserved.</p>
+    </div>
+    <div class="footer-middle">
+        <ul class="footer-menu">
+            <li><a href="#">K-MOOC소개</a></li>
+            <li><a href="#">전체메뉴</a></li>
+            <li><a href="#">커뮤니티</a></li>
+            <li><a href="#">사업공고</a></li>
+        </ul>
+        <div class="contact-info">
+            <p>(04520) 서울특별시 중구 정계로 14 (무교로77)</p>
+            <p>(Tel) 1811-3118 <span>※ 평일 9:00~18:00 운영 (점심시간 12:00~13:00 제외)</span></p>
+            <p>E-mail: info_kmooc@nile.or.kr</p>
         </div>
-    </footer>
+    </div>
+    <div class="footer-bottom">
+        <p>COPYRIGHT © 2022 NATIONAL INSTITUTE FOR LIFELONG EDUCATION. ALL RIGHTS RESERVED</p>
+        <div class="social-icons">
+            <a href="#">Facebook</a>
+            <a href="#">Youtube</a>
+            <a href="#">Instagram</a>
+            <a href="#">Blog</a>
+        </div>
+        <div class="family-site">
+            <label for="family-select">패밀리 사이트</label>
+            <select id="family-select">
+                <option>패밀리 사이트</option>
+                <option>사이트 1</option>
+                <option>사이트 2</option>
+                <option>사이트 3</option>
+            </select>
+        </div>
+    </div>
+</footer>
+
 </div>
 </body>
 </html>
