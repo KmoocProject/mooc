@@ -5,6 +5,19 @@
     <title>Title</title>
 </head>
 <body>
-
+<div>
+    <form class="login-form" action="/login/login" method="post">
+        <h1>로그인</h1>
+        <input type="text" id="memberId" name="memberId" required placeholder="아이디">
+        <input type="password" id="password" name="password" required placeholder="비밀번호">
+        <button class="button" type="submit">로그인</button>
+        <button class="button2" type="button" onclick="goRegist()">회원가입</button>
+    </form>
+    <script>
+        function goRegist(){
+            window.location.href = '/login/regist';
+        }
+    </script>
+</div>
 </body>
 </html>
