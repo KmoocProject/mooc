@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/main.html}"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <style>
+        /* 푸터 스타일 */
+        footer {
+            background-color: #333; /* 어두운 배경 */
+            color: #fff; /* 흰색 텍스트 */
+            padding: 20px 0;
+            font-size: 0.9em;
+        }
+
+        .footer-container {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-start;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            flex-wrap: wrap;
+        }
+
+        .footer-container div {
+            flex: 1;
+            margin: 10px;
+        }
+
+        .footer-about h3, .footer-links h4, .footer-contact h4 {
+            font-size: 1.2em;
+            margin-bottom: 10px;
+        }
+
+        .footer-about p {
+            line-height: 1.6;
+        }
+
+        .footer-links ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .footer-links ul li {
+            margin-bottom: 5px;
+        }
+
+        .footer-links ul li a {
+            color: #fff;
+            text-decoration: none;
+            transition: color 0.3s;
+        }
+
+        .footer-links ul li a:hover {
+            color: #f4c542; /* 하이라이트 색상 */
+        }
+
+        .footer-contact p {
+            margin: 5px 0;
+        }
+
+        .footer-contact a {
+            color: #f4c542;
+            text-decoration: none;
+        }
+
+        .footer-contact a:hover {
+            text-decoration: underline;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            border-top: 1px solid #444;
+            padding-top: 10px;
+            margin-top: 20px;
+            font-size: 0.8em;
+        }
+
+    </style>
+</head>
+<body>
+<div layout:fragment="footer">
+    <footer>
+        <div class="footer-container">
+            <div class="footer-about">
+                <h3>K-MOOC</h3>
+                <p>한국형 온라인 공개강좌(K-MOOC)는 최고의 무료 강좌를 제공합니다. 온라인 학습을 통해 더 많은 기회를 얻어보세요.</p>
+            </div>
+            <div class="footer-links">
+                <h4>빠른 링크</h4>
+                <ul>
+                    <li><a href="#home">홈</a></li>
+                    <li><a href="#courses">강좌</a></li>
+                    <li><a href="#about">소개</a></li>
+                    <li><a href="#contact">문의</a></li>
+                </ul>
+            </div>
+            <div class="footer-contact">
+                <h4>문의하기</h4>
+                <p>이메일: <a href="mailto:info@kmooc.kr">info@kmooc.kr</a></p>
+                <p>전화: 1234-5678</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2024 K-MOOC. All rights reserved.</p>
+        </div>
+    </footer>
+</div>
+</body>
+</html>
