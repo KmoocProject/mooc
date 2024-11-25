@@ -31,9 +31,9 @@ public class Member {
     private int gender; //TINYINT(1) NOT NULL, -- 성별(0 : male, 1 : female)
     @Column(name = "memberType", columnDefinition = "tinyint(1) not null default 0")
     private int memberType; //TINYINT(1) NOT NULL, -- 회원 유형 (0 : STUDENT, 1 : CREDIT_BANK)
-    @Column(name = "status", nullable = false, length = 20, columnDefinition = "default ACTIVE")
+    @Column(name = "status", nullable = false, length = 20, columnDefinition = "varchar(20) not null default 'ACTIVE'")
     private String status; // VARCHAR(20) NOT NULL, -- 회원 상태 (ACTIVE, INACTIVE, WITHDRAWN)
-    @Column(name = "credit", columnDefinition = "default 0")
+    @Column(name = "credit", columnDefinition = "int not null default 0")
     private int credit; //INT DEFAULT 0, -- 학점
     @CreatedDate
     @Column(name = "createdAt", columnDefinition = "datetime not null default now()")
