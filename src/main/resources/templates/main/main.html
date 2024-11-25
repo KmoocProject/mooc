@@ -174,7 +174,7 @@
 
         .search {
             padding: 20px;
-            background-color: #003399;
+            background-color: #ffffff;
             color: white;
             text-align: center;
         }
@@ -315,6 +315,179 @@
             color: #555;
         }
 
+
+
+        .search-container {
+            background-color: #0041c2;
+            padding: 30px;
+            border-radius: 10px;
+            width: 80%;
+            max-width: 900px;
+            margin: 30px auto;
+            color: white;
+            text-align: center;
+        }
+
+        .search-box {
+            margin-bottom: 20px;
+        }
+
+        .search-box h2 {
+            margin: 0 0 15px;
+            font-size: 24px;
+            color: white;
+        }
+
+        .search-input {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: white;
+            border-radius: 25px;
+            padding: 5px 10px;
+            width: 80%;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        .search-input input {
+            flex: 1;
+            border: none;
+            outline: none;
+            padding: 10px;
+            border-radius: 25px;
+            font-size: 16px;
+        }
+
+        .search-input button {
+            background-color: #00c17c;
+            border: none;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            padding: 0;
+        }
+
+        .search-input button img {
+            width: 20px;
+            height: 20px;
+        }
+
+        .categories {
+            margin-top: 15px;
+        }
+
+        .categories a {
+            margin: 0 10px;
+            font-size: 14px;
+            color: white;
+            text-decoration: none;
+        }
+
+        .categories a:hover {
+            text-decoration: underline;
+        }
+
+
+        .course-container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 0 15px;
+        }
+
+        h2 {
+            font-size: 24px;
+            color: #0041c2;
+            margin-bottom: 20px;
+        }
+
+        .course-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+
+        .course-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: calc(25% - 20px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        .course-image {
+            position: relative;
+            height: 150px;
+            overflow: hidden;
+        }
+
+        .course-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .badge {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background-color: #0041c2;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .badge.popular {
+            left: auto;
+            right: 10px;
+            background-color: #00c17c;
+        }
+
+        .course-info {
+            padding: 15px;
+            text-align: left;
+        }
+
+        .course-info h3 {
+            font-size: 16px;
+            margin: 0 0 10px;
+            color: #333;
+        }
+
+        .course-info p {
+            font-size: 14px;
+            color: #555;
+            margin: 5px 0;
+        }
+
+        .course-date {
+            color: #888;
+            font-size: 13px;
+            margin-top: 10px;
+        }
+
+        .tags {
+            margin-top: 10px;
+        }
+
+        .tags span {
+            display: inline-block;
+            background-color: #f0f0f0;
+            color: #555;
+            font-size: 12px;
+            padding: 5px 8px;
+            margin-right: 5px;
+            border-radius: 4px;
+        }
+
     </style>
 </head>
 <body>
@@ -330,7 +503,7 @@
 <body>
 <header class="header">
     <div class="logo">
-        <img src="/images/logo.png" alt="K-MOOC 로고">
+        <img src="../images/logo.png" alt="K-MOOC 로고">
     </div>
     <nav class="navbar">
         <ul class="menu-list">
@@ -396,22 +569,70 @@
 </div>
 
 <section class="search">
-    <div class="search-box">
-        <input type="text" style="font-size: 15px;" placeholder="배우고 싶은 강좌를 찾아보세요.">
-        <button>검색</button>
-    </div>
-    <div class="categories">
-        <button>인공지능</button>
-        <button>디자인</button>
-        <button>프로그래밍</button>
-        <button>영어</button>
-        <button>통계</button>
-        <button>위대한수업</button>
+    <div class="search-container">
+        <div class="search-box">
+            <h2>검색</h2>
+            <div class="search-input">
+                <input type="text" placeholder="배우고 싶은 강좌를 찾아보세요.">
+                <button type="submit">
+                    <img src="search-icon.png" alt="Search" />
+                </button>
+            </div>
+        </div>
+        <div class="categories">
+            <a href="#">인공지능</a>
+            <a href="#">디자인</a>
+            <a href="#">프로그래밍</a>
+            <a href="#">영어</a>
+            <a href="#">통계</a>
+            <a href="#">취업대상</a>
+        </div>
     </div>
 </section>
+<div class="course-container">
+    <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
+    <div class="course-list">
+        <div class="course-card">
+            <div class="course-image">
+                <img src="course1.jpg" alt="Course 1">
+                <span class="badge ongoing">진행중</span>
+                <span class="badge popular">이수중</span>
+            </div>
+            <div class="course-info">
+                <h3>창의적 문제해결을 위한 생각 프로세스 II</h3>
+                <p>최필렬<br>울산대학교</p>
+                <p class="course-date">2024.10.22 ~ 2024.12.09</p>
+                <div class="tags">
+                    <span>창의적</span>
+                    <span>문제해결</span>
+                    <span>생각도구</span>
+                </div>
+            </div>
+        </div>
+        <!-- Repeat for other courses -->
+        <div class="course-card">
+            <div class="course-image">
+                <img src="course2.jpg" alt="Course 2">
+                <span class="badge ongoing">진행중</span>
+                <span class="badge popular">이수중</span>
+            </div>
+            <div class="course-info">
+                <h3>셰익스피어</h3>
+                <p>박용남<br>고려대학교</p>
+                <p class="course-date">2024.09.10 ~ 2024.12.16</p>
+                <div class="tags">
+                    <span>문학</span>
+                    <span>작품해설</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div layout:fragment="footer">
+
 </div>
+
 
 <script>
     const images = document.querySelectorAll('.main-banner img');

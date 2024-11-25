@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Layout Page</title>
+</head>
+<body>
+
+<div layout:fragment="headear">
+  <h1>레이아웃 헤더 영역</h1>
+</div>
+
+<div >
+  <p>레이아웃 컨텐츠 영역</p>
+</div>
+
+<div layout:fragment="footer">
+  <h3>레이아웃 푸터 영역</h3>
+</div>
+
+<th:block layout:fragment="script">
+
+</th:block>
+
+</body>
+</html>
