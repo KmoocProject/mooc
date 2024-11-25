@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @Log4j2
 public class LoginController extends HttpServlet {
-    private final MemberServiceIf MemberService;
+//    private final MemberServiceIf MemberService;
     private CookieUtil cUtil = new CookieUtil();
     private JSFunc JSFunc = new JSFunc();
 }
