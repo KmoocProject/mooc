@@ -1,0 +1,101 @@
+.header {
+    display: flex;
+    justify-content: center; /* 전체 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+    padding: 10px 20px;
+    background-color: white;
+    gap: 300px; /* 로고와 메뉴 간의 간격 추가 */
+}
+
+.logo img {
+    height: 70px;
+}
+
+.navbar {
+    display: flex;
+    justify-content: center; /* 메뉴 리스트 중앙 정렬 */
+    align-items: center;
+    gap: 20px; /* 메뉴 간 간격 추가 */
+}
+
+.user-actions {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* 로그인, 회원가입 간 간격 */
+}
+
+.user-actions a {
+    text-decoration: none;
+    color: #007BFF;
+    font-size: 18px;
+}
+
+
+.user-actions select {
+    margin-left: 10px;
+}
+
+.menu-icon {
+    position: relative;
+}
+
+.dropdown-btn {
+    background: none;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 18px;
+    position: relative;
+    z-index: 1;
+}
+
+.dropdown-menu {
+    position: absolute;
+    top: 35px;
+    left: 0;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    list-style: none;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    display: none; /* Initially hidden */
+    width: 155px;
+    z-index: 10;
+}
+
+.dropdown-menu li {
+    padding: 10px;
+    font-size: 18px;
+}
+
+.dropdown-menu li a {
+    text-decoration: none;
+    color: #000;
+    display: block;
+}
+
+.dropdown-menu li:hover {
+    background-color: #f5f5f5;
+}
+
+.dropdown:hover .dropdown-menu {
+    display: block; /* Show menu on hover */
+}
+
+.menu-list {
+    display: flex;
+    list-style: none;
+    gap: 20px;
+}
+
+.menu-list a {
+    text-decoration: none;
+    color: #000;
+    font-size: 18px;
+}
+
+.menu-list a:hover {
+    color: #007BFF;
+}

@@ -7,6 +7,7 @@ import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.util.CookieUtil;
 import net.fullstack7.mooc.util.JSFunc;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -14,7 +15,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @Log4j2
 public class LoginController extends HttpServlet {
-    private final MemberServiceIf MemberService;
-    private CookieUtil cUtil = new CookieUtil();
-    private JSFunc JSFunc = new JSFunc();
+//    private final MemberServiceIf MemberService;
+//    private CookieUtil cUtil = new CookieUtil();
+//    private JSFunc JSFunc = new JSFunc();
+
 }

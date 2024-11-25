@@ -3,8 +3,15 @@
 <head>
     <meta charset="UTF-8">
     <title>Title</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
 </head>
 <body>
+<div th:replace="main/header :: header"></div>
+
+
+<div th:replace="main/footer :: footer"></div>
 
 </body>
 </html>
