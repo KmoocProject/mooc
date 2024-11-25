@@ -149,3 +149,28 @@ CREATE TABLE learningHistory (
     FOREIGN KEY (memberId) REFERENCES member(memberId), -- 회원 ID 외래 키  
     FOREIGN KEY (lectureContentId) REFERENCES lectureContent(lectureContentId) -- 강의 영역 콘텐츠 ID 외래 키
 );
+
+insert into subject (subjectName) values ('인문');
+insert into subject (subjectName) values ('사회');
+insert into subject (subjectName) values ('교육');
+insert into subject (subjectName) values ('공학');
+insert into subject (subjectName) values ('자연');
+insert into subject (subjectName) values ('의약');
+insert into subject (subjectName) values ('예체능');
+insert into subject (subjectName) values ('융·복합');
+insert into subject (subjectName) values ('기타');
+
+insert into institution (institutionName) values ('가상대학교');
+insert into institution (institutionName) values ('미래대학교');
+insert into institution (institutionName) values ('상상대학교');
+insert into institution (institutionName) values ('허구대학교');
+insert into institution (institutionName) values ('신화대학교');
+insert into institution (institutionName) values ('환상대학교');
+insert into institution (institutionName) values ('유토피아대학교');
+insert into institution (institutionName) values ('꿈꾸는대학교');
+insert into institution (institutionName) values ('가상의대학교');
+insert into institution (institutionName) values ('무한대학교');
+insert into institution (institutionName) values ('신비대학교');
+insert into institution (institutionName) values ('환상적인대학교');
+insert into institution (institutionName) values ('비현실대학교');
+insert into institution (institutionName) values ('상상의대학교');
