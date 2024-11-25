@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @ToString
-@Table(name="Alert")
+@Table(name="alert")
 public class Alert {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +22,7 @@ public class Alert {
     @JoinColumn(name = "memberId")
     private Member member;
     @Column(name="content", columnDefinition = "text not null")
-    private String content; // TEXT NOT NULL, -- 알림 내용
+    private String content; // TEXT NOT NULL, -- 알림 내용ㄲ
     @Column(name="isRead", columnDefinition = "tinyint(1) default 0")
     private int isRead; // TINYINT(1) DEFAULT 0, -- 읽음 여부
     @CreatedDate

@@ -1,230 +1,500 @@
 <!DOCTYPE html>
 <html lang="ko" xmlns:th="http://www.thymeleaf.org">
-  <head th:replace="teacher/common/header :: head"></head>
+<head th:replace="teacher/common/header :: head"></head>
+<style>
+    .progress-steps {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 2rem;
+        padding: 0 1rem;
+    }
+    .step {
+        position: relative;
+        flex: 1;
+        text-align: center;
+        padding: 1rem;
+        font-weight: bold;
+    }
+    .step::after {
+        content: '';
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 4px;
+        background: #e9ecef;
+        z-index: 1;
+    }
+    .step.active::after {
+        background: #0d6efd;
+    }
+    .step.completed::after {
+        background: #198754;
+    }
+    .step-content {
+        display: none;
+    }
+    .step-content.active {
+        display: block;
+    }
+    .content-preview {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: contain;
+    }
+</style>
 <body>
     <nav th:replace="teacher/common/nav :: nav"></nav>
     <div class="container mt-5">
-        <!-- 강좌 기본 정보 -->
-        <div class="card mb-4">
-            <div class="card-header">
-                <h4>강좌 기본 정보</h4>
-            </div>
-            <div class="card-body">
-                <form id="courseForm">
-                    <div class="row mb-3">
-                        <div class="col-md-6">
-                            <label class="form-label">강좌 제목</label>
-                            <input type="text" class="form-control" name="title" required>
-                        </div>
-                        <div class="col-md-6">
-                            <label class="form-label">과목 선택</label>
-                            <select class="form-select" name="subjectId" required>
-                                <option value="">과목을 선택하세요</option>
-                                <!-- 과목 목록 -->
-                            </select>
-                        </div>
-                    </div>
-                    <div class="row mb-3">
-                        <div class="col-md-4">
-                            <label class="form-label">주차 수</label>
-                            <input type="number" class="form-control" name="weeks" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">학습 시간(분)</label>
-                            <input type="number" class="form-control" name="learningTime" required>
-                        </div>
-                        <div class="col-md-4">
-                            <label class="form-label">언어</label>
-                            <select class="form-select" name="language" required>
-                                <option value="ko">한국어</option>
-                                <option value="en">영어</option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">강좌 설명</label>
-                        <textarea class="form-control" name="description" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">썸네일 이미지</label>
-                        <input type="file" class="form-control" name="thumbnail" accept="image/*">
-                    </div>
-                    <div class="form-check mb-3">
-                        <input type="checkbox" class="form-check-input" name="isCreditBank">
-                        <label class="form-check-label">학점은행제 강좌 여부</label>
-                    </div>
-                </form>
-            </div>
+        <!-- 진행 단계 표시 -->
+        <div class="progress-steps mb-4">
+            <div class="step active" data-step="1">1. 기본 정보</div>
+            <div class="step" data-step="2">2. 섹션 구성</div>
+            <div class="step" data-step="3">3. 콘텐츠 등록</div>
         </div>
 
-        <!-- 강의 섹션 -->
-        <div id="lectureContainer">
-            <!-- 섹션 템플릿 -->
-            <div class="card mb-4 lecture-section">
-                <div class="card-header d-flex justify-content-between align-items-center">
-                    <h5>섹션 1</h5>
-                    <button type="button" class="btn btn-danger btn-sm remove-section">섹션 삭제</button>
+        <!-- 스텝 1: 기본 정보 -->
+        <div class="step-content active" id="step1">
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h4>강좌 기본 정보</h4>
                 </div>
                 <div class="card-body">
-                    <div class="mb-3">
-                        <label class="form-label">섹션 제목</label>
-                        <input type="text" class="form-control" name="sectionTitle" required>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">섹션 설명</label>
-                        <textarea class="form-control" name="sectionDescription" rows="2" required></textarea>
-                    </div>
-                    
-                    <!-- 강의 콘텐츠 -->
-                    <div class="lecture-contents">
-                        <div class="card mb-3">
-                            <div class="card-body">
-                                <div class="row">
-                                    <div class="col-md-6">
-                                        <label class="form-label">콘텐츠 제목</label>
-                                        <input type="text" class="form-control" name="contentTitle" required>
-                                    </div>
-                                    <div class="col-md-6">
-                                        <label class="form-label">콘텐츠 유형</label>
-                                        <select class="form-select content-type" required>
-                                            <option value="" disabled selected>콘텐츠 유형을 선택하세요</option>
-                                            <option value="video">동영상</option>
-                                            <option value="file">파일</option>
-                                            <option value="quiz">퀴즈</option>
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="content-upload mt-3">
-                                    <!-- 동적으로 변경되는 업로드 영역 -->
-                                </div>
+                    <form id="courseForm">
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">강좌 제목</label>
+                                <input type="text" class="form-control" name="title" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">과목 선택</label>
+                                <select class="form-select" name="subjectId" required>
+                                    <option value="">과목을 선택하세요</option>
+                                    <th:block th:each="subject : ${subjects}">
+                                        <option th:value="${subject.subjectId}" 
+                                                th:text="${subject.subjectName}">
+                                        </option>
+                                    </th:block>
+                                </select>
                             </div>
                         </div>
-                    </div>
-                    
-                    <button type="button" class="btn btn-info btn-sm add-content">콘텐츠 추가</button>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <label class="form-label">주차 수</label>
+                                <input type="number" class="form-control" name="weeks" required min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">학습 시간(분)</label>
+                                <input type="number" class="form-control" name="learningTime" required min="1">
+                            </div>
+                            <div class="col-md-4">
+                                <label class="form-label">언어</label>
+                                <select class="form-select" name="language" required>
+                                    <option value="ko">한국어</option>
+                                    <option value="en">영어</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">강좌 설명</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">썸네일 이미지</label>
+                            <input type="file" class="form-control" name="thumbnail" accept="image/*" required>
+                            <div id="thumbnailPreview" class="mt-2"></div>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input type="checkbox" class="form-check-input" name="isCreditBank">
+                            <label class="form-check-label">학점은행제 강좌 여부</label>
+                        </div>
+                    </form>
                 </div>
+            </div>
+            <div class="d-flex justify-content-end">
+                <button type="button" class="btn btn-primary" onclick="nextStep(1)">다음</button>
             </div>
         </div>
 
-        <div class="d-flex justify-content-between mb-5">
-            <button type="button" class="btn btn-primary" id="addSection">새 섹션 추가</button>
-            <button type="button" class="btn btn-success" id="submitCourse">강좌 등록</button>
-        </div>
-    </div>
-    <footer th:replace="teacher/common/footer :: footer"></footer>
-    <script>
-        // 콘텐츠 타입 변경 시 업로드 영역 변경
-        document.addEventListener('change', function(e) {
-            if (e.target.classList.contains('content-type')) {
-                const uploadArea = e.target.closest('.row').nextElementSibling;
-                const type = e.target.value;
-                
-                let html = '';
-                if (type === 'video') {
-                    html = `
-                        <div class="mb-3">
-                            <label class="form-label">동영상 파일</label>
-                            <input type="file" class="form-control" accept="video/*" required>
-                        </div>
-                    `;
-                } else if (type === 'file') {
-                    html = `
-                        <div class="mb-3">
-                            <label class="form-label">첨부 파일</label>
-                            <input type="file" class="form-control" required>
-                        </div>
-                    `;
-                } else if (type === 'quiz') {
-                    html = `
-                        <div class="mb-3">
-                            <label class="form-label">문제</label>
-                            <textarea class="form-control" rows="2" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label class="form-label">정답</label>
-                            <input type="text" class="form-control" required>
-                        </div>
-                    `;
-                }
-                uploadArea.innerHTML = html;
-            }
-        });
-
-        // 새 섹션 추가
-        document.getElementById('addSection').addEventListener('click', function() {
-            const container = document.getElementById('lectureContainer');
-            const sectionCount = container.children.length + 1;
-            
-            // 섹션 템플릿 복사 및 번호 업데이트
-            const template = container.children[0].cloneNode(true);
-            template.querySelector('h5').textContent = `섹션 ${sectionCount}`;
-            
-            // 입력 필드 초기화
-            template.querySelectorAll('input, textarea').forEach(input => {
-                input.value = '';
-            });
-            
-            container.appendChild(template);
-        });
-
-        // 섹션 삭제
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-section')) {
-                if (document.getElementsByClassName('lecture-section').length > 1) {
-                    e.target.closest('.lecture-section').remove();
-                } else {
-                    alert('최소 1개의 섹션이 필요합니다.');
-                }
-            }
-        });
-
-        // 콘텐츠 추가
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('add-content')) {
-                const contentsContainer = e.target.previousElementSibling;
-                const contentTemplate = `
-                    <div class="card mb-3">
-                        <div class="card-body">
-                            <div class="d-flex justify-content-end mb-2">
-                                <button type="button" class="btn btn-danger btn-sm remove-content">콘텐츠 삭제</button>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <label class="form-label">콘텐츠 제목</label>
-                                    <input type="text" class="form-control" name="contentTitle" required>
+        <!-- 스텝 2: 섹션 구성 -->
+        <div class="step-content" id="step2">
+            <div class="card mb-4">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h4>섹션 구성</h4>
+                    <button type="button" class="btn btn-primary btn-sm" onclick="addSection()">섹션 추가</button>
+                </div>
+                <div class="card-body">
+                    <div id="sectionContainer">
+                        <!-- 섹션 템플릿 -->
+                        <div class="section-item mb-3">
+                            <div class="card">
+                                <div class="card-body">
+                                    <div class="d-flex justify-content-between align-items-center mb-3">
+                                        <h5 class="section-title">섹션 1</h5>
+                                        <button type="button" class="btn btn-danger btn-sm" onclick="removeSection(this)">삭제</button>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">섹션 제목</label>
+                                        <input type="text" class="form-control" name="sectionTitle" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label class="form-label">섹션 설명</label>
+                                        <textarea class="form-control" name="sectionDescription" rows="2" required></textarea>
+                                    </div>
                                 </div>
-                                <div class="col-md-6">
-                                    <label class="form-label">콘텐츠 유형</label>
-                                    <select class="form-select content-type" required>
-                                        <option value="" disabled selected>콘텐츠 유형을 선택하세요</option>
-                                        <option value="video">동영상</option>
-                                        <option value="file">파일</option>
-                                        <option value="quiz">퀴즈</option>
-                                    </select>
-                                </div>
-                            </div>
-                            <div class="content-upload mt-3">
-                                <!-- 동적으로 변경되는 업로드 영역 -->
                             </div>
                         </div>
                     </div>
-                `;
-                
-                contentsContainer.insertAdjacentHTML('beforeend', contentTemplate);
+                </div>
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="prevStep(2)">이전</button>
+                <button type="button" class="btn btn-primary" onclick="nextStep(2)">다음</button>
+            </div>
+        </div>
+
+        <!-- 스텝 3: 콘텐츠 등록 -->
+        <div class="step-content" id="step3">
+            <div id="contentContainer">
+                <!-- 섹션별 콘텐츠 등록 영역이 동적으로 생성됨 -->
+            </div>
+            <div class="d-flex justify-content-between">
+                <button type="button" class="btn btn-secondary" onclick="prevStep(3)">이전</button>
+                <button type="button" class="btn btn-success" onclick="submitCourse()">강좌 등록 완료</button>
+            </div>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        let currentStep = 1;
+        let courseData = null;
+
+        // 파일 미리보기
+        document.querySelector('input[name="thumbnail"]').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    document.getElementById('thumbnailPreview').innerHTML = 
+                        `<img src="${e.target.result}" class="content-preview">`;
+                }
+                reader.readAsDataURL(file);
             }
         });
 
-        // 콘텐츠 삭제
-        document.addEventListener('click', function(e) {
-            if (e.target.classList.contains('remove-content')) {
-                const contentCards = e.target.closest('.lecture-contents').getElementsByClassName('card');
-                if (contentCards.length > 1) {
-                    e.target.closest('.card').remove();
-                } else {
-                    alert('최소 1개의 콘텐츠가 필요합니다.');
+        function nextStep(step) {
+            if (validateStep(step)) {
+                if (step === 1) {
+                    saveBasicInfo().then(success => {
+                        if (success) {
+                            showStep(step + 1);
+                        }
+                    });
+                } else if (step === 2) {
+                    saveSections().then(success => {
+                        if (success) {
+                            showStep(step + 1);
+                        }
+                    });
                 }
             }
-        });
+        }
+
+        function prevStep(step) {
+            showStep(step - 1);
+        }
+
+        function showStep(step) {
+            document.querySelectorAll('.step-content').forEach(el => el.classList.remove('active'));
+            document.querySelectorAll('.step').forEach(el => {
+                el.classList.remove('active');
+                if (el.dataset.step < step) {
+                    el.classList.add('completed');
+                }
+            });
+            
+            document.getElementById(`step${step}`).classList.add('active');
+            document.querySelector(`.step[data-step="${step}"]`).classList.add('active');
+            currentStep = step;
+
+            if (step === 3) {
+                generateContentForms();
+            }
+        }
+
+        function validateStep(step) {
+            if (step === 1) {
+                const form = document.getElementById('courseForm');
+                return form.checkValidity();
+            } else if (step === 2) {
+                const sections = document.querySelectorAll('.section-item');
+                return sections.length > 0 && Array.from(sections).every(section => {
+                    return section.querySelector('[name="sectionTitle"]').value.trim() !== '' &&
+                           section.querySelector('[name="sectionDescription"]').value.trim() !== '';
+                });
+            }
+            return true;
+        }
+
+        async function saveBasicInfo() {
+            const formData = new FormData(document.getElementById('courseForm'));
+            try {
+                const response = await fetch('/api/teacher/courses', {
+                    method: 'POST',
+                    body: formData
+                });
+                if (response.ok) {
+                    courseData = await response.json();
+                    return true;
+                }
+                throw new Error('Failed to save course info');
+            } catch (error) {
+                console.error('Error saving course:', error);
+                alert('강좌 정보 저장에 실패했습니다.');
+                return false;
+            }
+        }
+
+        async function saveSections() {
+            if (!courseData?.id) {
+                alert('강좌 기본 정보가 없습니다.');
+                return false;
+            }
+
+            const sections = Array.from(document.querySelectorAll('.section-item')).map((section, index) => ({
+                courseId: courseData.id,
+                title: section.querySelector('[name="sectionTitle"]').value,
+                description: section.querySelector('[name="sectionDescription"]').value,
+                orderNum: index + 1
+            }));
+
+            try {
+                const response = await fetch(`/api/teacher/courses/${courseData.id}/sections`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(sections)
+                });
+                if (response.ok) {
+                    return true;
+                }
+                throw new Error('Failed to save sections');
+            } catch (error) {
+                console.error('Error saving sections:', error);
+                alert('섹션 저장에 실패했습니다.');
+                return false;
+            }
+        }
+
+        function addSection() {
+            const container = document.getElementById('sectionContainer');
+            const sectionCount = container.children.length + 1;
+            
+            const template = container.children[0].cloneNode(true);
+            template.querySelector('.section-title').textContent = `섹션 ${sectionCount}`;
+            template.querySelectorAll('input, textarea').forEach(input => input.value = '');
+            
+            container.appendChild(template);
+        }
+
+        function removeSection(button) {
+            const sections = document.getElementsByClassName('section-item');
+            if (sections.length > 1) {
+                button.closest('.section-item').remove();
+                // 섹션 번호 재정렬
+                Array.from(sections).forEach((section, index) => {
+                    section.querySelector('.section-title').textContent = `섹션 ${index + 1}`;
+                });
+            } else {
+                alert('최소 1개의 섹션이 필요합니다.');
+            }
+        }
+
+        function generateContentForms() {
+            const container = document.getElementById('contentContainer');
+            container.innerHTML = '';
+
+            document.querySelectorAll('.section-item').forEach((section, index) => {
+                const sectionTitle = section.querySelector('[name="sectionTitle"]').value;
+                container.insertAdjacentHTML('beforeend', `
+                    <div class="card mb-4" data-section-index="${index}">
+                        <div class="card-header d-flex justify-content-between align-items-center">
+                            <h5>${sectionTitle}</h5>
+                            <button type="button" class="btn btn-primary btn-sm" onclick="addContent(${index})">
+                                콘텐츠 추가
+                            </button>
+                        </div>
+                        <div class="card-body">
+                            <div class="content-list">
+                                <!-- 기본 콘텐츠 템플릿 -->
+                                ${getContentTemplate(index, 0)}
+                            </div>
+                        </div>
+                    </div>
+                `);
+            });
+        }
+
+        function getContentTemplate(sectionIndex, contentIndex) {
+            return `
+                <div class="content-item card mb-3">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-end mb-2">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeContent(this)">삭제</button>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                <label class="form-label">콘텐츠 제목</label>
+                                <input type="text" class="form-control" name="contentTitle" required>
+                            </div>
+                            <div class="col-md-6">
+                                <label class="form-label">콘텐츠 유형</label>
+                                <select class="form-select content-type" onchange="handleContentTypeChange(this)" required>
+                                    <option value="">콘텐츠 유형을 선택하세요</option>
+                                    <option value="video">동영상</option>
+                                    <option value="file">파일</option>
+                                    <option value="quiz">퀴즈</option>
+                                </select>
+                            </div>
+                        </div>
+                        <div class="content-upload-area">
+                            <!-- 콘텐츠 유형별 업로드 영역 -->
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleContentTypeChange(select) {
+            const uploadArea = select.closest('.content-item').querySelector('.content-upload-area');
+            const type = select.value;
+            
+            let html = '';
+            if (type === 'video') {
+                html = `
+                    <div class="mb-3">
+                        <label class="form-label">동영상 파일</label>
+                        <input type="file" class="form-control" accept="video/*" required>
+                        <small class="text-muted">지원 형식: MP4, WebM (최대 500MB)</small>
+                    </div>
+                `;
+            } else if (type === 'file') {
+                html = `
+                    <div class="mb-3">
+                        <label class="form-label">첨부 파일</label>
+                        <input type="file" class="form-control" required>
+                        <small class="text-muted">최대 100MB</small>
+                    </div>
+                `;
+            } else if (type === 'quiz') {
+                html = `
+                    <div class="mb-3">
+                        <label class="form-label">문제</label>
+                        <textarea class="form-control" rows="2" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">정답</label>
+                        <input type="text" class="form-control" required>
+                    </div>
+                `;
+            }
+            uploadArea.innerHTML = html;
+        }
+
+        function addContent(sectionIndex) {
+            const contentList = document.querySelector(`[data-section-index="${sectionIndex}"] .content-list`);
+            const contentCount = contentList.children.length;
+            contentList.insertAdjacentHTML('beforeend', getContentTemplate(sectionIndex, contentCount));
+        }
+
+        function removeContent(button) {
+            const contentList = button.closest('.content-list');
+            if (contentList.children.length > 1) {
+                button.closest('.content-item').remove();
+            } else {
+                alert('최소 1개의 콘텐츠가 필요합니다.');
+            }
+        }
+
+        async function submitCourse() {
+            if (!validateContents()) {
+                alert('모든 콘텐츠 정보를 입력해주세요.');
+                return;
+            }
+
+            const formData = new FormData();
+            const contents = [];
+
+            document.querySelectorAll('.card[data-section-index]').forEach((sectionCard, sectionIndex) => {
+                sectionCard.querySelectorAll('.content-item').forEach((contentItem, contentIndex) => {
+                    const content = {
+                        sectionIndex: sectionIndex,
+                        title: contentItem.querySelector('[name="contentTitle"]').value,
+                        type: contentItem.querySelector('.content-type').value,
+                        orderNum: contentIndex + 1
+                    };
+
+                    const uploadArea = contentItem.querySelector('.content-upload-area');
+                    if (content.type === 'video' || content.type === 'file') {
+                        const file = uploadArea.querySelector('input[type="file"]').files[0];
+                        if (file) {
+                            const fileKey = `content_${sectionIndex}_${contentIndex}`;
+                            formData.append(fileKey, file);
+                            content.fileKey = fileKey;
+                        }
+                    } else if (content.type === 'quiz') {
+                        content.question = uploadArea.querySelector('textarea').value;
+                        content.answer = uploadArea.querySelector('input[type="text"]').value;
+                    }
+
+                    contents.push(content);
+                });
+            });
+
+            formData.append('contents', JSON.stringify(contents));
+
+            try {
+                const response = await fetch(`/api/teacher/courses/${courseData.id}/contents`, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                if (response.ok) {
+                    alert('강좌가 성공적으로 등록되었습니다.');
+                    window.location.href = '/teacher/my-lectures';
+                } else {
+                    throw new Error('Failed to submit course');
+                }
+            } catch (error) {
+                console.error('Error submitting course:', error);
+                alert('강좌 등록에 실패했습니다.');
+            }
+        }
+
+        function validateContents() {
+            let valid = true;
+            document.querySelectorAll('.content-item').forEach(item => {
+                const title = item.querySelector('[name="contentTitle"]').value;
+                const type = item.querySelector('.content-type').value;
+                const uploadArea = item.querySelector('.content-upload-area');
+
+                if (!title || !type) {
+                    valid = false;
+                    return;
+                }
+
+                if (type === 'video' || type === 'file') {
+                    const file = uploadArea.querySelector('input[type="file"]').files[0];
+                    if (!file) valid = false;
+                } else if (type === 'quiz') {
+                    const question = uploadArea.querySelector('textarea').value;
+                    const answer = uploadArea.querySelector('input[type="text"]').value;
+                    if (!question || !answer) valid = false;
+                }
+            });
+            return valid;
+        }
     </script>
 </body>
 </html>
