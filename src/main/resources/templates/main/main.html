@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+    <style>
+        /* Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        /* 헤더 부분 */
+        .header {
+            display: flex;
+            justify-content: center; /* 전체 중앙 정렬 */
+            align-items: center; /* 세로 중앙 정렬 */
+            padding: 10px 20px;
+            background-color: white;
+            gap: 300px; /* 로고와 메뉴 간의 간격 추가 */
+        }
+
+        .logo img {
+            height: 70px;
+        }
+
+        .navbar {
+            display: flex;
+            justify-content: center; /* 메뉴 리스트 중앙 정렬 */
+            align-items: center;
+            gap: 20px; /* 메뉴 간 간격 추가 */
+        }
+
+        .user-actions {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 15px; /* 로그인, 회원가입 간 간격 */
+        }
+
+        .user-actions a {
+            text-decoration: none;
+            color: #007BFF;
+            font-size: 18px;
+        }
+
+
+        .user-actions select {
+            margin-left: 10px;
+        }
+
+        .menu-icon {
+            position: relative;
+        }
+
+        .dropdown-btn {
+            background: none;
+            border: 1px solid #ddd;
+            padding: 5px 10px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 18px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            top: 35px;
+            left: 0;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            list-style: none;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            display: none; /* Initially hidden */
+            width: 155px;
+            z-index: 10;
+        }
+
+        .dropdown-menu li {
+            padding: 10px;
+            font-size: 18px;
+        }
+
+        .dropdown-menu li a {
+            text-decoration: none;
+            color: #000;
+            display: block;
+        }
+
+        .dropdown-menu li:hover {
+            background-color: #f5f5f5;
+        }
+
+        .dropdown:hover .dropdown-menu {
+            display: block; /* Show menu on hover */
+        }
+
+        .menu-list {
+            display: flex;
+            list-style: none;
+            gap: 20px;
+        }
+
+        .menu-list a {
+            text-decoration: none;
+            color: #000;
+            font-size: 18px;
+        }
+
+        .menu-list a:hover {
+            color: #007BFF;
+        }
+
+        /*헤더 부분*/
+
+
+        .banner {
+            background-color: #ffffff;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .banner-content h1 {
+            font-size: 2rem;
+            margin-bottom: 10px;
+        }
+
+        .banner-content p {
+            margin-bottom: 15px;
+        }
+
+        .banner-content ul {
+            margin-bottom: 15px;
+        }
+
+        .banner-content .tags button {
+            margin: 5px;
+            padding: 5px 10px;
+            border: none;
+            background-color: white;
+            color: #003399;
+            border-radius: 15px;
+            cursor: pointer;
+        }
+
+        .banner-carousel button {
+            background-color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        .notice {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+            background-color: #f8f9fa;
+            font-size: 0.9rem;
+        }
+
+        .search {
+            padding: 20px;
+            background-color: #003399;
+            color: white;
+            text-align: center;
+        }
+
+        .search-box {
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            padding: 10px;
+            width: 500px;
+            border: none;
+            border-radius: 20px;
+            margin-right: 10px;
+        }
+
+        .search-box button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        .categories button {
+            margin: 5px;
+            padding: 5px 15px;
+            border: none;
+            background-color: white;
+            color: #003399;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+
+
+            .search-login a {
+                text-decoration: none;
+                color: #000;
+            }
+
+            .search-login a:hover {
+                color: #007BFF;
+            }
+
+        /* Main Banner Style */
+        .main-banner {
+            position: relative;
+            width: 100%;
+            height: 800px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-banner img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            position: absolute;
+            top: 0;
+            left: 0;
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+        }
+
+        .main-banner img.active {
+            opacity: 1;
+        }
+
+        @media (max-width: 768px) {
+            .header {
+                flex-direction: column; /* 세로 정렬 */
+                gap: 10px;
+            }
+
+            .navbar, .user-actions {
+                justify-content: center; /* 각각 중앙 정렬 유지 */
+            }
+
+            .menu-list {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+        }
+
+        .notice-board {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background-color: #fff;
+            border: 1px solid #ddd;
+            padding: 10px 20px;
+            margin: 20px auto;
+            max-width: 800px;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .notice-icon img {
+            width: 24px;
+            height: 24px;
+        }
+
+        .notice-content {
+            flex-grow: 1;
+            margin-left: 15px;
+        }
+
+        .notice-text {
+            font-size: 16px;
+            color: #333;
+            margin: 0;
+            line-height: 1.5;
+        }
+
+        .notice-date {
+            font-size: 14px;
+            color: #888;
+            margin: 5px 0 0;
+        }
+
+        .dropdown-icon {
+            font-size: 18px;
+            color: #888;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .dropdown-icon:hover {
+            color: #555;
+        }
+
+    </style>
+</head>
+<body>
+
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>K-MOOC</title>
+</head>
+<body>
+<header class="header">
+    <div class="logo">
+        <img src="/images/logo.png" alt="K-MOOC 로고">
+    </div>
+    <nav class="navbar">
+        <ul class="menu-list">
+            <div class="menu-icon dropdown">
+                <button class="dropdown-btn">&#9776; 강좌</button>
+                <ul class="dropdown-menu">
+                    <li><a href="#">전체 강좌 보기</a></li>
+                    <li><a href="#">인문</a></li>
+                    <li><a href="#">사회</a></li>
+                    <li><a href="#">공학</a></li>
+                </ul>
+            </div>
+            <div class="menu-icon dropdown">
+                <a href="#">상시강좌</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">대학강좌</a></li>
+                    <li><a href="#">대학 외 강좌</a></li>
+                </ul>
+            </div>
+            <div class="menu-icon dropdown">
+                <a href="#">학점은행</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">학점은행제 소개</a></li>
+                    <li><a href="#">학점은행제 강좌</a></li>
+                </ul>
+            </div>
+            <div class="menu-icon dropdown">
+                <a href="#">커뮤니티</a>
+                <ul class="dropdown-menu">
+                    <li><a href="#">사업 공고</a></li>
+                    <li><a href="#">공지 사항</a></li>
+                    <li><a href="#">Q n A</a></li>
+                </ul>
+            </div>
+            <li><a href="#" th:img src="/images/search.png"></a></li>
+        </ul>
+    </nav>
+    <div class="user-actions">
+        <a href="#">로그인</a>
+        <a href="#">회원가입</a>
+    </div>
+</header>
+
+
+<section class="banner">
+    <div class="main-banner" id="mainBanner">
+        <img src="/images/mainbanner1.png" class="active" />
+        <img src="/images/mainbanner2.png">
+        <div class="banner-dots" id="bannerDots"></div>
+    </div>
+</section>
+
+<div class="notice-board">
+    <div class="notice-content">
+        <p class="notice-text">
+            2024년 하반기 한국형 온라인 공개강좌(K-MOOC) 사업 안내 영상 및 FAQ 공개
+        </p>
+        <p class="notice-date">2024.10.21</p>
+    </div>
+    <div class="dropdown-icon">
+        <span>&#9660;</span>
+    </div>
+</div>
+
+<section class="search">
+    <div class="search-box">
+        <input type="text" style="font-size: 15px;" placeholder="배우고 싶은 강좌를 찾아보세요.">
+        <button>검색</button>
+    </div>
+    <div class="categories">
+        <button>인공지능</button>
+        <button>디자인</button>
+        <button>프로그래밍</button>
+        <button>영어</button>
+        <button>통계</button>
+        <button>위대한수업</button>
+    </div>
+</section>
+
+<div layout:fragment="footer">
+</div>
+
+<script>
+    const images = document.querySelectorAll('.main-banner img');
+    const dotsContainer = document.getElementById('bannerDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+
+    // Generate indicator dots
+    images.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.addEventListener('click', () => showSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.banner-dots span');
+    updateDots();
+
+    // Slide navigation function
+    function showSlide(index) {
+        images[currentIndex].classList.remove('active');
+        dots[currentIndex].classList.remove('active');
+        currentIndex = (index + images.length) % images.length;
+        images[currentIndex].classList.add('active');
+        dots[currentIndex].classList.add('active');
+    }
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Auto slide
+    function autoSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    let slideInterval = setInterval(autoSlide, 3000);
+
+    // Prev/Next button event listeners
+    prevBtn.addEventListener('click', () => {
+        clearInterval(slideInterval);
+        showSlide(currentIndex - 1);
+        slideInterval = setInterval(autoSlide, 3000);
+    });
+
+    nextBtn.addEventListener('click', () => {
+        clearInterval(slideInterval);
+        showSlide(currentIndex + 1);
+        slideInterval = setInterval(autoSlide, 3000);
+    });
+</script>
+</body>
+</html>
