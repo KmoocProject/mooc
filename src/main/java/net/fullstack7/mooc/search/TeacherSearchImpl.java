@@ -30,7 +30,7 @@ public class TeacherSearchImpl extends QuerydslRepositorySupport implements Teac
             bb.and(teacherq.status.eq(status));
         }
         if(teacherId != null) {
-            bb.and(teacherq.teacherId.eq(teacherId));
+            bb.and(teacherq.teacherId.like('%'+teacherId+'%'));
         }
         if(bb.hasValue()) query.where(bb);
 

@@ -90,6 +90,9 @@ public class AdminServiceImpl implements AdminServiceIf {
     @Override
     public Member getMember(String id) {
         Optional<Member> member = memberRepository.findByMemberId(id);
+        if(member.isPresent()) {
+            return member.get();
+        }
         return null;
     }
 
