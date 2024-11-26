@@ -183,6 +183,7 @@
     <script th:inline="javascript">
         let currentStep = 1;
         let courseData = null;
+        let isSubmitting = false;  // 중복 제출 방지 플래그
 
         // 파일 미리보기
         document.querySelector('input[name="thumbnail"]').addEventListener('change', function(e) {
@@ -252,32 +253,56 @@
         }
 
         async function saveBasicInfo() {
-            const formData = new FormData(document.getElementById('courseForm'));
+            const form = document.getElementById('courseForm');
+            if (!form.checkValidity()) {
+                form.classList.add('was-validated');
+                return false;
+            }
+
+            const formData = new FormData(form);
+            
             try {
                 const response = await fetch('/api/teacher/courses', {
                     method: 'POST',
                     body: formData
                 });
-                if (response.ok) {
-                    courseData = await response.json();
-                    return true;
+
+                const responseText = await response.text();
+                console.log('서버 응답:', responseText);
+
+                if (!response.ok) {
+                    throw new Error(responseText || '강좌 등록에 실패했습니다.');
                 }
-                throw new Error('Failed to save course info');
+
+                try {
+                    courseData = JSON.parse(responseText);
+                    console.log('강좌 데이터:', courseData);
+                    
+                    if (!courseData || !courseData.courseId) {
+                        throw new Error('강좌 기본 정보가 없습니다.');
+                    }
+
+                    nextStep(1);
+                    return true;
+                } catch (e) {
+                    console.error('JSON 파싱 에러:', e);
+                    throw new Error('서버 응답을 처리할 수 없습니다.');
+                }
             } catch (error) {
-                console.error('Error saving course:', error);
-                alert('강좌 정보 저장에 실패했습니다.');
+                console.error('Error:', error);
+                alert(error.message);
                 return false;
             }
         }
 
         async function saveSections() {
-            if (!courseData?.id) {
+            if (!courseId) {
                 alert('강좌 기본 정보가 없습니다.');
                 return false;
             }
 
             const sections = Array.from(document.querySelectorAll('.section-item')).map((section, index) => ({
-                courseId: courseData.id,
+                courseId: courseData.courseId,
                 title: section.querySelector('[name="sectionTitle"]').value,
                 description: section.querySelector('[name="sectionDescription"]').value,
                 orderNum: index + 1
@@ -510,6 +535,14 @@
             });
             return valid;
         }
+
+        // 이벤트 리스너 등록 부분도 확인
+        document.addEventListener('DOMContentLoaded', function() {
+            // 기존 이벤트 리스너 제거
+            const form = document.getElementById('courseForm');
+            const oldForm = form.cloneNode(true);
+            form.parentNode.replaceChild(oldForm, form);
+        });
     </script>
 </body>
 </html>

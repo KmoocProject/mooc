@@ -21,7 +21,8 @@ import java.util.UUID;
 @Component
 @Log4j2
 public class FileUploadUtil {
-
+    private static final String UPLOAD_PATH = "/uploads/";
+    
     @Value("${file.upload.path}")
     private String uploadPath;
 
@@ -55,7 +56,7 @@ public class FileUploadUtil {
             Files.copy(file.getInputStream(), targetFile, StandardCopyOption.REPLACE_EXISTING);
 
             log.info("파일 업로드 성공: {}", newFilename);
-            return Paths.get(subPath, newFilename).toString();
+            return UPLOAD_PATH + Paths.get(subPath, newFilename).toString();
 
         } catch (IOException e) {
             log.error("파일 업로드 실패: {}", originalFilename, e);
