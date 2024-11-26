@@ -5,7 +5,12 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MemberMapper {
-    Member selectMemberById(String memberId);
+    Member login(String memberId);
+    Member viewMember(String memberId);
     int registMember(Member member);
-    int deleteMember(String memberId);
+    String pwdCheck(String memberId);
+    int modifyMember(Member member);
+    String memberIdCheck(String memberId);
+
+    void deleteMember(String memberId);
 }
