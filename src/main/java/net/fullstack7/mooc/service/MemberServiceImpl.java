@@ -1,5 +1,6 @@
 package net.fullstack7.mooc.service;
 
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Member;
@@ -15,37 +16,61 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final MemberMapper memberMapper;
     private final ModelMapper modelMapper;
 
-//    @Override
-    public int getMember(String memberId){
-        Member member = memberMapper.selectMemberById(memberId);
-//        return modelMapper.map(member, MemberDTO.class);
-        return 0;
-    }
-
     @Override
-    public int registMember(MemberDTO memberDTO) {
-        try{
-            Member member = modelMapper.map(memberDTO, Member.class);
-//            return memberMapper.registMember(member) > 0;
-        } catch (Exception e){
-            log.error("회원가입실패",e);
-//            return false;
+    public MemberDTO login(String memberId, String password) {
+        Member member = memberMapper.login(memberId);
+        if(member != null && member.getPassword().equals(password)) {
+            if(member.getStatus().equals("ACTIVE")&&member.getMemberType() == 0){
+            return modelMapper.map(member, MemberDTO.class);
+            }
         }
-        return 0;
-    }
-
-    @Override
-    public MemberDTO loginMember(String memberId, String password) {
-        Member member = memberMapper.selectMemberById(memberId);
-        if(member != null){
-//            return member.getPassword().equals(password);
-        }
-//        return false;
         return null;
     }
 
     @Override
-    public boolean deleteMember(String memberId) {
-        return memberMapper.deleteMember(memberId) > 0;
+    public MemberDTO viewMember(String memberId) {
+        Member member = memberMapper.viewMember(memberId);
+        if(member != null && member.getMemberType() == 0){
+            return modelMapper.map(member, MemberDTO.class);
+        }
+        return null;
+    }
+
+    @Override
+    public int registMember(MemberDTO memberDTO) {
+        log.info("memberDTO: {}", memberDTO);
+        Member member = modelMapper.map(memberDTO, Member.class);
+        return memberMapper.registMember(member);
+    }
+
+    @Override
+    public boolean memberIdCheck(String memberId) {
+        String result = memberMapper.memberIdCheck(memberId);
+        return result == null;
+    }
+
+
+    @Override
+    public boolean pwdCheck(String memberId, String password) {
+        String result = memberMapper.pwdCheck(memberId);
+        return result != null && result.equals(password);
+    }
+
+    @Override
+    public int modifyMember(MemberDTO memberDTO) {
+        Member member = modelMapper.map(memberDTO, Member.class);
+        return memberMapper.modifyMember(member);
+    }
+
+
+    @Override
+    @Transactional
+    public void deleteMember(String memberId) {
+        memberMapper.deleteMember(memberId);
+    }
+
+    @Override
+    public boolean dontDeleteMember(String memberId) {
+        return false;
     }
 }
