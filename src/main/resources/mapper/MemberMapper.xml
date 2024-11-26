@@ -26,24 +26,24 @@
         WHERE memberId = #{memberId}
     </select>
 
-<!--    <insert id="registMember">-->
-<!--        INSERT INTO member(memberId, password, userName, email, gender, memberType, status, credit, createdAt-->
-<!--        ) values (#{memberId}, #{password}, #{userName}, #{email}, #{gender}, #{memberType}, #{status}, #{credit}, #{createdAt})-->
-<!--    </insert>-->
-
     <insert id="registMember">
-        INSERT INTO member (
-        memberId, password, userName, email, gender, memberType, status, credit, createdAt
-        )
-        VALUES (
-        #{memberId}, #{password}, #{userName}, #{email},
-        COALESCE(#{gender}, 0),           <!-- 기본값 0 -->
-        COALESCE(#{memberType}, 0),       <!-- 기본값 0 -->
-        COALESCE(#{status}, 'ACTIVE'),    <!-- 기본값 'ACTIVE' -->
-        COALESCE(#{credit}, 0),           <!-- 기본값 0 -->
-        COALESCE(#{createdAt}, NOW())     <!-- 기본값 현재시간 -->
-        )
+        INSERT INTO member(memberId, password, userName, email, gender, memberType, status, credit, createdAt
+        ) values (#{memberId}, #{password}, #{userName}, #{email}, #{gender}, #{memberType}, #{status}, #{credit}, #{createdAt})
     </insert>
+
+<!--    <insert id="registMember">-->
+<!--        INSERT INTO member (-->
+<!--        memberId, password, userName, email, gender, memberType, status, credit, createdAt-->
+<!--        )-->
+<!--        VALUES (-->
+<!--        #{memberId}, #{password}, #{userName}, #{email},-->
+<!--        COALESCE(#{gender}, 0),           &lt;!&ndash; 기본값 0 &ndash;&gt;-->
+<!--        COALESCE(#{memberType}, 0),       &lt;!&ndash; 기본값 0 &ndash;&gt;-->
+<!--        COALESCE(#{status}, 'ACTIVE'),    &lt;!&ndash; 기본값 'ACTIVE' &ndash;&gt;-->
+<!--        COALESCE(#{credit}, 0),           &lt;!&ndash; 기본값 0 &ndash;&gt;-->
+<!--        COALESCE(#{createdAt}, NOW())     &lt;!&ndash; 기본값 현재시간 &ndash;&gt;-->
+<!--        )-->
+<!--    </insert>-->
 
 
     <delete id="deleteMember">
