@@ -23,8 +23,6 @@ public class Notice {
     @JoinColumn(name = "adminId")
     private Admin admin;
 
-    @Column(name="amdinId", nullable = false, length = 50)
-    private String adminId; // VARCHAR(50) NOT NULL, -- 관리자 ID
     @Column(name="title", nullable = false, length = 200)
     private String title; // VARCHAR(200) NOT NULL, -- 공지사항 제목
     @Column(name="content", columnDefinition = "text not null")

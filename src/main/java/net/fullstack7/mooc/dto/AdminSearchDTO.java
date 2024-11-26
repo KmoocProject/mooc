@@ -2,7 +2,7 @@ package net.fullstack7.mooc.dto;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
-import net.fullstack7.mooc.domain.Teacher;
+import net.fullstack7.mooc.domain.Member;
 
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
@@ -14,7 +14,7 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class AdminSearchDTO extends PageDTO<Teacher> {
+public class AdminSearchDTO extends PageDTO<Member> {
     @Builder.Default
     private int memberType = -1;
     @Builder.Default

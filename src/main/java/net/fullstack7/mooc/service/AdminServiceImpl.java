@@ -3,13 +3,14 @@ package net.fullstack7.mooc.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.fullstack7.mooc.domain.Admin;
-import net.fullstack7.mooc.domain.Member;
-import net.fullstack7.mooc.domain.Teacher;
+import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
+import net.fullstack7.mooc.dto.NoticeDTO;
+import net.fullstack7.mooc.dto.PageDTO;
 import net.fullstack7.mooc.repository.AdminRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
+import net.fullstack7.mooc.repository.NoticeRepository;
 import net.fullstack7.mooc.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -24,6 +25,7 @@ public class AdminServiceImpl implements AdminServiceIf {
     private final AdminRepository adminRepository;
     private final TeacherRepository teacherRepository;
     private final MemberRepository memberRepository;
+    private final NoticeRepository noticeRepository;
 
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
@@ -94,6 +96,38 @@ public class AdminServiceImpl implements AdminServiceIf {
             return member.get();
         }
         return null;
+    }
+
+    @Override
+    public String deleteMember(String id, String typeSelect) {
+
+        if(typeSelect.equals("s")) {
+            if(getMember(id) == null)
+                return "존재하지 않는 회원입니다.";
+
+            memberRepository.delete(getMember(id));
+        }
+
+        if(typeSelect.equals("t")) {
+            if(getTeacher(id) == null)
+                return "존재하지 않는 회원입니다.";
+
+            teacherRepository.delete(getTeacher(id));
+        }
+
+        return "탈퇴 완료";
+    }
+
+    @Override
+    public Page<Course> getCourses(AdminSearchDTO adminSearchDTO) {
+        return null;
+    }
+
+    @Override
+    public Page<NoticeDTO> getNotices(PageDTO<Notice> pageDTO) {
+
+        return noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
+
     }
 
 

@@ -5,9 +5,11 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Member;
+import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
+import net.fullstack7.mooc.dto.PageDTO;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -154,6 +156,49 @@ public class AdminController {
         }
 
         return "admin/teacherModify";
+    }
+
+    @GetMapping("/memberDelete")
+    public String memberDeleteGet(@RequestParam(defaultValue = "0") String memberId, @RequestParam(defaultValue = "") String typeSelect, Model model, RedirectAttributes redirectAttributes) {
+        if (memberId.equals("0")) {
+            redirectAttributes.addFlashAttribute("errors", "삭제할 회원을 선택해주세요.");
+            return "redirect:/admin/memberList";
+        }
+        if ( (!typeSelect.equals("t") && !typeSelect.equals("s")) ) {
+            redirectAttributes.addFlashAttribute("errors", "회원 분류 설정 오류");
+            return "redirect:/admin/memberList";
+        }
+
+
+        redirectAttributes.addFlashAttribute("errors", adminService.deleteMember(memberId, typeSelect));
+        return "redirect:/admin/memberList";
+    }
+
+    @GetMapping("/approve")
+    public String approveGet(@RequestParam(defaultValue = "0") String memberId, Model model, RedirectAttributes redirectAttributes) {
+        if (memberId.equals("0")) {
+
+        }
+
+        return "redirect:/admin/memberList";
+    }
+
+
+    /*
+    나중에 김경민이 다 하면 날먹하기
+     */
+    @GetMapping("/courseList")
+    public String courseListGet(Model model, RedirectAttributes redirectAttributes) {
+        return "admin/course/courselist";
+    }
+
+    @GetMapping("/noticeList")
+    public String noticeListGet(@Valid PageDTO<Notice> pageDTO, Model model, RedirectAttributes redirectAttributes) {
+
+        model.addAttribute("pageinfo", adminService.getNotices(pageDTO));
+        model.addAttribute("searchinfo", pageDTO);
+
+        return "";
     }
 
 }
