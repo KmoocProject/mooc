@@ -1,5 +1,6 @@
 package net.fullstack7.mooc.service;
 
+import java.time.LocalDateTime;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -11,6 +12,10 @@ import net.fullstack7.mooc.repository.TeacherRepository;
 import net.fullstack7.mooc.domain.Institution;
 import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.repository.InstitutionRepository;
+import net.fullstack7.mooc.domain.Course;
+import net.fullstack7.mooc.repository.CourseRepository;
+
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -19,6 +24,7 @@ public class TeacherService {
     
     private final TeacherRepository teacherRepository;
     private final InstitutionRepository institutionRepository;
+    private final CourseRepository courseRepository;
     
     public void join(TeacherJoinDTO dto) {
         // 아이디 중복 체크
@@ -40,9 +46,10 @@ public class TeacherService {
                 .password(dto.getPassword())
                 .teacherName(dto.getTeacherName())
                 .email(dto.getEmail())
-                .institution(institution.getInstitutionName())
+                .institution(institution)
                 .isApproved(0)
                 .status("INACTIVE")
+                .createdAt(LocalDateTime.now())
                 .build();
                 
         teacherRepository.save(teacher);
@@ -53,11 +60,23 @@ public class TeacherService {
             .orElseThrow(() -> new IllegalArgumentException("아이디 또는 비밀번호가 일치하지 않습니다."));
     }
 
+    public Teacher getTeacher(String teacherId) {
+        return teacherRepository.findByTeacherId(teacherId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교사입니다."));
+    }
+
     public boolean checkId(String teacherId) {
         return teacherRepository.existsByTeacherId(teacherId);
     }
 
     public boolean checkEmail(String email) {
         return teacherRepository.existsByEmail(email);
+    }
+
+    @Transactional(readOnly = true)
+    public List<Course> getMyLectures(String teacherId) {
+        Teacher teacher = teacherRepository.findByTeacherId(teacherId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 교사입니다."));
+        return courseRepository.findByTeacherOrderByCreatedAtDesc(teacher);
     }
 }

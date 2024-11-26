@@ -7,7 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.Min;
-
+import net.fullstack7.mooc.domain.Institution;
 @Data
 @Builder
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class TeacherJoinDTO {
     @Pattern(regexp = "^[a-z0-9]{5,15}$", message = "아이디는 5~15자의 영문 소문자, 숫자만 사용 가능합니다")
     private String teacherId;
     
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,20}$",
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$",
             message = "비밀번호는 10~20자의 영문 대/소문자, 숫자, 특수문자 조합이어야 합니다")
     private String password;
     

@@ -4,126 +4,39 @@
 <body>
     <nav th:replace="teacher/common/nav :: nav"></nav>
     
-    <div class="container mt-5">
-        <div class="d-flex justify-content-between align-items-center mb-4">
-            <h2>내 강의 관리</h2>
-            <a href="/teacher/regist-lecture" class="btn btn-primary">새 강의 등록</a>
-        </div>
-
-        <!-- 강의 목록 필터 -->
-        <div class="card mb-4">
-            <div class="card-body">
-                <div class="row g-3">
-                    <div class="col-md-3">
-                        <select class="form-select">
-                            <option value="">전체 상태</option>
-                            <option value="DRAFT">임시저장</option>
-                            <option value="PUBLISHED">공개</option>
-                            <option value="DELETED">삭제됨</option>
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <select class="form-select">
-                            <option value="">전체 과목</option>
-                            <option value="1">프로그래밍</option>
-                            <option value="2">데이터베이스</option>
-                            <option value="3">네트워크</option>
-                        </select>
-                    </div>
-                    <div class="col-md-4">
-                        <input type="text" class="form-control" placeholder="강의명 검색">
-                    </div>
-                    <div class="col-md-2">
-                        <button class="btn btn-secondary w-100">검색</button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 강의 목록 -->
-        <div class="row row-cols-1 row-cols-lg-2 g-4">
-            <!-- 강의 카드 1 -->
-            <div class="col">
+    <div class="container mt-4">
+        <h2>내 강의 목록</h2>
+        <div class="row row-cols-1 row-cols-md-2 g-4">
+            <div th:each="lecture : ${lectures}" class="col">
                 <div class="card h-100">
                     <div class="row g-0">
                         <div class="col-md-5">
-                            <img src="https://via.placeholder.com/300x200" 
+                            <img th:src="${lecture.thumbnail}" 
                                  class="img-fluid rounded-start w-100 h-100 object-fit-cover" 
                                  alt="강의 썸네일"
                                  style="min-height: 200px;">
                         </div>
                         <div class="col-md-7">
                             <div class="card-body">
-                                <h5 class="card-title">스프링 부트 기초</h5>
+                                <h5 class="card-title" th:text="${lecture.title}">강좌 제목</h5>
                                 <p class="card-text">
-                                    <small class="text-muted">프로그래밍 | 12주차</small>
+                                    <small class="text-muted" 
+                                           th:text="${lecture.subject.subjectName + ' | ' + lecture.weeks + '주차'}">
+                                    </small>
                                 </p>
-                                <p class="card-text">스프링 부트의 기초부터 실전까지</p>
+                                <p class="card-text" th:text="${lecture.description}">강좌 설명</p>
                                 <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-success">공개중</span>
+                                    <span class="badge" 
+                                          th:classappend="${lecture.status == 'DRAFT' ? 'bg-warning text-dark' : 
+                                                         (lecture.status == 'PUBLISHED' ? 'bg-success' : 'bg-danger')}"
+                                          th:text="${lecture.status == 'DRAFT' ? '임시저장' : 
+                                                  (lecture.status == 'PUBLISHED' ? '공개' : '삭제됨')}">
+                                    </span>
                                     <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-secondary">수정</button>
-                                        <button class="btn btn-sm btn-outline-danger">삭제</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 강의 카드 2 -->
-            <div class="col">
-                <div class="card h-100">
-                    <div class="row g-0">
-                        <div class="col-md-5">
-                            <img src="https://via.placeholder.com/300x200" 
-                                 class="img-fluid rounded-start w-100 h-100 object-fit-cover" 
-                                 alt="강의 썸네일"
-                                 style="min-height: 200px;">
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card-body">
-                                <h5 class="card-title">JPA 마스터하기</h5>
-                                <p class="card-text">
-                                    <small class="text-muted">데이터베이스 | 8주차</small>
-                                </p>
-                                <p class="card-text">JPA와 Hibernate 심화 과정</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-warning text-dark">임시저장</span>
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-secondary">수정</button>
-                                        <button class="btn btn-sm btn-outline-danger">삭제</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- 강의 카드 3 (방금 등록한 강의) -->
-            <div class="col">
-                <div class="card h-100">
-                    <div class="row g-0">
-                        <div class="col-md-5">
-                            <img src="https://via.placeholder.com/300x200" 
-                                 class="img-fluid rounded-start w-100 h-100 object-fit-cover" 
-                                 alt="강의 썸네일"
-                                 style="min-height: 200px;">
-                        </div>
-                        <div class="col-md-7">
-                            <div class="card-body">
-                                <h5 class="card-title">새로 등록한 강의</h5>
-                                <p class="card-text">
-                                    <small class="text-muted">과목명 | n주차</small>
-                                </p>
-                                <p class="card-text">강의 설명이 여기에 표시됩니다</p>
-                                <div class="d-flex justify-content-between align-items-center">
-                                    <span class="badge bg-warning text-dark">임시저장</span>
-                                    <div class="btn-group">
-                                        <button class="btn btn-sm btn-outline-secondary">수정</button>
-                                        <button class="btn btn-sm btn-outline-danger">삭제</button>
+                                        <a th:href="@{'/teacher/lectures/edit/' + ${lecture.courseId}}" 
+                                           class="btn btn-sm btn-outline-secondary">수정</a>
+                                        <button class="btn btn-sm btn-outline-danger"
+                                                th:onclick="'deleteLecture(' + ${lecture.courseId} + ')'">삭제</button>
                                     </div>
                                 </div>
                             </div>
@@ -132,21 +45,6 @@
                 </div>
             </div>
         </div>
-
-        <!-- 페이지네이션 -->
-        <nav class="mt-4">
-            <ul class="pagination justify-content-center">
-                <li class="page-item disabled">
-                    <a class="page-link" href="#" tabindex="-1">이전</a>
-                </li>
-                <li class="page-item active"><a class="page-link" href="#">1</a></li>
-                <li class="page-item"><a class="page-link" href="#">2</a></li>
-                <li class="page-item"><a class="page-link" href="#">3</a></li>
-                <li class="page-item">
-                    <a class="page-link" href="#">다음</a>
-                </li>
-            </ul>
-        </nav>
     </div>
 
     <footer th:replace="teacher/common/footer :: footer"></footer>

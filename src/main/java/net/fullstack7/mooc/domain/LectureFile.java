@@ -2,7 +2,6 @@ package net.fullstack7.mooc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
-import org.checkerframework.checker.units.qual.C;
 
 @Entity
 @Data
