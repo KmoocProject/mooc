@@ -98,7 +98,6 @@
                 <th>질문 제목</th>
                 <th>질문 내용</th>
                 <th>답변 상태</th>
-                <th>답변 하기</th>
             </tr>
             </thead>
             <tbody>
@@ -107,7 +106,6 @@
                 <td>자료집</td>
                 <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
                 <td>답변 대기중</td>
-                <td><button class="reply-button" id="btnReply">답변하러가기</button></td>
             </tr>
             </tbody>
         </table>
@@ -116,22 +114,6 @@
 </section>
 
 <div th:replace="admin/footer :: footer"></div>
-<td><button id="btnReply">답변하러가기</button></td>
-
-<script>
-    const btnReply = document.getElementById("btnReply");
-
-    btnReply.addEventListener("click", () => {
-        // 팝업창 URL과 옵션 설정
-        const popup = window.open(
-            "/admin/qna/replypop", // 열릴 페이지 (예: JSP 파일)
-            "답변 작성", // 팝업창 이름
-            "width=600,height=400,scrollbars=yes,resizable=yes" // 옵션 설정
-        );
-
-    });
-</script>
-
 
 </body>
 </html>
