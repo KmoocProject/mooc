@@ -19,6 +19,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
+import net.fullstack7.mooc.domain.Subject;
+import net.fullstack7.mooc.repository.SubjectRepository;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,7 +28,7 @@ import java.util.List;
 public class TeacherController {
     private final TeacherService teacherService;
     private final InstitutionRepository institutionRepository;
-
+    private final SubjectRepository subjectRepository;
     @GetMapping("/login")
     public String loginForm() {
         return "teacher/login";
@@ -90,7 +92,14 @@ public class TeacherController {
     }
     
     @GetMapping("/registLecture")
-    public String registLecture() {
+    public String registLecture(Model model, HttpSession session) {
+        Teacher teacher = (Teacher) session.getAttribute("teacher");
+        if (teacher == null) {
+            return "redirect:/teacher/login";
+        }
+
+        List<Subject> subjects = subjectRepository.findAllByOrderBySubjectIdAsc();
+        model.addAttribute("subjects", subjects);
         return "teacher/registLecture";
     }
 }
