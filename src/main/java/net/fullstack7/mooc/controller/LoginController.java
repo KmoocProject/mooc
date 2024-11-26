@@ -16,10 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
@@ -41,7 +38,6 @@ public class LoginController extends HttpServlet {
             redirectAttributes.addFlashAttribute("errors", "이미 로그인된 상태입니다. 회원가입 페이지에 접근할 수 없습니다.");
             return "redirect:/main/main";
         }
-//        String referer = request.getHeader("referer");
         return "login/login";
     }
 
@@ -84,27 +80,27 @@ public class LoginController extends HttpServlet {
     }
 
     //회원가입처리하고 열어서 약관만들어
-//    @GetMapping("/registCheck")
-//    public String registCheck(HttpServletResponse res, HttpSession session, RedirectAttributes redirectAttributes) {
-//        String loginCheck = (String) session.getAttribute("memberId");
-//        if (loginCheck != null) {
-//            redirectAttributes.addFlashAttribute("errors", "로그인 한 회원은 접근할 수 없습니다.");
-//            return "redirect:/main/main";
-//        }
-////        session.removeAttribute("termsAgree");
-//        return "login/registCheck";
-//    }
-//
-//    @PostMapping("registCheck")
-//    public String registCheck(@RequestParam(value="termsAgreement", defaultValue = "false" )boolean termsAgreement, HttpSession session, Model model) {
-//        if(termsAgreement){
-//            session.setAttribute("termsAgree", true);
-//            return "redirect:/login/regist";
-//        } else{
-//            model.addAttribute("errors", "약관동의 후 회원가입이 가능합니다.");
-//            return "redirect:/login/registCheck";
-//        }
-//    }
+    @GetMapping("/memberterms")
+    public String memberterms(HttpSession session, RedirectAttributes redirectAttributes) {
+        String loginCheck = (String) session.getAttribute("memberId");
+        if (loginCheck != null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 한 회원은 접근할 수 없습니다.");
+            return "redirect:/main/main";
+        }
+        session.removeAttribute("termsAgree");
+        return "login/memberterms";
+    }
+
+    @PostMapping("/memberterms")
+    public String membertermsPost(@RequestParam(value="termsAgreement", defaultValue = "false" )boolean termsAgreement, HttpSession session, Model model) {
+        if(termsAgreement){
+            session.setAttribute("termsAgree", true);
+            return "redirect:/login/regist";
+        } else{
+            model.addAttribute("errors", "약관동의 후 회원가입이 가능합니다.");
+            return "redirect:/login/memberterms";
+        }
+    }
 
     @GetMapping("/regist")
     public String regist(HttpSession session, HttpServletResponse res, Model model, RedirectAttributes redirectAttributes) throws IOException {
@@ -117,16 +113,17 @@ public class LoginController extends HttpServlet {
         }
 //        if(termsAgree == null || ! termsAgree){
 //            model.addAttribute("erros", "약관에 동의한 후 회원가입이 가능합니다.");
-//            return "login/registCheck";
+//            return "login/memberterms";
 //        }
 //        session.removeAttribute("termsAgree");
+        log.info("로그찍힘4");
         return "login/regist";
     }
 
     @PostMapping("/regist")
     public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
 //        session.setAttribute("termsAgree", true);
-        log.info("로그찍힘4");
+        log.info("로그찍힘5");
 
         if(bindingResult.hasErrors()) {
             log.info("유효성 검사 오류: " + bindingResult.getAllErrors());
@@ -156,10 +153,6 @@ public class LoginController extends HttpServlet {
         return "login/memberchose";
     }
 
-    @GetMapping("/memberterms")
-    public String memberterms() {
-        return "login/memberterms";
-    }
 
 
     @GetMapping("/finishjoin")
