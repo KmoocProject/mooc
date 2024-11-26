@@ -12,7 +12,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 import java.util.List;
 import java.util.Objects;
 
-public class MemberSearchImpl extends QuerydslRepositorySupport implements MemberSearch{
+public class MemberSearchImpl extends QuerydslRepositorySupport implements MemberSearch {
     public MemberSearchImpl() {
         super(Member.class);
     }
@@ -31,7 +31,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
             bb.and(memberq.status.eq(status));
         }
         if(memberId != null) {
-            bb.and(memberq.memberId.like('%'+memberId+'%'));
+            bb.and(memberq.memberId.containsIgnoreCase(memberId));
         }
         if(bb.hasValue()) query.where(bb);
 
