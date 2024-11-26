@@ -4,9 +4,12 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.dto.AdminLoginDTO;
+import net.fullstack7.mooc.dto.AdminSearchDTO;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -54,6 +57,22 @@ public class AdminController {
     @GetMapping("/main")
     public String mainGet() {
         return "admin/main";
+    }
+
+    @GetMapping("/memberList")
+    public String memberListGet(Model model, @Valid AdminSearchDTO adminSearchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if(bindingResult.hasErrors()) {
+            adminSearchDTO = AdminSearchDTO.<Teacher>builder().build();
+        }
+
+        if(adminSearchDTO.getTypeSelect().equals("t"))
+            model.addAttribute("pageinfo", adminService.getTeachers(adminSearchDTO));
+        else
+            model.addAttribute("pageinfo", adminService.getMembers(adminSearchDTO));
+
+        model.addAttribute("searchinfo", adminSearchDTO);
+
+        return "admin/memberList";
     }
 
 }
