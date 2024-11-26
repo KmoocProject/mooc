@@ -9,11 +9,10 @@ import net.fullstack7.mooc.dto.CourseCreateDTO;
 import net.fullstack7.mooc.dto.LectureContentCreateDTO;
 import net.fullstack7.mooc.dto.LectureCreateDTO;
 import net.fullstack7.mooc.service.CourseService;
-import net.fullstack7.mooc.service.TeacherService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import net.fullstack7.mooc.dto.CourseResponseDTO;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;  
 
@@ -41,7 +40,7 @@ public class TeacherApiController {
 
             Course course = courseService.createCourse(courseDTO, teacher);
             
-            return ResponseEntity.ok(course);
+            return ResponseEntity.ok(CourseResponseDTO.from(course));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
