@@ -14,6 +14,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -73,6 +74,19 @@ public class AdminController {
         model.addAttribute("searchinfo", adminSearchDTO);
 
         return "admin/memberList";
+    }
+
+    @GetMapping("/memberView")
+    public String memberViewGet(@RequestParam(defaultValue = "0") String memberId, @RequestParam(defaultValue = "t") String typeSelect, Model model, RedirectAttributes redirectAttributes) {
+
+        if(memberId.equals("0")){
+            redirectAttributes.addFlashAttribute("errors", "조회할 계정을 선택하세요.");
+            return "redirect:/admin/memberList";
+        }
+
+        
+
+        return "admin/memberView";
     }
 
 }
