@@ -31,7 +31,7 @@ public class MemberSearchImpl extends QuerydslRepositorySupport implements Membe
             bb.and(memberq.status.eq(status));
         }
         if(memberId != null) {
-            bb.and(memberq.memberId.eq(memberId));
+            bb.and(memberq.memberId.like('%'+memberId+'%'));
         }
         if(bb.hasValue()) query.where(bb);
 
