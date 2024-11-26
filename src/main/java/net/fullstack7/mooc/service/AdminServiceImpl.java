@@ -9,10 +9,9 @@ import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
 import net.fullstack7.mooc.repository.AdminRepository;
-import net.fullstack7.mooc.repository.MemberRepository2;
-import net.fullstack7.mooc.repository.TeacherRepository2;
+import net.fullstack7.mooc.repository.MemberRepository;
+import net.fullstack7.mooc.repository.TeacherRepository;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -23,9 +22,8 @@ import java.util.Optional;
 @Transactional
 public class AdminServiceImpl implements AdminServiceIf {
     private final AdminRepository adminRepository;
-    private final TeacherRepository2 teacherRepository;
-    private final TeacherRepository2 teacherRepository2;
-    private final MemberRepository2 memberRepository2;
+    private final TeacherRepository teacherRepository;
+    private final MemberRepository memberRepository;
 
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
@@ -56,7 +54,7 @@ public class AdminServiceImpl implements AdminServiceIf {
             isApproved = -1;
         }
 
-        return teacherRepository2.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
+        return teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
     }
 
     @Override
@@ -77,6 +75,23 @@ public class AdminServiceImpl implements AdminServiceIf {
             memberType = -1;
         }
 
-        return memberRepository2.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
+        return memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
     }
+
+    @Override
+    public Teacher getTeacher(String id) {
+        Optional<Teacher> teacher = teacherRepository.findByTeacherId(id);
+        if(teacher.isPresent()) {
+            return teacher.get();
+        }
+        return null;
+    }
+
+    @Override
+    public Member getMember(String id) {
+        Optional<Member> member = memberRepository.findByMemberId(id);
+        return null;
+    }
+
+
 }
