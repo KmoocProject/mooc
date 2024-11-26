@@ -150,4 +150,21 @@ public class LoginController extends HttpServlet {
         }
     }
 
+
+    @GetMapping("/memberchose")
+    public String memberchose() {
+        return "login/memberchose";
+    }
+
+    @GetMapping("/memberterms")
+    public String memberterms() {
+        return "login/memberterms";
+    }
+
+
+    @GetMapping("/finishjoin")
+    public String finishjoin() {
+        return "login/finishjoin";
+    }
+
 }

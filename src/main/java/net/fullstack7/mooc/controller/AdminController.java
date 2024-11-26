@@ -60,7 +60,7 @@ public class AdminController {
         return "admin/main";
     }
 
-    @GetMapping("/memberList")
+    @GetMapping("/member")
     public String memberListGet(Model model, @Valid AdminSearchDTO adminSearchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if(bindingResult.hasErrors()) {
             adminSearchDTO = AdminSearchDTO.<Teacher>builder().build();
@@ -73,7 +73,7 @@ public class AdminController {
 
         model.addAttribute("searchinfo", adminSearchDTO);
 
-        return "admin/memberList";
+        return "admin/member";
     }
 
     @GetMapping("/memberView")
