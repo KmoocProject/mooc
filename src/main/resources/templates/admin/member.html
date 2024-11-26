@@ -23,7 +23,6 @@
         background-color: #f9f9f9;
         color: #333;
     }
-
     .content {
         max-width: 1500px;
         margin: 50px auto;
@@ -33,68 +32,72 @@
         border-radius: 8px;
         height: 800px;
     }
-    /* styles.css */
+    
 
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        color: #333;
+    }
 
-    .table-container {
-        margin: 20px auto;
-        max-width: 800px;
-        background-color: #ffffff;
-        border-radius: 8px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        overflow-x: auto;
+    .search-box {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 20px;
+    }
+
+    .search-box label {
+        font-size: 14px;
+        color: #333;
+    }
+
+    .search-box select, .search-box input {
+        padding: 8px;
+        font-size: 14px;
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        width: 150px;
+    }
+
+    .search-box button {
+        padding: 10px 15px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .search-box button:hover {
+        background-color: #0056b3;
     }
 
     table {
         width: 100%;
         border-collapse: collapse;
+        margin-top: 20px;
     }
 
-    thead {
-        background-color: #f3f4f6;
-    }
-
-    thead th {
+    table th, table td {
+        padding: 12px;
         text-align: left;
-        padding: 12px 16px;
-        font-weight: bold;
-        font-size: 14px;
-        border-bottom: 2px solid #e5e7eb;
+        border-bottom: 1px solid #ddd;
     }
 
-    tbody tr {
-        border-bottom: 1px solid #e5e7eb;
+    table th {
+        background-color: #007bff;
+        color: white;
     }
 
-    tbody tr:last-child {
-        border-bottom: none;
+    table td {
+        background-color: #f9f9f9;
     }
 
-    tbody td {
-        padding: 12px 16px;
-        font-size: 14px;
-        color: #374151;
+    table tr:hover {
+        background-color: #f1f1f1;
     }
-
-    tbody td:nth-child(1),
-    tbody td:nth-child(4) {
-        text-align: center;
-    }
-
-    tbody tr:hover {
-        background-color: #f9fafb;
-    }
-
-    td a {
-        color: #2563eb;
-        text-decoration: none;
-    }
-
-    td a:hover {
-        text-decoration: underline;
-    }
-
-
 
 
 </style>
@@ -103,37 +106,112 @@
 <div th:replace="admin/header :: header"></div>
 
 <section class="content">
-    <div>
-        <table>
+    <div class="container">
+        <h1>회원 검색</h1>
+        <form method="get" action="/admin/memberList">
+            <div class="search-box">
+
+                <label for="typeSelect">구분</label>
+                <select id="typeSelect" name="typeSelect" onchange="updateMemberOptions()">
+                    <option value="t">강사</option>
+                    <option value="s">학생</option>
+                </select>
+
+                <!-- 학생 선택 시 표시되는 옵션 -->
+                <div id="student-options" style="display:none;">
+                    <label for="memberType">학생 상태:</label>
+                    <select id="memberType" name="memberType">
+                        <option value="-1">전체</option>
+                        <option value="0">일반학생</option>
+                        <option value="1">학점은행제학생</option>
+                    </select>
+                </div>
+
+                <!-- 강사 선택 시 표시되는 옵션 -->
+                <div id="instructor-options" style="display:block;">
+                    <label for="isApproved">강사 상태:</label>
+                    <select id="isApproved" name="isApproved">
+                        <option value="-1">전체</option>
+                        <option value="1">승인</option>
+                        <option value="0">미승인</option>
+                    </select>
+                </div>
+                <label for="status">회원 상태:</label>
+                <select id="status" name="status">
+                    <option value="">전체</option>
+                    <option value="ACTIVE">활성화</option>
+                    <option value="INACTIVE">비활성화</option>
+                    <option value="WITHDRAWN">탈퇴</option>
+                </select>
+
+                <label for="searchId">아이디:</label>
+                <input type="text" id="searchId" name="searchId" placeholder="아이디 검색">
+
+                <button type="submit">검색</button>
+            </div>
+        </form>
+
+        <table id="result-table">
             <thead>
             <tr>
-                <th>회원 ID</th>
-                <th>이름</th>
-                <th>이메일</th>
+                <th>아이디</th>
+                <th th:if="${searchinfo.memberType == -1}">가입승인</th>
+                <th th:unless="${searchinfo.memberType == -1}">회원종류</th>
+                <th>회원 상태</th>
                 <th>가입일</th>
-                <th>회원 타입</th>
-                <th>상태</th>
-                <th>상태 관리</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>63</td>
-                <td>자료집</td>
-                <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
-                <td>2024.09.12</td>
-                <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
-                <td>활성</td>
-                <td><button>활성</button><button>비활성</button><button>탈퇴</button></td>
-            </tr>
+            <!-- 검색 결과가 여기에 출력됩니다 -->
+            <th:block th:if="${searchinfo.typeSelect == 't'}">
+                <tr th:each="item, status:${pageinfo.content}">
+                    <td th:text="${item.teacherId}"></td>
+                    <td th:text="${item.isApproved}"></td>
+                    <td th:text="${item.status}"></td>
+                    <td th:text="${item.createdAt}"></td>
+                </tr>
+            </th:block>
+            <th:block th:unless="${searchinfo.typeSelect == 't'}">
+                <tr th:each="item, status:${pageinfo.content}">
+                    <td th:text="${item.memberId}"></td>
+                    <td th:text="${item.memberType}"></td>
+                    <td th:text="${item.status}"></td>
+                    <td th:text="${item.createdAt}"></td>
+                </tr>
+            </th:block>
 
             </tbody>
         </table>
     </div>
 
+
+
 </section>
 
 <div th:replace="admin/footer :: footer"></div>
+<script>
+    function updateMemberOptions() {
+        const memberType = document.getElementById('typeSelect').value;
+        const studentOptions = document.getElementById('student-options');
+        const instructorOptions = document.getElementById('instructor-options');
 
+        // 학생이 선택된 경우: 학생 상태 선택 창을 보이게
+        if (memberType === 's') {
+            studentOptions.style.display = 'block';
+            instructorOptions.style.display = 'none';
+        }
+        // 강사가 선택된 경우: 강사 상태 선택 창을 보이게
+        else if (memberType === 't') {
+            studentOptions.style.display = 'none';
+            instructorOptions.style.display = 'block';
+        }
+        // 아무것도 선택되지 않은 경우: 모두 숨기기
+        else {
+            studentOptions.style.display = 'none';
+            instructorOptions.style.display = 'block';
+        }
+    }
+
+</script>
 </body>
 </html>
