@@ -118,16 +118,23 @@
 
 
 <div class="content">
+    <form class="login-form" action="/login/login" method="post">
     <h1>로그인</h1>
     <div class="login-form">
-        <input type="email" placeholder="이메일을 입력하세요." class="input-field">
-        <input type="password" placeholder="비밀번호를 입력하세요." class="input-field">
+        <input type="text" id="memberId" name="memberId" placeholder="아이디를 입력하세요." class="input-field">
+        <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요." class="input-field">
         <div class="find-links">
             <a href="#">이메일 찾기</a> | <a href="#">비밀번호 찾기</a>
         </div>
-        <button class="login-button">로그인</button>
-        <button class="signup-button">회원가입</button>
+        <button class="login-button" type="submit">로그인</button>
+        <button class="signup-button" type="button" onclick="goRegist()">회원가입</button>
     </div>
+    </form>
+    <script>
+        function goRegist(){
+            window.location.href = '/login/regist';
+        }
+    </script>
 </div>
 
 

@@ -22,11 +22,11 @@ public class MemberDTO {
     @Pattern(regexp = "^[a-z0-9]{5,15}$", message = "아이디는 영문자로 시작하고 5~15자의 영문자와 숫자만 사용 가능합니다.")
     private String memberId;
     @NotBlank
-    @Size(min = 5, max = 15)
-
+    @Size(min = 10, max = 20)
     @Pattern(regexp = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$", message = "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.")
     private String password;
     @NotBlank
+    @Size(min = 2, max = 5)
     @Pattern(regexp = " ^[가-힣]{2,5}$", message = "이름은 한글 2~5자 이내로 입력 가능합니다.")
     private String userName;
     @NotBlank
