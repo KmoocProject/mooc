@@ -1,6 +1,7 @@
 package net.fullstack7.mooc.util;
 
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.constant.FileConstants;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -13,6 +14,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -115,5 +117,29 @@ public class FileUploadUtil {
      */
     public Path getFilePath(String filePath) {
         return Paths.get(uploadPath, filePath);
+    }
+
+    public void validateFileExtension(MultipartFile file, String[] allowedExtensions) {
+        String extension = FilenameUtils.getExtension(file.getOriginalFilename()).toLowerCase();
+        boolean isValid = Arrays.asList(allowedExtensions).contains(extension);
+        
+        if (!isValid) {
+            throw new IllegalArgumentException("허용되지 않는 파일 형식입니다: " + extension);
+        }
+    }
+
+    public String uploadVideoFile(MultipartFile file, String subPath) throws IOException {
+        validateFileExtension(file, FileConstants.ALLOWED_VIDEO_EXTENSIONS);
+        return uploadFile(file, subPath);
+    }
+
+    public String uploadDocumentFile(MultipartFile file, String subPath) throws IOException {
+        validateFileExtension(file, FileConstants.ALLOWED_DOCUMENT_EXTENSIONS);
+        return uploadFile(file, subPath);
+    }
+
+    public String uploadImageFile(MultipartFile file, String subPath) throws IOException {
+        validateFileExtension(file, FileConstants.ALLOWED_IMAGE_EXTENSIONS);
+        return uploadFile(file, subPath);
     }
 }
