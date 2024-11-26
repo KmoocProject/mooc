@@ -12,4 +12,5 @@ import org.springframework.stereotype.Repository;
 public interface LectureRepository extends JpaRepository<Lecture, Integer> {
     List<Lecture> findByCourseOrderByLectureIdAsc(Course course);
     Optional<Lecture> findByLectureIdAndCourse(int lectureId, Course course);
+    Optional<Lecture> findByLectureId(int lectureId);
 }

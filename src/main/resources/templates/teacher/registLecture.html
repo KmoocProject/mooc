@@ -184,6 +184,7 @@
         let currentStep = 1;
         let courseData = null;
         let isSubmitting = false;  // 중복 제출 방지 플래그
+        let sectionLectureIds = [];  // 전역 변수 추가
 
         // 파일 미리보기
         document.querySelector('input[name="thumbnail"]').addEventListener('change', function(e) {
@@ -253,15 +254,22 @@
         }
 
         async function saveBasicInfo() {
+            // 이미 제출 중이면 리턴
+            if (isSubmitting) {
+                return false;
+            }
+            
             const form = document.getElementById('courseForm');
             if (!form.checkValidity()) {
                 form.classList.add('was-validated');
                 return false;
             }
 
-            const formData = new FormData(form);
-            
             try {
+                isSubmitting = true;  // 제출 시작
+                const formData = new FormData(form);
+                
+                console.log('강좌 등록 시작');
                 const response = await fetch('/api/teacher/courses', {
                     method: 'POST',
                     body: formData
@@ -270,33 +278,38 @@
                 const responseText = await response.text();
                 console.log('서버 응답:', responseText);
 
-                if (!response.ok) {
+                let responseData;
+                try {
+                    responseData = JSON.parse(responseText);
+                } catch (e) {
                     throw new Error(responseText || '강좌 등록에 실패했습니다.');
                 }
 
-                try {
-                    courseData = JSON.parse(responseText);
-                    console.log('강좌 데이터:', courseData);
-                    
-                    if (!courseData || !courseData.courseId) {
-                        throw new Error('강좌 기본 정보가 없습니다.');
-                    }
+                if (!response.ok) {
+                    throw new Error(responseData.message || '강좌 등록에 실패했습니다.');
+                }
 
+                courseData = responseData;
+                console.log('강좌 데이터 저장됨:', courseData);
+                
+                if (courseData && courseData.courseId) {
+                    console.log('다음 단계로 이동');
                     nextStep(1);
                     return true;
-                } catch (e) {
-                    console.error('JSON 파싱 에러:', e);
-                    throw new Error('서버 응답을 처리할 수 없습니다.');
                 }
+                
+                throw new Error('강좌 데이터가 올바르지 않습니다.');
             } catch (error) {
                 console.error('Error:', error);
                 alert(error.message);
                 return false;
+            } finally {
+                isSubmitting = false;  // 제출 완료
             }
         }
 
         async function saveSections() {
-            if (!courseId) {
+            if (!courseData?.courseId) {
                 alert('강좌 기본 정보가 없습니다.');
                 return false;
             }
@@ -304,24 +317,27 @@
             const sections = Array.from(document.querySelectorAll('.section-item')).map((section, index) => ({
                 courseId: courseData.courseId,
                 title: section.querySelector('[name="sectionTitle"]').value,
-                description: section.querySelector('[name="sectionDescription"]').value,
-                orderNum: index + 1
+                description: section.querySelector('[name="sectionDescription"]').value
             }));
 
             try {
-                const response = await fetch(`/api/teacher/courses/${courseData.id}/sections`, {
+                const response = await fetch(`/api/teacher/courses/${courseData.courseId}/sections`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify(sections)
                 });
+
                 if (response.ok) {
+                    const lectureData = await response.json();
+                    sectionLectureIds = lectureData.map(lecture => lecture.lectureId);  // lectureId 배열 저장
+                    console.log('섹션 lectureIds:', sectionLectureIds);
                     return true;
                 }
-                throw new Error('Failed to save sections');
+                throw new Error('섹션 저장에 실패했습니다.');
             } catch (error) {
-                console.error('Error saving sections:', error);
+                console.error('섹션 저장 에러:', error);
                 alert('섹션 저장에 실패했습니다.');
                 return false;
             }
@@ -378,60 +394,61 @@
 
         function getContentTemplate(sectionIndex, contentIndex) {
             return `
-                <div class="content-item card mb-3">
-                    <div class="card-body">
-                        <div class="d-flex justify-content-end mb-2">
-                            <button type="button" class="btn btn-danger btn-sm" onclick="removeContent(this)">삭제</button>
-                        </div>
-                        <div class="row mb-3">
-                            <div class="col-md-6">
+                <div class="content-item mb-3">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="mb-3">
                                 <label class="form-label">콘텐츠 제목</label>
                                 <input type="text" class="form-control" name="contentTitle" required>
                             </div>
-                            <div class="col-md-6">
+                            <div class="mb-3">
+                                <label class="form-label">콘텐츠 설명</label>
+                                <textarea class="form-control" name="contentDescription" required></textarea>
+                            </div>
+                            <div class="mb-3">
                                 <label class="form-label">콘텐츠 유형</label>
-                                <select class="form-select content-type" onchange="handleContentTypeChange(this)" required>
-                                    <option value="">콘텐츠 유형을 선택하세요</option>
+                                <select class="form-select content-type" onchange="updateUploadArea(this)">
+                                    <option value="">선택하세요</option>
                                     <option value="video">동영상</option>
-                                    <option value="file">파일</option>
+                                    <option value="file">문서</option>
                                     <option value="quiz">퀴즈</option>
                                 </select>
                             </div>
-                        </div>
-                        <div class="content-upload-area">
-                            <!-- 콘텐츠 유형별 업로드 영역 -->
+                            <div class="content-upload-area"></div>
                         </div>
                     </div>
                 </div>
             `;
         }
 
-        function handleContentTypeChange(select) {
-            const uploadArea = select.closest('.content-item').querySelector('.content-upload-area');
+        function updateUploadArea(select) {
+            const contentItem = select.closest('.content-item');
+            const uploadArea = contentItem.querySelector('.content-upload-area');
+            const descriptionField = contentItem.querySelector('[name="contentDescription"]').closest('.mb-3');
             const type = select.value;
-            
             let html = '';
-            if (type === 'video') {
+
+            // 설명 필드 표시/숨김 처리
+            if (type === 'quiz') {
+                descriptionField.style.display = 'none';
+            } else {
+                descriptionField.style.display = 'block';
+            }
+
+            if (type === 'video' || type === 'file') {
+                const fileType = type === 'video' ? 'video/*' : '*/*';
                 html = `
                     <div class="mb-3">
-                        <label class="form-label">동영상 파일</label>
-                        <input type="file" class="form-control" accept="video/*" required>
-                        <small class="text-muted">지원 형식: MP4, WebM (최대 500MB)</small>
-                    </div>
-                `;
-            } else if (type === 'file') {
-                html = `
-                    <div class="mb-3">
-                        <label class="form-label">첨부 파일</label>
-                        <input type="file" class="form-control" required>
-                        <small class="text-muted">최대 100MB</small>
+                        <label class="form-label">${type === 'video' ? '동영상' : '문서'} 파일</label>
+                        <input type="file" class="form-control" accept="${fileType}" required>
+                        <div class="preview mt-2"></div>
                     </div>
                 `;
             } else if (type === 'quiz') {
                 html = `
                     <div class="mb-3">
-                        <label class="form-label">문제</label>
-                        <textarea class="form-control" rows="2" required></textarea>
+                        <label class="form-label">퀴즈 문제</label>
+                        <textarea class="form-control" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">정답</label>
@@ -439,7 +456,32 @@
                     </div>
                 `;
             }
+
             uploadArea.innerHTML = html;
+
+            if (type === 'video' || type === 'file') {
+                const fileInput = uploadArea.querySelector('input[type="file"]');
+                const preview = uploadArea.querySelector('.preview');
+                
+                fileInput.addEventListener('change', function(e) {
+                    const file = e.target.files[0];
+                    if (!file) return;
+
+                    if (type === 'video') {
+                        preview.innerHTML = `
+                            <video class="content-preview mt-2" controls>
+                                <source src="${URL.createObjectURL(file)}" type="video/mp4">
+                            </video>
+                        `;
+                    } else {
+                        preview.innerHTML = `
+                            <div class="mt-2">
+                                <i class="bi bi-file-earmark"></i> ${file.name}
+                            </div>
+                        `;
+                    }
+                });
+            }
         }
 
         function addContent(sectionIndex) {
@@ -463,52 +505,66 @@
                 return;
             }
 
-            const formData = new FormData();
-            const contents = [];
-
-            document.querySelectorAll('.card[data-section-index]').forEach((sectionCard, sectionIndex) => {
-                sectionCard.querySelectorAll('.content-item').forEach((contentItem, contentIndex) => {
-                    const content = {
-                        sectionIndex: sectionIndex,
-                        title: contentItem.querySelector('[name="contentTitle"]').value,
-                        type: contentItem.querySelector('.content-type').value,
-                        orderNum: contentIndex + 1
-                    };
-
-                    const uploadArea = contentItem.querySelector('.content-upload-area');
-                    if (content.type === 'video' || content.type === 'file') {
-                        const file = uploadArea.querySelector('input[type="file"]').files[0];
-                        if (file) {
-                            const fileKey = `content_${sectionIndex}_${contentIndex}`;
-                            formData.append(fileKey, file);
-                            content.fileKey = fileKey;
-                        }
-                    } else if (content.type === 'quiz') {
-                        content.question = uploadArea.querySelector('textarea').value;
-                        content.answer = uploadArea.querySelector('input[type="text"]').value;
-                    }
-
-                    contents.push(content);
-                });
-            });
-
-            formData.append('contents', JSON.stringify(contents));
-
             try {
-                const response = await fetch(`/api/teacher/courses/${courseData.id}/contents`, {
-                    method: 'POST',
-                    body: formData
-                });
+                const sections = document.querySelectorAll('.card[data-section-index]');
                 
-                if (response.ok) {
-                    alert('강좌가 성공적으로 등록되었습니다.');
-                    window.location.href = '/teacher/my-lectures';
-                } else {
-                    throw new Error('Failed to submit course');
+                for (let i = 0; i < sections.length; i++) {
+                    const section = sections[i];
+                    const lectureId = sectionLectureIds[i];
+                    
+                    const contents = section.querySelectorAll('.content-item');
+                    
+                    for (let j = 0; j < contents.length; j++) {
+                        const contentItem = contents[j];
+                        const formData = new FormData();
+                        
+                        // 필수 필드 추가
+                        formData.append('title', contentItem.querySelector('[name="contentTitle"]').value);
+                        const type = contentItem.querySelector('.content-type').value;
+
+                        // 퀴즈가 아닐 때만 description 추가
+                        if (type !== 'quiz') {
+                            formData.append('description', contentItem.querySelector('[name="contentDescription"]').value);
+                        }
+
+                        formData.append('type', contentItem.querySelector('.content-type').value);
+                        
+                        const uploadArea = contentItem.querySelector('.content-upload-area');
+
+                        if (type === 'video') {
+                            formData.append('isVideo', '1');
+                            const file = uploadArea.querySelector('input[type="file"]').files[0];
+                            if (file) {
+                                formData.append('file', file);
+                            }
+                        } else if (type === 'file') {
+                            formData.append('isVideo', '0');
+                            const file = uploadArea.querySelector('input[type="file"]').files[0];
+                            if (file) {
+                                formData.append('file', file);
+                            }
+                        } else if (type === 'quiz') {
+                            formData.append('isVideo', '0');
+                            formData.append('question', uploadArea.querySelector('textarea').value);
+                            formData.append('answer', uploadArea.querySelector('input[type="text"]').value);
+                        }
+
+                        const response = await fetch(`/api/teacher/lectures/${lectureId}/contents`, {
+                            method: 'POST',
+                            body: formData
+                        });
+
+                        if (!response.ok) {
+                            throw new Error(`섹션 ${i + 1}의 콘텐츠 ${j + 1} 등록 실패`);
+                        }
+                    }
                 }
+
+                alert('강좌가 성공적으로 등록되었습니다.');
+                window.location.href = '/teacher/myLectures';
             } catch (error) {
                 console.error('Error submitting course:', error);
-                alert('강좌 등록에 실패했습니다.');
+                alert('강좌 등록에 실패했습니다: ' + error.message);
             }
         }
 

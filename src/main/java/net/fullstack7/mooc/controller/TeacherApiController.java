@@ -13,17 +13,23 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import net.fullstack7.mooc.dto.CourseResponseDTO;
+import net.fullstack7.mooc.dto.ApiResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;  
 
 import lombok.RequiredArgsConstructor;
+import net.fullstack7.mooc.dto.LectureResponseDTO;
+import lombok.extern.log4j.Log4j2;
+import java.io.IOException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api/teacher")
+@Log4j2
 public class TeacherApiController {
     
     private final CourseService courseService;
@@ -56,21 +62,25 @@ public class TeacherApiController {
                 section.setCourseId(courseId);
                 lectures.add(courseService.createLecture(section));
             }
-            return ResponseEntity.ok(lectures);
+            List<LectureResponseDTO> responseDTOs = lectures.stream()
+                    .map(LectureResponseDTO::from)
+                    .collect(Collectors.toList());
+            return ResponseEntity.ok(responseDTOs);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
-
-    @PostMapping("/courses/{courseId}/contents")
-    public ResponseEntity<?> createContents(
-            @PathVariable Integer courseId,
-            @ModelAttribute LectureContentCreateDTO contentDTO) {
+    @PostMapping("/lectures/{lectureId}/contents")
+    public ResponseEntity<ApiResponse<Void>> createContent(
+            @PathVariable int lectureId,
+            @ModelAttribute LectureContentCreateDTO dto) {
         try {
-            LectureContent content = courseService.createContent(contentDTO);
-            return ResponseEntity.ok(content);
+            dto.setLectureId(lectureId);
+            LectureContent content = null;
+            content = courseService.createContent(dto);
+            return ResponseEntity.ok(ApiResponse.success("콘텐츠가 성공적으로 생성되었습니다."));
         } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
 }

@@ -44,6 +44,9 @@
                     </div>
                 </div>
             </div>
+            <div class="col" th:if="${lectures.size() == 0}">
+                <p class="text-center">등록된 강의가 없습니다.</p>
+            </div>
         </div>
     </div>
 

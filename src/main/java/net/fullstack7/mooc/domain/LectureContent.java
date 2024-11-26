@@ -17,7 +17,7 @@ public class LectureContent {
     private int lectureContentId; // INT PRIMARY KEY AUTO_INCREMENT, -- 강의 영역 콘텐츠 ID
     @Column(name="title", nullable = false, length = 200)
     private String title; // VARCHAR(200) NOT NULL, -- 강의 영역 콘텐츠 제목
-    @Column(name="description", columnDefinition = "text not null")
+    @Column(name="description", columnDefinition = "text not null default ''")
     private String description; // TEXT NOT NULL, -- 강의 영역 콘텐츠 설명
 //    private int lectureId; // INT NOT NULL, -- 강의 영역 ID
 
