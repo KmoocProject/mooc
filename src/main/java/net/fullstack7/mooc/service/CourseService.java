@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 
 import java.io.IOException;
+import java.time.LocalDateTime;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +52,7 @@ public class CourseService {
             .teacher(teacher)
             .status("DRAFT")
             .viewCount(0)
+            .createdAt(LocalDateTime.now())
             .build();
 
         return courseRepository.save(course);

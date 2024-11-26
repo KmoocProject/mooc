@@ -105,8 +105,23 @@
                             <div id="thumbnailPreview" class="mt-2"></div>
                         </div>
                         <div class="form-check mb-3">
-                            <input type="checkbox" class="form-check-input" name="isCreditBank">
-                            <label class="form-check-label">학점은행제 강좌 여부</label>
+                            <div class="form-group">
+                                <label>학점은행제 강좌 여부</label>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" 
+                                           name="isCreditBank" id="isCreditBank0" value="0" checked>
+                                    <label class="form-check-label" for="isCreditBank0">
+                                        일반 강좌
+                                    </label>
+                                </div>
+                                <div class="form-check">
+                                    <input class="form-check-input" type="radio" 
+                                           name="isCreditBank" id="isCreditBank1" value="1">
+                                    <label class="form-check-label" for="isCreditBank1">
+                                        학점은행제 강좌
+                                    </label>
+                                </div>
+                            </div>
                         </div>
                     </form>
                 </div>
