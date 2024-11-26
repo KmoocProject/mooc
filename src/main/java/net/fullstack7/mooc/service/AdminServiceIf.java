@@ -21,5 +21,8 @@ public interface AdminServiceIf {
     String deleteMember(String id, String typeSelect);
 
     Page<Course> getCourses(AdminSearchDTO adminSearchDTO);
-    Page<NoticeDTO> getNotices(PageDTO<Notice> pageDTO);
+
+    String insertNotice(NoticeDTO dto);
+    String modifyNotice(NoticeDTO dto);
+    String deleteNotice(int noticeId, String adminId);
 }

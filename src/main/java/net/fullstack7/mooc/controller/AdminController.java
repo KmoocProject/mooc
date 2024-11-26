@@ -11,6 +11,7 @@ import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
 import net.fullstack7.mooc.dto.PageDTO;
 import net.fullstack7.mooc.service.AdminServiceIf;
+import net.fullstack7.mooc.service.NoticeServiceIf;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -26,6 +27,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/admin")
 public class AdminController {
     private final AdminServiceIf adminService;
+    private final NoticeServiceIf noticeService;
 
     @GetMapping("/login")
     public String loginGet(HttpSession session, RedirectAttributes redirectAttributes) {
@@ -195,7 +197,7 @@ public class AdminController {
     @GetMapping("/noticeList")
     public String noticeListGet(@Valid PageDTO<Notice> pageDTO, Model model, RedirectAttributes redirectAttributes) {
 
-        model.addAttribute("pageinfo", adminService.getNotices(pageDTO));
+        model.addAttribute("pageinfo", noticeService.getNotices(pageDTO));
         model.addAttribute("searchinfo", pageDTO);
 
         return "";

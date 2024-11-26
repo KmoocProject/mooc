@@ -12,6 +12,7 @@ import net.fullstack7.mooc.repository.AdminRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
 import net.fullstack7.mooc.repository.NoticeRepository;
 import net.fullstack7.mooc.repository.TeacherRepository;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +27,7 @@ public class AdminServiceImpl implements AdminServiceIf {
     private final TeacherRepository teacherRepository;
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
@@ -112,7 +114,7 @@ public class AdminServiceImpl implements AdminServiceIf {
             if(getTeacher(id) == null)
                 return "존재하지 않는 회원입니다.";
 
-//            teacherRepository.save();
+            teacherRepository.updateStatusByTeacherId(id, "WITHDRAWN");
         }
 
         return "탈퇴 완료";
@@ -124,10 +126,38 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
-    public Page<NoticeDTO> getNotices(PageDTO<Notice> pageDTO) {
+    public String insertNotice(NoticeDTO dto) {
+        Notice notice = modelMapper.map(dto, Notice.class);
+        noticeRepository.save(notice);
 
-        return noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
+        if(notice.getNoticeId() != 0) {
+            return "등록 완료";
+        }
 
+        return null;
+    }
+
+    @Override
+    public String modifyNotice(NoticeDTO dto) {
+        if(noticeRepository.findByNoticeId(dto.getNoticeId()) == null) {
+            return "존재하지 않는 게시글입니다.";
+        }
+        if(!adminRepository.existsAdminByAdminId(dto.getAdminId())) {
+            return "관리자 권한 계정만 수정 가능합니다.";
+        }
+        noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent());
+        return "수정 완료";
+    }
+
+    @Override
+    public String deleteNotice(int noticeId, String adminId) {
+        if(adminRepository.existsAdminByAdminId(adminId))
+            return "관리자 권한 계정만 삭제 가능합니다.";
+        if(noticeRepository.existsNoticeByNoticeId(noticeId)) {
+            noticeRepository.delete(noticeRepository.findByNoticeId(noticeId).get());
+            return "삭제 완료";
+        }
+        return "존재하지 않는 게시글입니다.";
     }
 
 
