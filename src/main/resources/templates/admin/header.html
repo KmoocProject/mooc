@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+</head>
+<body>
+<div th:fragment="header">
+    <header class="header">
+        <div class="logo">
+            <a href="/admin/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
+        </div>
+        <nav class="navbar">
+            <ul class="menu-list">
+                <div class="menu-icon dropdown">
+                    <a href="/admin/member">회원 관리</a>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="/admin/course/courselist">강의 관리</a>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="#">공지사항 관리</a>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="#">Q n A 답변관리</a>
+                </div>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <a href="/admin/login" id="loginBtn">로그인</a>
+        </div>
+    </header>
+</div>
+
+</body>
+</html>
