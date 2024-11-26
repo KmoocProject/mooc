@@ -10,29 +10,32 @@
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
     <style>
         /* 기본 스타일 초기화 */
-        body, html {
+        * {
             margin: 0;
             padding: 0;
-            font-family: 'Arial', sans-serif;
             box-sizing: border-box;
         }
 
         body {
-            background-color: #f7faff;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
         }
 
-        .login-container {
-            background-color: #ffffff;
-            padding: 40px;
-            border-radius: 10px;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            width: 100%;
-            max-width: 400px;
+        .content {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
         }
 
         h1 {
@@ -42,7 +45,7 @@
         }
 
         .login-form {
-            background-color: #e8f4ff;
+            background-color: #ffffff;
             padding: 20px;
             border-radius: 10px;
         }
@@ -107,24 +110,24 @@
             background-color: #f0f8ff;
         }
 
+
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
+<div th:replace="admin/header :: header"></div>
 
-<div class="login-container">
+
+<div class="content">
     <h1>로그인</h1>
     <div class="login-form">
-        <input type="email" placeholder="이메일을 입력하세요." class="input-field">
-        <input type="password" placeholder="비밀번호를 입력하세요." class="input-field">
-        <div class="find-links">
-            <a href="#">이메일 찾기</a> | <a href="#">비밀번호 찾기</a>
-        </div>
-        <button class="login-button">로그인</button>
-        <button class="signup-button">회원가입</button>
+        <form method="get">
+            <input type="text" placeholder="아이디를 입력하세요." class="input-field">
+            <input type="password" placeholder="비밀번호를 입력하세요." class="input-field">
+            <button type="submit" class="login-button">로그인</button>
+        </form>
     </div>
 </div>
 
-<div th:replace="main/footer :: footer"></div>
+<div th:replace="admin/footer :: footer"></div>
 </body>
 </html>

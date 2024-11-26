@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Layout Page</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
+</head>
+<style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+    }
+
+    body {
+        font-family: Arial, sans-serif;
+        line-height: 1.6;
+        background-color: #f9f9f9;
+        color: #333;
+    }
+
+    .content {
+        max-width: 1500px;
+        margin: 50px auto;
+        padding: 20px;
+        background-color: #fff;
+        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+        height: 800px;
+    }
+    /* styles.css */
+
+
+    .table-container {
+        margin: 20px auto;
+        max-width: 800px;
+        background-color: #ffffff;
+        border-radius: 8px;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        overflow-x: auto;
+    }
+
+    table {
+        width: 100%;
+        border-collapse: collapse;
+    }
+
+    thead {
+        background-color: #f3f4f6;
+    }
+
+    thead th {
+        text-align: left;
+        padding: 12px 16px;
+        font-weight: bold;
+        font-size: 14px;
+        border-bottom: 2px solid #e5e7eb;
+    }
+
+    tbody tr {
+        border-bottom: 1px solid #e5e7eb;
+    }
+
+    tbody tr:last-child {
+        border-bottom: none;
+    }
+
+    tbody td {
+        padding: 12px 16px;
+        font-size: 14px;
+        color: #374151;
+    }
+
+    tbody td:nth-child(1),
+    tbody td:nth-child(4) {
+        text-align: center;
+    }
+
+    tbody tr:hover {
+        background-color: #f9fafb;
+    }
+
+    td a {
+        color: #2563eb;
+        text-decoration: none;
+    }
+
+    td a:hover {
+        text-decoration: underline;
+    }
+
+
+
+
+</style>
+<body>
+
+<div th:replace="admin/header :: header"></div>
+
+<section class="content">
+    <div>
+        <table>
+            <thead>
+            <tr>
+                <th>강의명</th>
+                <th><a href="/admin/course/courseview">강의코드</a></th>
+                <th>강사명</th>
+                <th>수강 기간</th>
+                <th>수강 상태</th>
+                <th>승인여부</th>
+                <th>승인</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>63</td>
+                <td>자료집</td>
+                <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
+                <td>2024.09.12</td>
+                <td>진행중</td>
+                <td>승인</td>
+                <td><button>승인</button></td>
+            </tr>
+
+            </tbody>
+        </table>
+
+    </div>
+
+</section>
+
+<div th:replace="admin/footer :: footer"></div>
+
+</body>
+</html>

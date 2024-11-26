@@ -19,4 +19,30 @@ public class LoginController extends HttpServlet {
 //    private CookieUtil cUtil = new CookieUtil();
 //    private JSFunc JSFunc = new JSFunc();
 
+    @GetMapping("/login")
+    public String login() {
+        return "login/login";
+    }
+
+    @GetMapping("/memberchose")
+    public String memberchose() {
+        return "login/memberchose";
+    }
+
+    @GetMapping("/memberterms")
+    public String memberterms() {
+        return "login/memberterms";
+    }
+
+    @GetMapping("/regist")
+    public String regist() {
+        return "login/regist";
+    }
+
+    @GetMapping("/finishjoin")
+    public String finishjoin() {
+        return "login/finishjoin";
+    }
+
+
 }

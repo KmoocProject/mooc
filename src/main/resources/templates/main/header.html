@@ -12,7 +12,7 @@
 <div th:fragment="header">
 <header class="header">
     <div class="logo">
-        <img th:src="@{/images/logo.png}" alt="K-MOOC 로고">
+        <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
     </div>
     <nav class="navbar">
         <ul class="menu-list">
@@ -51,10 +51,11 @@
         </ul>
     </nav>
     <div class="user-actions">
-        <a href="#">로그인</a>
-        <a href="#">회원가입</a>
+        <a href="/login/login" id="loginBtn">로그인</a>
+        <a href="/login/memberchose" id="registBtn">회원가입</a>
     </div>
 </header>
 </div>
+
 </body>
 </html>
