@@ -105,14 +105,14 @@ public class AdminServiceImpl implements AdminServiceIf {
             if(getMember(id) == null)
                 return "존재하지 않는 회원입니다.";
 
-            memberRepository.delete(getMember(id));
+            memberRepository.save(getMember(id));
         }
 
         if(typeSelect.equals("t")) {
             if(getTeacher(id) == null)
                 return "존재하지 않는 회원입니다.";
 
-            teacherRepository.delete(getTeacher(id));
+//            teacherRepository.save();
         }
 
         return "탈퇴 완료";
