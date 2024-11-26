@@ -1,89 +1,133 @@
 <!DOCTYPE html>
-<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>관리자 로그인</title>
+    <title>로그인</title>
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f4f4f4;
+        /* 기본 스타일 초기화 */
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
+            box-sizing: border-box;
         }
 
-        .login-container {
-            background-color: white;
-            padding: 40px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 10px;
-            width: 300px;
-            text-align: center;
-        }
-
-        h2 {
-            margin-bottom: 30px;
-            font-size: 24px;
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
             color: #333;
         }
 
-        input[type="text"], input[type="password"] {
-            width: 100%;
-            padding: 10px;
-            margin: 10px 0;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 16px;
+        .content {
+            max-width: 500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        html {
+            margin: 0;
+            padding: 0;
+            font-family: 'Arial', sans-serif;
+            box-sizing: border-box;
         }
 
-        input[type="submit"] {
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            color: #000000;
+        }
+
+        .login-form {
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .input-field {
             width: 100%;
-            padding: 12px;
-            background-color: #4CAF50;
-            border: none;
-            color: white;
-            font-size: 16px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border: 1px solid #ddd;
             border-radius: 5px;
+            font-size: 14px;
+            outline: none;
+        }
+
+        .input-field:focus {
+            border-color: #007bff;
+        }
+
+        .find-links {
+            font-size: 14px;
+            color: #666666;
+            margin-bottom: 20px;
+        }
+
+        .find-links a {
+            color: #007bff;
+            text-decoration: none;
+        }
+
+        .find-links a:hover {
+            text-decoration: underline;
+        }
+
+        .login-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            color: #ffffff;
+            font-size: 16px;
+            cursor: pointer;
+            margin-bottom: 10px;
+        }
+
+        .login-button:hover {
+            background-color: #0056b3;
+        }
+
+        .signup-button {
+            width: 100%;
+            padding: 15px;
+            background-color: #ffffff;
+            border: 2px solid #007bff;
+            border-radius: 5px;
+            color: #007bff;
+            font-size: 16px;
             cursor: pointer;
         }
 
-        input[type="submit"]:hover {
-            background-color: #45a049;
+        .signup-button:hover {
+            background-color: #f0f8ff;
         }
 
-        .error {
-            color: red;
-            font-size: 14px;
-            margin-top: 10px;
-        }
 
-        .footer {
-            position: absolute;
-            bottom: 10px;
-            font-size: 12px;
-            color: #666;
-        }
     </style>
 </head>
 <body>
+<div th:replace="admin/header :: header"></div>
 
-<div class="login-container">
-    <h2>관리자 로그인</h2>
-    <form action="/admin/login" method="POST" onsubmit="return validateForm()">
-        <input type="text" id="adminId" name="adminId" placeholder="아이디" required maxlength="20"><br>
-        <input type="password" id="password" name="password" placeholder="비밀번호" required maxlength="20"><br>
-        <input type="submit" value="로그인">
-    </form>
-    <div id="error-message" class="error" th:text="${errors}"></div>
+
+<div class="content">
+    <h1>로그인</h1>
+    <div class="login-form">
+        <form method="get">
+            <input type="text" placeholder="아이디를 입력하세요." class="input-field">
+            <input type="password" placeholder="비밀번호를 입력하세요." class="input-field">
+            <button type="submit" class="login-button">로그인</button>
+        </form>
+    </div>
 </div>
 
-<div class="footer">
-    <p>관리자 페이지에 로그인하십시오.</p>
-</div>
-
+<div th:replace="admin/footer :: footer"></div>
 </body>
 </html>
