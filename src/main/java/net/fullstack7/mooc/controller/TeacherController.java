@@ -76,6 +76,7 @@ public class TeacherController {
             return "redirect:/teacher/join";
         }
     }
+
     @GetMapping("/myLectures")
     public String myLectures(Model model, HttpSession session) {
         Teacher teacher = (Teacher) session.getAttribute("teacher");
@@ -86,5 +87,10 @@ public class TeacherController {
         List<Course> lectures = teacherService.getMyLectures(teacher.getTeacherId());
         model.addAttribute("lectures", lectures);
         return "teacher/myLectures";
+    }
+    
+    @GetMapping("/registLecture")
+    public String registLecture() {
+        return "teacher/registLecture";
     }
 }
