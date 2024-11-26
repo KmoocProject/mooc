@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head th:fragment="head">
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <style>
+        .user-menu {
+            position: relative;
+            display: inline-block;
+        }
+
+        .user-icon {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .dropdown-menu {
+            position: absolute;
+            right: 0;
+            top: 100%;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+            width: 200px;
+            padding: 10px;
+            z-index: 1000;
+            display: none;
+        }
+
+        .dropdown-menu ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .dropdown-menu li {
+            margin: 10px 0;
+        }
+
+        .dropdown-menu a {
+            text-decoration: none;
+            color: #333;
+            font-size: 14px;
+        }
+
+        .user-info {
+            text-align: center;
+            margin-bottom: 10px;
+        }
+
+        .user-image {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-bottom: 5px;
+        }
+
+        .logout-btn {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            width: 100%;
+            padding: 5px;
+            cursor: pointer;
+        }
+
+        .hidden {
+            display: none;
+        }
+
+        .visible {
+            display: block;
+        }
+
+    </style>
+</head>
+<body>
+<div th:fragment="header">
+    <header class="header">
+        <div class="logo">
+            <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
+        </div>
+        <nav class="navbar">
+            <ul class="menu-list">
+                <div class="menu-icon dropdown">
+                    <button class="dropdown-btn">&#9776; 강좌</button>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">전체 강좌 보기</a></li>
+                        <li><a href="#">인문</a></li>
+                        <li><a href="#">사회</a></li>
+                        <li><a href="#">공학</a></li>
+                    </ul>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="#">상시강좌</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">대학강좌</a></li>
+                        <li><a href="#">대학 외 강좌</a></li>
+                    </ul>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="#">학점은행</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">학점은행제 소개</a></li>
+                        <li><a href="#">학점은행제 강좌</a></li>
+                    </ul>
+                </div>
+                <div class="menu-icon dropdown">
+                    <a href="#">커뮤니티</a>
+                    <ul class="dropdown-menu">
+                        <li><a href="#">사업 공고</a></li>
+                        <li><a href="#">공지 사항</a></li>
+                        <li><a href="#">Q n A</a></li>
+                    </ul>
+                </div>
+                <li><a href="#"><img th:src="@{/images/search.png}"></a></li>
+            </ul>
+        </nav>
+        <div class="user-actions">
+            <div class="user-menu">
+                <a href="#">내 강의실</a>
+                <a><img th:src="@{/images/alram.png}"></a>
+                <button id="user-icon" class="user-icon">
+                    <i class="fas fa-user">사람</i> <!-- Replace with your user icon -->
+                </button>
+                <div id="dropdown" class="dropdown-menu hidden">
+                    <div class="user-info">
+                        <img src="user-icon.png" alt="User Image" class="user-image">
+                        <p>최사랑</p>
+                        <p>sarang1126611@nav...</p>
+                    </div>
+                    <ul>
+                        <li><a href="#">내 강의실</a></li>
+                        <li><a href="#">K-MOOC 학점은행제</a></li>
+                        <li><a href="#">학습캘린더</a></li>
+                        <li><a href="#">관심분야설정</a></li>
+                        <li><a href="#">개인정보관리</a></li>
+                        <li><a href="#">SNS로그인연결</a></li>
+                    </ul>
+                    <button class="logout-btn">로그아웃</button>
+                </div>
+            </div>
+
+        </div>
+    </header>
+</div>
+<script>
+    document.getElementById('user-icon').addEventListener('click', function () {
+        const dropdown = document.getElementById('dropdown');
+        dropdown.classList.toggle('hidden');
+        dropdown.classList.toggle('visible');
+    });
+
+    document.addEventListener('click', function (event) {
+        const dropdown = document.getElementById('dropdown');
+        const userIcon = document.getElementById('user-icon');
+        if (!userIcon.contains(event.target) && !dropdown.contains(event.target)) {
+            dropdown.classList.add('hidden');
+            dropdown.classList.remove('visible');
+        }
+    });
+</script>
+
+</body>
+</html>
