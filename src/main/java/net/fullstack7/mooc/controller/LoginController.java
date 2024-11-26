@@ -8,7 +8,10 @@ import jakarta.validation.Valid;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.MemberDTO;
+import net.fullstack7.mooc.mapper.MemberMapper;
+import net.fullstack7.mooc.repository.MemberRepository;
 import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.util.CookieUtil;
 import net.fullstack7.mooc.util.JSFunc;
@@ -21,6 +24,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
 import java.net.URLDecoder;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Optional;
 
 @Controller
 @RequestMapping("/login")
@@ -31,6 +37,9 @@ public class LoginController extends HttpServlet {
     private final MemberServiceIf memberService;
     private CookieUtil cUtil = new CookieUtil();
     private JSFunc JSFunc = new JSFunc();
+    private MemberRepository memberRepository;
+    @Autowired
+    private MemberMapper memberMapper;
 
     @GetMapping("/login")
     public String login(HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
@@ -46,9 +55,7 @@ public class LoginController extends HttpServlet {
         MemberDTO memberDTO = memberService.login(memberId, password);
         if (memberDTO != null) {
             session.setAttribute("memberId", memberDTO.getMemberId());
-            log.info("id"+memberDTO.getMemberId());
             session.setAttribute("password", memberDTO.getPassword());
-            log.info("pwd"+memberDTO.getPassword());
 
             String redirectURL = (String) session.getAttribute("redirectAfterLogin");
             if (redirectURL != null) {
@@ -79,7 +86,6 @@ public class LoginController extends HttpServlet {
         return "redirect:/main/main";
     }
 
-    //회원가입처리하고 열어서 약관만들어
     @GetMapping("/memberterms")
     public String memberterms(HttpSession session, RedirectAttributes redirectAttributes) {
         String loginCheck = (String) session.getAttribute("memberId");
@@ -108,40 +114,45 @@ public class LoginController extends HttpServlet {
         String loginCheck = (String) session.getAttribute("memberId");
         if (loginCheck != null) {
             redirectAttributes.addFlashAttribute("errors", "이미 로그인 한 회원은 접근할 수 없습니다.");
-            log.info("로그인함");
             return "redirect:/main/main";
         }
-//        if(termsAgree == null || ! termsAgree){
-//            model.addAttribute("erros", "약관에 동의한 후 회원가입이 가능합니다.");
-//            return "login/memberterms";
-//        }
-//        session.removeAttribute("termsAgree");
-        log.info("로그찍힘4");
         return "login/regist";
     }
+
+    @PostMapping("/idCheck")
+    @ResponseBody
+    public Map<String, Object> checkId(@RequestParam("memberId")String memberId){
+        Map<String, Object> response = new HashMap<>();
+        log.info("memberId"+memberId);
+        String result = memberMapper.memberIdCheck(memberId);
+        if(result == null){
+            response.put("isAvailable", true);
+            log.info("아이디사용가능");
+        } else {
+            response.put("isAvailable", false);
+            log.info("아이디사용불가");
+        }
+        log.info("response"+response);
+        return response;
+    }
+
 
     @PostMapping("/regist")
     public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
 //        session.setAttribute("termsAgree", true);
-        log.info("로그찍힘5");
 
         if(bindingResult.hasErrors()) {
-            log.info("유효성 검사 오류: " + bindingResult.getAllErrors());
+//            log.info("유효성 검사 오류: " + bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
             return "redirect:/login/regist";
         }
-        log.info("memberDTO"+memberDTO);
         int result = memberService.registMember(memberDTO);
 
         if(result >0){
-            log.info("memberDTO성공"+memberDTO);
-            
             redirectAttributes.addFlashAttribute("errors","회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
             return "redirect:/login/login";
         }else {
-            log.info("memberDTO실패"+memberDTO);
-            
             redirectAttributes.addFlashAttribute("errors", "회원가입에 실패했습니다.");
             return "redirect:/login/regist";
         }

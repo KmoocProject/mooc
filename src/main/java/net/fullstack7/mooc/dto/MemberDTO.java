@@ -23,11 +23,11 @@ public class MemberDTO {
     private String memberId;
     @NotBlank
     @Size(min = 10, max = 20)
-    @Pattern(regexp = "/^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$", message = "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.")
+    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$", message = "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.")
     private String password;
     @NotBlank
     @Size(min = 2, max = 5)
-    @Pattern(regexp = " ^[가-힣]{2,5}$", message = "이름은 한글 2~5자 이내로 입력 가능합니다.")
+    @Pattern(regexp = "^[가-힣]{2,5}$", message = "이름은 한글 2~5자 이내로 입력 가능합니다.")
     private String userName;
     @NotBlank
     @Pattern(regexp = "^(?=.{1,254}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "유효한 이메일 형식으로 입력해주세요.")

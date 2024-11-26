@@ -10,5 +10,4 @@ public interface MemberServiceIf {
     public int modifyMember(MemberDTO memberDTO);
     public boolean memberIdCheck(String memberId);
     void deleteMember(String memberId);
-    boolean dontDeleteMember(String memberId);
 }

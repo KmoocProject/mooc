@@ -38,15 +38,16 @@ public class MemberServiceImpl implements MemberServiceIf {
 
     @Override
     public int registMember(MemberDTO memberDTO) {
-        log.info("memberDTO: {}", memberDTO);
+//        log.info("memberDTO: {}", memberDTO);
         Member member = modelMapper.map(memberDTO, Member.class);
         return memberMapper.registMember(member);
     }
 
     @Override
     public boolean memberIdCheck(String memberId) {
-        String result = memberMapper.memberIdCheck(memberId);
-        return result == null;
+//        String result = memberMapper.memberIdCheck(memberId);
+//        return result == null;
+        return memberMapper.memberIdCheck(memberId) == null;
     }
 
 
@@ -69,8 +70,5 @@ public class MemberServiceImpl implements MemberServiceIf {
         memberMapper.deleteMember(memberId);
     }
 
-    @Override
-    public boolean dontDeleteMember(String memberId) {
-        return false;
-    }
+
 }

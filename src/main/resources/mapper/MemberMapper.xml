@@ -27,24 +27,15 @@
     </select>
 
     <insert id="registMember">
-        INSERT INTO member(memberId, password, userName, email, gender, memberType, status, credit, createdAt
-        ) values (#{memberId}, #{password}, #{userName}, #{email}, #{gender}, #{memberType}, #{status}, #{credit}, #{createdAt})
+        INSERT INTO member(memberId, password, userName, email, gender, memberType, status, credit
+        ) values (#{memberId}, #{password}, #{userName}, #{email}, #{gender}, #{memberType}, #{status}, #{credit})
     </insert>
 
-<!--    <insert id="registMember">-->
-<!--        INSERT INTO member (-->
-<!--        memberId, password, userName, email, gender, memberType, status, credit, createdAt-->
-<!--        )-->
-<!--        VALUES (-->
-<!--        #{memberId}, #{password}, #{userName}, #{email},-->
-<!--        COALESCE(#{gender}, 0),           &lt;!&ndash; 기본값 0 &ndash;&gt;-->
-<!--        COALESCE(#{memberType}, 0),       &lt;!&ndash; 기본값 0 &ndash;&gt;-->
-<!--        COALESCE(#{status}, 'ACTIVE'),    &lt;!&ndash; 기본값 'ACTIVE' &ndash;&gt;-->
-<!--        COALESCE(#{credit}, 0),           &lt;!&ndash; 기본값 0 &ndash;&gt;-->
-<!--        COALESCE(#{createdAt}, NOW())     &lt;!&ndash; 기본값 현재시간 &ndash;&gt;-->
-<!--        )-->
-<!--    </insert>-->
-
+    <update id="modifyMember">
+        UPDATE member
+        SET memberId = #{memberId}, email = #{email}, password = #{password}, userName = #{userName}
+        WHERE memberId = #{memberId}
+    </update>
 
     <delete id="deleteMember">
         DELETE FROM member
