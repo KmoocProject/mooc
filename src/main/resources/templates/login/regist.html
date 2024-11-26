@@ -10,6 +10,9 @@
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
 <!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
+<!--    <script src="https://code.jquery.com/jquery-3.7.1.js" integrity="sha256-eKhayi8LEQwp4NKxN+CfCh+3qOVUtJn3QNZ0TciWLP4=" crossorigin="anonymous"></script>-->
+    <script src="your-script.js"></script> <!-- checkId 함수가 정의된 파일 -->
+
 </head>
 
 <style>
@@ -216,14 +219,29 @@
         </div>
         <div class="form-section">
             <h2 class="section-title">기본정보</h2>
+<!--            <span th:if="${errors != null}" th:text="${errors}"></span>-->
+            <script th:inline="javascript">
+                const errors = [[${errors}]];
+                if (errors) {
+                    alert(errors);
+                }
+            </script>
+<!--            <script th:inline="javascript">-->
+<!--                /*<![CDATA[*/-->
+<!--                const successMessage = [[${success}]];-->
+<!--                if (successMessage) {-->
+<!--                    alert(successMessage);  // 성공 메시지가 있으면 alert 띄우기-->
+<!--                }-->
+<!--                /*]]>*/-->
+<!--            </script>-->
             <form method="post" th:action="@{/login/regist}">
                 <!-- Username -->
                 <div class="form-group">
                     <label for="memberId">아이디 <span class="required">(필수)</span></label>
                     <input type="text" id="memberId" name="memberId" placeholder="아이디를 입력하세요.">
-                    <button type="button" class="check-btn2" id="checkBtn" onclick="checkId()">중복체크</button>
+                    <button type="button" class="check-btn" id="checkBtn" onclick="checkId()">중복체크</button>
 <!--                <p id="message"></p>-->
-                <div id="idCheckMessage" style="color:red; margin-top: 10px;"></div>
+                    <div id="div_err_memberId" style="display:none;"></div>
                 </div>
                 <!-- Name -->
                 <div class="form-group">
@@ -255,9 +273,10 @@
                             <option value="gmail.com">gmail.com</option>
                             <option value="naver.com">naver.com</option>
                         </select>
-                        <button type="button" id="checkBtn2" class="check-btn">중복체크</button>
+                        <button type="button" id="checkBtn2" class="check-btn" onclick="checkEmail()">중복체크</button>
                         <button type="button" class="reset-btn">취소</button>
                     </div>
+                    <div id="div_err_email" style="display:none;"></div>
                 </div>
 
                 <!-- Password -->
@@ -372,15 +391,11 @@
         updateSubmitButton();
     });
 
-    // document.addEventListener("DOMContentLoaded", function() {
-    //     const checkButton = document.querySelector(".check-btn2");
-    //     checkButton.addEventListener("click", checkId); // DOM 로드 후에 이벤트 리스너를 등록합니다.
-    // });
-    //
     // function checkId(){
     //     console.log("checkId 함수 호출됨");
-    //     const memberId = document.getElementById("memberId").value.trim();
+    //     const memberId = document.getElementById("memberId").value;
     //     console.log("아이디 입력 값: " + memberId);
+    //     const
     //     if(memberId === ""){
     //         document.getElementById("idCheckMessage").textContent = "아이디를 입력해주세요.";
     //         document.getElementById("idCheckMessage").style.color = "red";
@@ -411,11 +426,125 @@
     //         }
     //     });
     // }
-    //
 
-    // function useId() {
-    //     alert("아이디 사용하기 버튼 클릭");
-    // }
+    //중복 체크
+    document.addEventListener("DOMContentLoaded", function() {
+        const checkBtn = document.getElementById("checkBtn");
+        const checkBtn2 = document.getElementById("checkBtn2");
+        if (checkBtn) {
+            checkBtn.addEventListener("click", checkId); // 버튼에 이벤트 리스너 추가
+        } else {
+            console.error("checkBtn 요소를 찾을 수 없습니다.");
+        }
+        if (checkBtn2) {
+            checkBtn2.addEventListener("click", checkEmail); // 버튼에 이벤트 리스너 추가
+        } else {
+            console.error("checkBtn2 요소를 찾을 수 없습니다.");
+        }
+    });
+
+        function checkId() {
+            const memberId = document.getElementById("memberId").value;
+            if (!memberId) {
+                alert("아이디를 입력하세요.");
+                return;
+            }
+            fetch("/login/memberIdCheck", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded",
+                },
+                body: "memberId=" + encodeURIComponent(memberId)
+            })
+                .then(response => response.json())
+                .then(data => {
+                    const errorDiv = document.getElementById("div_err_memberId");
+
+                    if (errorDiv) {
+                        if (data.available) {
+                            errorDiv.style.display = "block";
+                            errorDiv.textContent = "사용 가능한 아이디입니다.";
+                            errorDiv.style.color = "green";
+                        } else {
+                            errorDiv.style.display = "block";
+                            errorDiv.textContent = "이미 사용 중인 아이디입니다.";
+                            errorDiv.style.color = "red";
+                        }
+                    } else {
+                        console.error("div_err_memberId 요소를 찾을 수 없습니다.");
+                    }
+                })
+                .catch(error => {
+                    const errorDiv = document.getElementById("div_err_memberId");
+                    if (errorDiv) {
+                        errorDiv.textContent = "중복 확인에 실패했습니다.";
+                        errorDiv.style.color = "red";
+                    }
+                    console.error("error" + error);
+                });
+        }
+
+    // 이메일 중복 체크
+    function checkEmail() {
+        const emailId = document.querySelector('input[name="email"]').value; // 이메일 아이디
+        const emailDomain = document.querySelector('select[name="emailDomain"]').value; // 이메일 도메인
+
+        // 이메일이 비어있거나 도메인이 선택되지 않으면 경고
+        if (!emailId || !emailDomain) {
+            alert("이메일을 입력하고 도메인을 선택하세요.");
+            return;
+        }
+
+        const email = `${emailId}@${emailDomain}`; // 이메일 결합
+
+        fetch("/login/emailCheck", {  // 서버 경로는 '/login/emailCheck'로 가정
+            method: "POST",
+            headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+            },
+            body: "email=" + encodeURIComponent(email)
+        })
+            .then(response => response.json())
+            .then(data => {
+                const errorDiv = document.getElementById("div_err_email"); // 이메일 오류 표시
+                if (errorDiv) {
+                    if (data.available) {
+                        errorDiv.style.display = "block";
+                        errorDiv.textContent = "사용 가능한 이메일입니다.";
+                        errorDiv.style.color = "green";
+                    } else {
+                        errorDiv.style.display = "block";
+                        errorDiv.textContent = "이미 사용 중인 이메일입니다.";
+                        errorDiv.style.color = "red";
+                    }
+                } else {
+                    console.error("div_err_email 요소를 찾을 수 없습니다.");
+                }
+            })
+            .catch(error => {
+                const errorDiv = document.getElementById("div_err_email");
+                if (errorDiv) {
+                    errorDiv.textContent = "중복 확인에 실패했습니다.";
+                    errorDiv.style.color = "red";
+                }
+                console.error("error" + error);
+            });
+    }
+
+        function showMessage(field, isValid, message) {
+            const errorDiv = document.getElementById(`div_err_${field.id}`);
+            if (isValid) {
+                errorDiv.style.display = "none";
+                errorDiv.innerText = "";
+                field.classList.add("valid");
+                field.classList.remove("invalid");
+            } else {
+                errorDiv.style.display = "block";
+                errorDiv.innerText = message;
+                field.classList.add("invalid");
+                field.classList.remove("valid");
+            }
+        }
 </script>
 <script>
 

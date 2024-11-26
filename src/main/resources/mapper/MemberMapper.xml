@@ -26,6 +26,12 @@
         WHERE memberId = #{memberId}
     </select>
 
+    <select id="emailCheck" resultType="String">
+        SELECT email
+            FROM member
+                WHERE email = #{email}
+    </select>
+
     <insert id="registMember">
         INSERT INTO member(memberId, password, userName, email, gender, memberType, status, credit
         ) values (#{memberId}, #{password}, #{userName}, #{email}, #{gender}, #{memberType}, #{status}, #{credit})

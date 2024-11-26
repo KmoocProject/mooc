@@ -11,6 +11,7 @@ public interface MemberMapper {
     String pwdCheck(String memberId);
     int modifyMember(Member member);
     String memberIdCheck(String memberId);
+    String emailCheck(String email);
 
     void deleteMember(String memberId);
 }

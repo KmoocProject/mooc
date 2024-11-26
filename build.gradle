@@ -66,6 +66,10 @@ dependencies {
 
     // 파일 업로드 용량 제한 설정을 위한 의존성
     implementation 'org.springframework.boot:spring-boot-configuration-processor'
+
+    //json
+    implementation group: 'org.json', name: 'json', version: '20240303'
+
 }
 
 sourceSets {
