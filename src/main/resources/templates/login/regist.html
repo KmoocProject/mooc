@@ -9,6 +9,7 @@
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+<!--    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>-->
 </head>
 
 <style>
@@ -203,7 +204,7 @@
 </style>
 <body>
 
-<div th:replace="main/header :: header"></div>
+<div th:replace="~{main/header :: header}"></div>
 
 <section class="content">
     <div class="container">
@@ -215,7 +216,15 @@
         </div>
         <div class="form-section">
             <h2 class="section-title">기본정보</h2>
-            <form>
+            <form method="post" th:action="@{/login/regist}">
+                <!-- Username -->
+                <div class="form-group">
+                    <label for="memberId">아이디 <span class="required">(필수)</span></label>
+                    <input type="text" id="memberId" name="memberId" placeholder="아이디를 입력하세요.">
+                    <button type="button" class="check-btn2" id="checkBtn" onclick="checkId()">중복체크</button>
+<!--                <p id="message"></p>-->
+                <div id="idCheckMessage" style="color:red; margin-top: 10px;"></div>
+                </div>
                 <!-- Name -->
                 <div class="form-group">
                     <label for="userName">이름 <span class="required">(필수)</span></label>
@@ -223,16 +232,6 @@
 <!--                    <button type="button" class="verify-btn2">본인인증</button>-->
                     <p class="info-text">* 프로필에 사용되는 이름입니다. 이름은 한글 2자 이상 5자 이하로 입력해주세요.</p>
                 </div>
-
-                <!-- Gender -->
-                <div class="form-group">
-                    <label>성별 <span class="required">(필수)</span></label>
-                    <div class="radio-group">
-                        <label><input type="radio" name="gender" value="male"> 남성</label>
-                        <label><input type="radio" name="gender" value="female"> 여성</label>
-                    </div>
-                </div>
-
 <!--                &lt;!&ndash; Birth Year &ndash;&gt;-->
 <!--                <div class="form-group">-->
 <!--                    <label for="birth-year">출생연도 <span class="required">(필수)</span></label>-->
@@ -249,14 +248,14 @@
                 <div class="form-group">
                     <label>이메일 <span class="required">(필수)</span></label>
                     <div class="email-group">
-                        <input type="text" placeholder="이메일 아이디 입력">
+                        <input type="text" name="email" placeholder="이메일 아이디 입력">
                         <span>@</span>
-                        <select>
+                        <select name="emailDomain">
                             <option value="" selected>이메일 도메인 입력</option>
                             <option value="gmail.com">gmail.com</option>
                             <option value="naver.com">naver.com</option>
                         </select>
-                        <button type="button" class="check-btn">중복체크</button>
+                        <button type="button" id="checkBtn2" class="check-btn">중복체크</button>
                         <button type="button" class="reset-btn">취소</button>
                     </div>
                 </div>
@@ -264,17 +263,24 @@
                 <!-- Password -->
                 <div class="form-group">
                     <label for="password">비밀번호 <span class="required">(필수)</span></label>
-                    <input type="password" id="password" placeholder="비밀번호를 입력하세요.">
+                    <input type="password" id="password" name="password" placeholder="비밀번호를 입력하세요.">
                     <p class="info-text">* 영문, 숫자, 특수문자 3가지 조합으로 8자 이상 20자 이하로 입력해주세요.</p>
                 </div>
 
-                <!-- Username -->
+                <!-- Gender -->
                 <div class="form-group">
-                    <label for="memberId">아이디 <span class="required">(필수)</span></label>
-                    <input type="text" id="memberId" placeholder="아이디를 입력하세요.">
-                    <button type="button" class="check-btn2">중복체크</button>
+                    <label>성별 <span class="required">(필수)</span></label>
+                    <div class="radio-group">
+                        <label><input type="radio" name="gender" value="0"> 남성</label>
+                        <label><input type="radio" name="gender" value="1"> 여성</label>
+                    </div>
                 </div>
 
+                <div class="form-gruop">
+                    <input type="hidden" name="status" value="ACTIVE">
+                    <input type="hidden" name="credit" value="0">
+                    <input type="hidden" name="memberType" value="0">
+                </div>
 <!--                &lt;!&ndash; Additional Info &ndash;&gt;-->
 <!--                <h2 class="section-title">선택사항</h2>-->
 <!--                <div class="form-group">-->
@@ -311,8 +317,110 @@
     </div>
 
 </section>
+<script>
+    document.querySelector("form").addEventListener("submit", function(e) {
+        // 이메일 아이디와 도메인 결합
+        var emailId = document.querySelector("input[name='email']").value;
+        var domain = document.querySelector("select[name='emailDomain']").value;
 
-<div th:replace="main/footer :: footer"></div>
+        // 이메일 결합 (아이디 + 도메인)
+        if (emailId && domain) {
+            document.querySelector("input[name='email']").value = emailId + "@" + domain;
+        }
+    });
+
+    const idRegex = /^[a-z0-9]{5,15}$/;
+    const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{10,20}$/;
+    const nameRegex = /^[가-힣]{2,5}$/;
+    const emailRegex = /^(?=.{1,254}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+
+    const validationState = {
+        teacherId: false,
+        password: false,
+        teacherName: false,
+        email: false,
+        institution: false
+    };
+
+    function validateField(field, regex) {
+        const input = document.getElementById(field);
+        const isValid = regex.test(input.value);
+
+        if (isValid) {
+            input.classList.remove('is-invalid');
+            input.classList.add('is-valid');
+            input.nextElementSibling.style.display = 'block';
+            input.nextElementSibling.nextElementSibling.style.display = 'none';
+        } else {
+            input.classList.remove('is-valid');
+            input.classList.add('is-invalid');
+            input.nextElementSibling.style.display = 'none';
+            input.nextElementSibling.nextElementSibling.style.display = 'block';
+        }
+
+        validationState[field] = isValid;
+        updateSubmitButton();
+    }
+
+    // 실시간 유효성 검사
+    document.getElementById('teacherId').addEventListener('input', () => validateField('teacherId', idRegex));
+    document.getElementById('password').addEventListener('input', () => validateField('password', pwRegex));
+    document.getElementById('teacherName').addEventListener('input', () => validateField('teacherName', nameRegex));
+    document.getElementById('email').addEventListener('input', () => validateField('email', emailRegex));
+    document.getElementById('institution').addEventListener('change', function() {
+        validationState.institution = this.value !== '';
+        updateSubmitButton();
+    });
+
+    // document.addEventListener("DOMContentLoaded", function() {
+    //     const checkButton = document.querySelector(".check-btn2");
+    //     checkButton.addEventListener("click", checkId); // DOM 로드 후에 이벤트 리스너를 등록합니다.
+    // });
+    //
+    // function checkId(){
+    //     console.log("checkId 함수 호출됨");
+    //     const memberId = document.getElementById("memberId").value.trim();
+    //     console.log("아이디 입력 값: " + memberId);
+    //     if(memberId === ""){
+    //         document.getElementById("idCheckMessage").textContent = "아이디를 입력해주세요.";
+    //         document.getElementById("idCheckMessage").style.color = "red";
+    //         return;
+    //     }
+    //
+    //     const requestData = JSON.stringify({ memberId: memberId });
+    //
+    //     $.ajax({
+    //         url: "/idCheck",
+    //         type: "POST",
+    //         contentType: "application/json",
+    //         // data: JSON.stringify({ memberId: memberId }),
+    //         data: requestData,
+    //         success: function(response) {
+    //             console.log("response"+response);
+    //             if (response.isAvailable) {
+    //                 document.getElementById("idCheckMessage").textContent = "사용 가능한 아이디입니다.";
+    //                 document.getElementById("idCheckMessage").style.color = "green";  // 아이디가 사용 가능하면 초록색
+    //             } else {
+    //                 document.getElementById("idCheckMessage").textContent = "이미 사용 중인 아이디입니다.";
+    //                 document.getElementById("idCheckMessage").style.color = "red";  // 아이디가 사용 중이면 빨간색
+    //             }
+    //         },
+    //         error: function(xhr, status, error) {
+    //             document.getElementById("idCheckMessage").textContent = "서버 요청에 실패했습니다.";
+    //             document.getElementById("idCheckMessage").style.color = "red";  // 서버 요청 실패 시 빨간색
+    //         }
+    //     });
+    // }
+    //
+
+    // function useId() {
+    //     alert("아이디 사용하기 버튼 클릭");
+    // }
+</script>
+<script>
+
+</script>
+<div th:replace="~{main/footer :: footer}"></div>
 
 </body>
 </html>
