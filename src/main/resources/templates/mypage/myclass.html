@@ -64,13 +64,23 @@
         margin-top: 20px;
     }
 
-    .stats .stat-card {
+    .stats  {
         flex: 1;
         background-color: #ecf0f1;
         padding: 15px;
         margin-right: 10px;
         text-align: center;
         border-radius: 8px;
+    }
+    .stat-card{
+        flex: 1;
+        background-color: #ecf0f1;
+        padding: 15px;
+        margin-right: 10px;
+        text-align: center;
+        border-radius: 8px;
+        width: 120px;
+
     }
 
     .stats .stat-card:last-child {
@@ -167,7 +177,7 @@
         </div>
 
         <!-- Stats -->
-        <div class="stats">
+        <div class="stats" style="width: 1000px;">
             <div class="stat-card" style="background-color: #1abc9c">
                 <h3>수강중인 강좌 수</h3>
                 <p>1</p>
@@ -178,10 +188,6 @@
             </div>
             <div class="stat-card" style="background-color: #cccccc">
                 <h3>종료한 강좌 수</h3>
-                <p>0</p>
-            </div>
-            <div class="stat-card" style="background-color: #cccccc">
-                <h3>묶음 강좌 수</h3>
                 <p>0</p>
             </div>
             <div class="stat-card" style="background-color: #cccccc">
@@ -201,7 +207,7 @@
                     <p>주차: 16주 | 학습활동진척율: 0%</p>
                 </div>
                 <div class="course-actions">
-                    <button class="learn-btn">학습하기</button>
+                    <button class="learn-btn" id="learnGoBtn" >학습하기</button>
                     <button class="cancel-btn">수강취소</button>
                 </div>
             </div>
@@ -212,6 +218,12 @@
 </section>
 
 <div th:replace="main/footer :: footer"></div>
+<script>
+    const learnGoBtn = document.getElementById("learnGoBtn")
+    learnGoBtn.addEventListener("click", ()=>{
+        location.href='/learn/view'
+    })
+</script>
 
 </body>
 </html>

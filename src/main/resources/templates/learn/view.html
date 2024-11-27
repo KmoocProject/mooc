@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 레이아웃</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <style>
+        .content {
+            max-width: 100%;
+            max-height: 100%;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* General Styles */
+
+        .main-container {
+            display: flex;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 250px;
+            background-color: rgba(133, 129, 129, 0.06);
+            color: #000000;
+            padding: 20px;
+            height: 100vh;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #555;
+            padding-bottom: 5px;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        .sidebar ul li {
+            margin: 10px 0;
+            font-size: 14px;
+        }
+
+        .sidebar ul li strong {
+            font-weight: bold;
+            color: #0fbc8c;
+        }
+
+        /* Content */
+        .content {
+            flex: 1;
+            background-color: #fff;
+            margin-top: -7px;
+        }
+
+        .header2 {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #000;
+            color: #fff;
+            border-bottom: 4px solid #3d4a59;
+            height: 100px;
+
+        }
+
+        .header2 h1 {
+            font-size: 18px;
+            margin: 0;
+        }
+
+        .user-info {
+            font-size: 14px;
+        }
+
+        .lecture-overview {
+            margin: 20px 0;
+        }
+
+        .lecture-overview h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+        }
+
+        .lecture-overview p {
+            font-size: 14px;
+            line-height: 1.6;
+            margin: 10px 0;
+        }
+
+        .overview-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .button {
+            padding: 10px 15px;
+            background: #f1f1f1;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .button:hover {
+            background: #007bff;
+            color: #fff;
+        }
+
+        /* Professor Info */
+        .professor-info {
+            margin-top: 30px;
+        }
+
+        .professor-info h2 {
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .professor-info img {
+            width: 120px;
+            height: auto;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+        }
+
+    </style>
+</head>
+<body>
+<div th:replace="main/header :: header"></div>
+<!-- Sidebar -->
+
+<section class="content">
+    <div class="main-container">
+        <aside class="sidebar">
+            <h2>강의의 목록</h2>
+            <ul class="lecture-list">
+                <li><strong>강의 개요</strong></li>
+                <li>[1주차] 개인 비전의 실현</li>
+                <li>[2주차] 시장 트렌드의 발견</li>
+                <li>[3주차] 시장 세분화와 고객 분석</li>
+                <li>[4주차] 비즈니스 콘셉트의 구체화</li>
+                <li>[5주차] 비즈니스 콘셉트 정리</li>
+            </ul>
+            <h2>학습 활동</h2>
+            <ul class="activity-list">
+                <li>게시판</li>
+                <li>과제</li>
+                <li>퀴즈</li>
+                <li>토론방</li>
+            </ul>
+        </aside>
+
+        <div class="content">
+            <header class="header2">
+                <h1 style="margin-left: 20px;">스타트업 비즈니스 기획론</h1>
+                <div class="user-info">
+                    <span style="margin-right: 20px;">서리빈</span>
+                </div>
+            </header>
+
+            <div class="lecture-overview">
+                <h2>강의 개요</h2>
+                <p>안녕하세요, '스타트업 비즈니스 기획론' 강좌를 수강 신청한 모든 수강생 여러분 진심으로 환영합니다!</p>
+                <p>이 강좌를 통해 창업 및 신사업 개발 과정에서 실질적이고 유용한 지식을 습득하여 성공적인 비즈니스 성과를 이루길 기대합니다.</p>
+                <div class="overview-buttons">
+                    <div class="button">공지사항</div>
+                    <div class="button">Q&A</div>
+                    <div class="button">강의계획서 및 이슈기준</div>
+                    <div class="button">생각나눔 게시판</div>
+                    <div class="button">강의자료</div>
+                </div>
+            </div>
+
+            <div class="professor-info">
+                <h2>교수자 소개</h2>
+                <img src="professor.jpg" alt="교수자 사진">
+            </div>
+        </div>
+    </div>
+
+</section>
+
+<div th:replace="main/footer :: footer"></div>
+
+</body>
+</html>
