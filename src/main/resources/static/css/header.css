@@ -1,43 +1,47 @@
+/* General Header Styles */
 .header {
     display: flex;
-    justify-content: center; /* 전체 중앙 정렬 */
-    align-items: center; /* 세로 중앙 정렬 */
+    justify-content: center; /* Center the entire header content horizontally */
+    align-items: center; /* Align items vertically */
     padding: 10px 20px;
     background-color: white;
-    gap: 300px; /* 로고와 메뉴 간의 간격 추가 */
+    gap: 300px; /* Add space between the logo and menu */
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for better visibility */
 }
 
 .logo img {
-    height: 70px;
+    height: 70px; /* Adjust logo size */
 }
 
+/* Navbar Styles */
 .navbar {
     display: flex;
-    justify-content: center; /* 메뉴 리스트 중앙 정렬 */
+    justify-content: center; /* Center-align menu list */
     align-items: center;
-    gap: 20px; /* 메뉴 간 간격 추가 */
+    gap: 20px; /* Add space between menu items */
 }
 
-.user-actions {
+.menu-list {
     display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 15px; /* 로그인, 회원가입 간 간격 */
+    list-style: none;
+    gap: 20px; /* Space between menu items */
+    margin: 0;
+    padding: 0;
 }
 
-.user-actions a {
+.menu-list a {
     text-decoration: none;
-    color: #007BFF;
-    font-size: 18px;
+    color: #000; /* Black text for menu items */
+    font-size: 18px; /* Adjust font size for better readability */
 }
 
-
-.user-actions select {
-    margin-left: 10px;
+.menu-list a:hover {
+    color: #007BFF; /* Change color on hover for interactivity */
 }
 
+/* Dropdown Menu Styles */
 .menu-icon {
-    position: relative;
+    position: relative; /* For positioning the dropdown menu */
 }
 
 .dropdown-btn {
@@ -49,25 +53,37 @@
     font-size: 18px;
     position: relative;
     z-index: 1;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Add smooth hover effect */
+}
+
+.dropdown-btn:hover {
+    background-color: #f5f5f5; /* Light gray background on hover */
+    color: #007BFF; /* Highlighted color */
 }
 
 .dropdown-menu {
     position: absolute;
-    top: 35px;
+    top: 40px; /* Adjust to sit just below the button */
     left: 0;
     background-color: #fff;
     border: 1px solid #ddd;
     border-radius: 5px;
     list-style: none;
-    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    display: none; /* Initially hidden */
-    width: 155px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow for better visibility */
+    display: none; /* Hidden by default */
+    width: 155px; /* Adjust dropdown menu width */
     z-index: 10;
+    padding: 0;
 }
 
 .dropdown-menu li {
     padding: 10px;
     font-size: 18px;
+    transition: background-color 0.3s ease; /* Add smooth hover effect */
+}
+
+.dropdown-menu li:hover {
+    background-color: #f5f5f5; /* Highlight menu item on hover */
 }
 
 .dropdown-menu li a {
@@ -76,26 +92,53 @@
     display: block;
 }
 
-.dropdown-menu li:hover {
-    background-color: #f5f5f5;
-}
-
 .dropdown:hover .dropdown-menu {
-    display: block; /* Show menu on hover */
+    display: block; /* Show dropdown menu on hover */
 }
 
-.menu-list {
+/* User Actions */
+.user-actions {
     display: flex;
-    list-style: none;
-    gap: 20px;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Space between login and register */
 }
 
-.menu-list a {
+.user-actions a {
     text-decoration: none;
-    color: #000;
+    color: #007BFF; /* Blue text for action links */
     font-size: 18px;
+    padding: 5px 10px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease, color 0.3s ease; /* Smooth transition for hover effects */
 }
 
-.menu-list a:hover {
-    color: #007BFF;
+.user-actions a:hover {
+    background-color: #f5f5f5; /* Highlight background on hover */
+    color: #0056b3; /* Darker blue for hover state */
+}
+
+.user-actions select {
+    margin-left: 10px;
+    font-size: 16px;
+    padding: 5px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .header {
+        flex-direction: column;
+        gap: 20px; /* Adjust spacing for smaller screens */
+    }
+
+    .menu-list {
+        gap: 10px; /* Reduce space between menu items */
+    }
+
+    .user-actions {
+        flex-direction: column;
+        gap: 10px; /* Stack login/register buttons */
+    }
 }
