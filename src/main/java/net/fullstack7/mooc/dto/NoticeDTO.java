@@ -19,8 +19,6 @@ import java.util.List;
 @Builder
 public class NoticeDTO {
     private int noticeId;
-    @NotBlank
-    @Size(max=50)
     private String adminId;
     private final String adminName = "관리자";
     @NotBlank(message = "제목을 입력해주세요.")
@@ -30,5 +28,6 @@ public class NoticeDTO {
     @Size(max=2000)
     private String content;
     private LocalDateTime createdAt;
-    private int importance;
+    @Builder.Default
+    private int importance = 1;
 }

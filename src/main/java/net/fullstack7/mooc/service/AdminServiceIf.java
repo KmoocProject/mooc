@@ -8,9 +8,11 @@ import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
 import net.fullstack7.mooc.dto.NoticeDTO;
 import net.fullstack7.mooc.dto.PageDTO;
+import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 
 public interface AdminServiceIf {
+    boolean existsAdmin(String id);
     String login(AdminLoginDTO adminLoginDTO);
     Page<Teacher> getTeachers(AdminSearchDTO adminSearchDTO);
     Page<Member> getMembers(AdminSearchDTO adminSearchDTO);

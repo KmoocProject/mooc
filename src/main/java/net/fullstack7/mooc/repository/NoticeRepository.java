@@ -12,6 +12,6 @@ public interface NoticeRepository extends JpaRepository<Notice, Integer>, Notice
     Optional<Notice> findByNoticeId(Integer noticeId);
     boolean existsNoticeByNoticeId(int noticeId);
     @Modifying
-    @Query("update Notice N set N.title = :title, N.content = :content where N.noticeId = :noticeId")
-    int updateNotice(int noticeId, String title, String content);
+    @Query("update Notice N set N.title = :title, N.content = :content, N.importance = :importance where N.noticeId = :noticeId")
+    int updateNotice(int noticeId, String title, String content, int importance);
 }

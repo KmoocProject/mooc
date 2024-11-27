@@ -144,7 +144,7 @@
 <section class="content">
 
     <div class="container">
-        <form method="post" >
+        <form method="post" action="/admin/noticeRegist">
             <h1>공지사항 등록</h1>
             <div class="report-header">
                 <h2><input type="text" name="title" value="" placeholder="제목"></h2>
@@ -155,7 +155,8 @@
                 <textarea type="text" name="content" placeholder="내용"></textarea>
             </div>
             <hr>
-            <button class="back-delete">취소</button>
+            <button class="back-modify" type="submit">등록</button>
+            <button class="back-delete" type="reset">초기화</button>
             <button class="back-button" id="backBtn">목록</button>
         </form>
     </div>
