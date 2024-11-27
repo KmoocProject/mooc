@@ -2,11 +2,10 @@ package net.fullstack7.mooc.search;
 
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.jpa.JPQLQuery;
+import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.CourseResponseDTO;
 import net.fullstack7.mooc.dto.CourseSearchDTO;
-import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -14,8 +13,8 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
+@Log4j2
 public class CourseSearchImpl extends QuerydslRepositorySupport implements CourseSearch {
     public CourseSearchImpl() {
         super(Course.class);
@@ -55,7 +54,7 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
         }
 
         if(builder.hasValue())
-            query.where(qCourse.title.contains(courseSearchDTO.getSearchValue()));
+            query.where(builder);
 
         if(courseSearchDTO.getSortField() != null && !courseSearchDTO.getSortField().isEmpty() && courseSearchDTO.getSortDirection() != null && !courseSearchDTO.getSortDirection().isEmpty()) {
             switch (courseSearchDTO.getSortField()) {
@@ -81,6 +80,7 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
                 .learningTime(entity.getLearningTime())
                 .description(entity.getDescription())
                 .language(entity.getLanguage())
+                .status(entity.getStatus())
                 .build()
         ).toList();
 

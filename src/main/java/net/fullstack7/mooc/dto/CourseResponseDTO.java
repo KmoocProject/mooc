@@ -18,6 +18,7 @@ public class CourseResponseDTO {
     private String language;
     private int isCreditBank;
     private String thumbnail;
+    private String status;
     
     public static CourseResponseDTO from(Course course) {
         return CourseResponseDTO.builder()

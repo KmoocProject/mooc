@@ -93,24 +93,20 @@
         <table id="result-table">
             <thead>
             <tr>
+                <th>강의코드</th>
                 <th>강의명</th>
-                <th><a href="/admin/course/courseview">강의코드</a></th>
-                <th>강사명</th>
                 <th>수강 기간</th>
                 <th>수강 상태</th>
-                <th>승인여부</th>
                 <th>승인</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>63</td>
-                <td>자료집</td>
-                <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
-                <td>2024.09.12</td>
-                <td>진행중</td>
-                <td>승인</td>
-                <td><button class="reply-button">승인</button></td>
+            <tr th:each="item, status:${pageinfo.content}">
+                <td th:text="${item.courseId}"></td>
+                <td><a th:href="@{/admin/courseView/{courseId}(courseId=${item.courseId})}" th:text="${item.title}"></a></td>
+                <td th:text="${item.weeks}"></td>
+                <td th:text="${item.status}"></td>
+                <td><button class="reply-button" th:if="${item.status=='DRAFT'}" th:onclick="@{/course/approve/{courseId}(courseId=${item.courseId})}">승인</button></td>
             </tr>
 
             </tbody>

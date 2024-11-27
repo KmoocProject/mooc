@@ -8,10 +8,7 @@ import net.fullstack7.mooc.domain.Admin;
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.domain.Teacher;
-import net.fullstack7.mooc.dto.AdminLoginDTO;
-import net.fullstack7.mooc.dto.AdminSearchDTO;
-import net.fullstack7.mooc.dto.NoticeDTO;
-import net.fullstack7.mooc.dto.PageDTO;
+import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import net.fullstack7.mooc.service.NoticeServiceIf;
 import org.springframework.data.domain.Page;
@@ -73,6 +70,8 @@ public class AdminController {
         if (bindingResult.hasErrors()) {
             adminSearchDTO = AdminSearchDTO.<Teacher>builder().build();
         }
+
+        adminSearchDTO.initialize();
 
         if (adminSearchDTO.getTypeSelect().equals("t"))
             model.addAttribute("pageinfo", adminService.getTeachers(adminSearchDTO));
@@ -189,13 +188,20 @@ public class AdminController {
         return "redirect:/admin/memberList";
     }
 
-
-    /*
-    나중에 김경민이 다 하면 날먹하기
-     */
     @GetMapping("/courseList")
-    public String courseListGet(Model model, RedirectAttributes redirectAttributes) {
-        return "admin/course/courselist";
+    public String courseListGet(@Valid CourseSearchDTO searchDTO, BindingResult bindingResult
+            , Model model, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            searchDTO = CourseSearchDTO.builder().build();
+        }
+
+        searchDTO.initialize();
+
+        model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
+        model.addAttribute("searchinfo", searchDTO);
+
+        return "admin/course/courseList";
     }
 
     @GetMapping("/noticeList")
