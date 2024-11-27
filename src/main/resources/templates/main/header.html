@@ -52,13 +52,11 @@
         .dropdown:hover .dropdown-menu {
             display: block; /* Show dropdown menu on hover */
         }
-
-
     </style>
 </head>
 <body>
 <div th:fragment="header">
-<header class="header">
+<header class="header" id="main">
     <div class="logo">
         <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
     </div>
@@ -121,6 +119,5 @@
     </div>
 </header>
 </div>
-
 </body>
 </html>

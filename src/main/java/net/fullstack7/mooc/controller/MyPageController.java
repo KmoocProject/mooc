@@ -32,10 +32,30 @@ public class MyPageController {
         return "mypage/memberView" ;
     }
 
+    @GetMapping("/creditTransform")
+    public String creditTransform() {
+        return "mypage/creditTransform" ;
+    }
+    @GetMapping("/creditTransform2")
+    public String creditTransform2() {
+        return "mypage/creditTransform2" ;
+    }
+    @GetMapping("/creditTransform3")
+    public String creditTransform3() {
+        return "mypage/creditTransform3" ;
+    }
+    @GetMapping("/creditclass")
+    public String creditclass() {
+        return "mypage/creditclass" ;
+    }
+
+
     @PostMapping("/memberModify")
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         return "redirect:/mypage/memberView";
     }
+
+
 
 
 //    @GetMapping("")

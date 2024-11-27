@@ -122,7 +122,6 @@
         <div class="progress-bar">
             <div class="step active">개인정보 수집/제공 동의</div>
             <div class="step">내 정보 등록</div>
-            <div class="step">본인인증</div>
             <div class="step">완료</div>
         </div>
 
@@ -160,7 +159,7 @@
         const agree = document.getElementById("agree").checked;
 
         if(agree){
-            location.href = '/login/regist';
+            location.href = '/mypage/creditTransform2';
         }else {
             // 체크되지 않은 항목이 있을 경우 경고 알림
             alert('이용약관 동의는 필수 사항입니다.');

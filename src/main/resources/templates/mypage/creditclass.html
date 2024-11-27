@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>마이페이지 레이아웃</title>
+    <link th:href="@{/css/main.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link th:href="@{/css/mypagesidebar.css}" rel="stylesheet" />
+    <style>
+        .content {
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        /* Course Section */
+        .course-section {
+            margin-top: 30px;
+        }
+
+        .course-section h3 {
+            margin-bottom: 15px;
+        }
+
+        .course-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .course-details {
+            flex: 1;
+        }
+
+        .course-details h4 {
+            margin: 0;
+            font-size: 20px;
+        }
+
+        .course-details p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .course-actions {
+            text-align: right;
+        }
+
+        .course-actions button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .learn-btn {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .cancel-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+<div th:replace="main/header :: header"></div>
+<!-- Sidebar -->
+
+<section class="content">
+    <div th:replace="mypage/sidebar ::sidebar"></div>
+
+    <!-- Courses -->
+    <div class="course-section">
+        <h3>수강중인 학점은행제 강좌</h3>
+        <div class="course-card">
+            <div class="course-details">
+                <h4>스타트업 비즈니스 기획론</h4>
+                <p>서리빈</p>
+                <p>2024-11-11 ~ 2024-12-31</p>
+                <p>주차: 16주 | 학습활동진척율: 0%</p>
+            </div>
+            <div class="course-actions">
+                <button class="learn-btn">학습하기</button>
+                <button class="cancel-btn">수강취소</button>
+            </div>
+        </div>
+    </div>
+</section>
+
+<div th:replace="main/footer :: footer"></div>
+
+</body>
+</html>
