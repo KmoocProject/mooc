@@ -8,6 +8,18 @@
     <title>Title</title>
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
         .dropdown-btn1 {
             position: relative;
             z-index: 1;
@@ -52,9 +64,18 @@
         .dropdown:hover .dropdown-menu {
             display: block; /* Show dropdown menu on hover */
         }
+        .content {
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
     </style>
 </head>
 <body>
+<section class="content">
 <div th:fragment="header">
     <div th:replace="main/up :: up"></div>
 <header class="header" id="main">
@@ -120,5 +141,6 @@
     </div>
 </header>
 </div>
+</section>
 </body>
 </html>

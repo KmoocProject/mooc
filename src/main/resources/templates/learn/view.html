@@ -150,18 +150,15 @@
             <h2>강의의 목록</h2>
             <ul class="lecture-list">
                 <li><strong>강의 개요</strong></li>
-                <li>[1주차] 개인 비전의 실현</li>
-                <li>[2주차] 시장 트렌드의 발견</li>
-                <li>[3주차] 시장 세분화와 고객 분석</li>
-                <li>[4주차] 비즈니스 콘셉트의 구체화</li>
-                <li>[5주차] 비즈니스 콘셉트 정리</li>
+                <li><a href="#">[1주차] 개인 비전의 실현</a></li>
+                <li><a href="#">[2주차] 시장 트렌드의 발견</a></li>
             </ul>
             <h2>학습 활동</h2>
             <ul class="activity-list">
-                <li>게시판</li>
-                <li>과제</li>
-                <li>퀴즈</li>
-                <li>토론방</li>
+                <li><a href="#">게시판</a></li>
+                <li><a href="#">과제</a></li>
+                <li><a href="#">퀴즈</a></li>
+                <li><a href="#">토론방</a></li>
             </ul>
         </aside>
 
@@ -178,16 +175,22 @@
                 <p>안녕하세요, '스타트업 비즈니스 기획론' 강좌를 수강 신청한 모든 수강생 여러분 진심으로 환영합니다!</p>
                 <p>이 강좌를 통해 창업 및 신사업 개발 과정에서 실질적이고 유용한 지식을 습득하여 성공적인 비즈니스 성과를 이루길 기대합니다.</p>
                 <div class="overview-buttons">
-                    <div class="button">공지사항</div>
-                    <div class="button">Q&A</div>
-                    <div class="button">강의계획서 및 이슈기준</div>
-                    <div class="button">생각나눔 게시판</div>
-                    <div class="button">강의자료</div>
+                    <div class="button" id="breport">강의계획서</div>
+                    <div class="button" id="binform">공지사항</div>
+                    <div class="button" id="bqna">Q&A</div>
                 </div>
             </div>
 
-            <div class="professor-info">
-                <h2>교수자 소개</h2>
+            <div class="professor-info" id="report">
+                <h2>교수자 소개 강의계획서</h2>
+                <img src="professor.jpg" alt="교수자 사진">
+            </div>
+            <div class="professor-info" id="inform">
+                <h2>공지사항</h2>
+                <img src="professor.jpg" alt="교수자 사진">
+            </div>
+            <div class="professor-info" id="qna">
+                <h2>Q&A</h2>
                 <img src="professor.jpg" alt="교수자 사진">
             </div>
         </div>
@@ -196,6 +199,25 @@
 </section>
 
 <div th:replace="main/footer :: footer"></div>
+
+<script>
+    const report = document.getElementById("breport")
+    report.addEventListener("click", ()=>{
+        location.href='#report'
+    });
+
+    const binform = document.getElementById("binform")
+    binform.addEventListener("click", ()=>{
+        location.href='#inform'
+    });
+
+    const qna = document.getElementById("bqna")
+    qna.addEventListener("click", ()=>{
+        location.href='#qna'
+    });
+
+
+</script>
 
 </body>
 </html>
