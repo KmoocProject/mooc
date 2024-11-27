@@ -51,8 +51,7 @@ public class LoginController extends HttpServlet {
     public String login(@RequestParam("memberId") String memberId, @RequestParam("password") String password, HttpSession session, Model model) {
         MemberDTO memberDTO = memberService.login(memberId, password);
         if (memberDTO != null) {
-            session.setAttribute("memberId", memberDTO.getMemberId());
-            session.setAttribute("password", memberDTO.getPassword());
+            session.setAttribute("memberDTO", memberDTO);
 
             String redirectURL = (String) session.getAttribute("redirectAfterLogin");
             if (redirectURL != null) {
