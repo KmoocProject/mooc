@@ -87,6 +87,15 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
+    public String approveTeacherRegist(String teacherId) {
+        if(teacherRepository.existsByTeacherId(teacherId)){
+            teacherRepository.updateIsApprovedByTeacherId(teacherId, 1);
+            return teacherId + " 승인 완료";
+        }
+        return "존재하지 않는 계정입니다.";
+    }
+
+    @Override
     public Teacher getTeacher(String id) {
         Optional<Teacher> teacher = teacherRepository.findByTeacherId(id);
         if(teacher.isPresent()) {

@@ -16,6 +16,7 @@ public interface AdminServiceIf {
     String login(AdminLoginDTO adminLoginDTO);
     Page<Teacher> getTeachers(AdminSearchDTO adminSearchDTO);
     Page<Member> getMembers(AdminSearchDTO adminSearchDTO);
+    String approveTeacherRegist(String teacherId);
 
     Teacher getTeacher(String id);
     Member getMember(String id);
