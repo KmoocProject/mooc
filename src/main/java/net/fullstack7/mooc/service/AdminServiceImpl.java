@@ -28,7 +28,10 @@ public class AdminServiceImpl implements AdminServiceIf {
     private final TeacherRepository teacherRepository;
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
-    private final ModelMapper modelMapper;
+
+    public boolean existsAdmin(String id) {
+        return adminRepository.existsAdminByAdminId(id);
+    }
 
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
@@ -108,7 +111,7 @@ public class AdminServiceImpl implements AdminServiceIf {
             if(getMember(id) == null)
                 return "존재하지 않는 회원입니다.";
 
-            memberRepository.save(getMember(id));
+            memberRepository.updateStatusByMemberId(id, "WITHDRAWN");
         }
 
         if(typeSelect.equals("t")) {
@@ -152,13 +155,13 @@ public class AdminServiceImpl implements AdminServiceIf {
         if(!adminRepository.existsAdminByAdminId(dto.getAdminId())) {
             return "관리자 권한 계정만 수정 가능합니다.";
         }
-        noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent());
+        noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent(), dto.getImportance());
         return "수정 완료";
     }
 
     @Override
     public String deleteNotice(int noticeId, String adminId) {
-        if(adminRepository.existsAdminByAdminId(adminId))
+        if(!adminRepository.existsAdminByAdminId(adminId))
             return "관리자 권한 계정만 삭제 가능합니다.";
         if(noticeRepository.existsNoticeByNoticeId(noticeId)) {
             noticeRepository.delete(noticeRepository.findByNoticeId(noticeId).get());

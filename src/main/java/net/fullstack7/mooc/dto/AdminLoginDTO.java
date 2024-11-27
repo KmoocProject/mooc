@@ -16,7 +16,6 @@ public class AdminLoginDTO {
     @Pattern(regexp = "^[a-z0-9]{5,15}$", message = "아이디 또는 비밀번호가 일치하지 않습니다.2")
     private String adminId;
     @NotBlank(message = "비밀번호를 입력해주세요.")
-    @Size(min=10, max=20, message = "아이디 또는 비밀번호가 일치하지 않습니다.3")
-    @Pattern(regexp = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{10,20}$", message = "아이디 또는 비밀번호가 일치하지 않습니다.4")
+    @Size(max=20, message = "아이디 또는 비밀번호가 일치하지 않습니다.3")
     private String password;
 }
