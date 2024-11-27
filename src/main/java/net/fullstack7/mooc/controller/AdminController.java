@@ -179,10 +179,9 @@ public class AdminController {
         return "redirect:/admin/memberList";
     }
 
-    @GetMapping("/approve")
-    public String approveGet(@RequestParam(defaultValue = "0") String memberId, Model model, RedirectAttributes redirectAttributes) {
-        if (memberId.equals("0")) {
-
+    @GetMapping("/approve/{teacherId}")
+    public String approveGet(@PathVariable String teacherId, Model model, RedirectAttributes redirectAttributes) {
+        if (teacherId == null) {
         }
 
         return "redirect:/admin/memberList";

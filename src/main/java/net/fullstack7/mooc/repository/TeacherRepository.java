@@ -19,4 +19,8 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, Teach
     @Modifying
     @Query("update Teacher T set T.status = :status where T.teacherId = :teacherId")
     int updateStatusByTeacherId(String teacherId, String status);
+
+    @Modifying
+    @Query("update Teacher T set T.isApproved = :isApproved where T.teacherId = :teacherId")
+    int updateIsApprovedByTeacherId(String teacherId, int isApproved);
 }
