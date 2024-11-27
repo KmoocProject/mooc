@@ -182,8 +182,10 @@ public class AdminController {
     @GetMapping("/approve/{teacherId}")
     public String approveGet(@PathVariable String teacherId, Model model, RedirectAttributes redirectAttributes) {
         if (teacherId == null) {
+            redirectAttributes.addFlashAttribute("erros", "존재하지 않는 계정입니다.");
+            return "redirect:/admin/memberList";
         }
-
+        adminService.approveTeacherRegist(teacherId);
         return "redirect:/admin/memberList";
     }
 
