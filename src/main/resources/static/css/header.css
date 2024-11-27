@@ -26,10 +26,10 @@
 .menu-list {
     display: flex;
     list-style: none;
+    white-space: nowrap;
     gap: 20px; /* Space between menu items */
     margin: 0;
     padding: 0;
-    white-space: nowrap;
 }
 
 .menu-list a {

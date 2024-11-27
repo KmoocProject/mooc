@@ -28,4 +28,13 @@ public class DummyController {
     model.addAttribute("currentPage", "my-lectures");
     return "teacher/myLectures";
   }
+
+  @GetMapping("/admin/notice/noticeList")
+  public String noticeList() {
+    return "admin/notice/noticeList";
+  }
+  @GetMapping("/admin/memberList")
+  public String memberList() {
+    return "admin/memberList";
+  }
 }

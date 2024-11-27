@@ -2,67 +2,21 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
->
+      xmlns="http://www.w3.org/1999/html">
 <head>
     <meta charset="UTF-8">
     <title>마이페이지 레이아웃</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link th:href="@{/css/learnsidebar.css}" rel="stylesheet" />
     <style>
         .content {
             max-width: 100%;
             max-height: 100%;
-            margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
-
-        /* General Styles */
-
-        .main-container {
-            display: flex;
-        }
-
-        /* Sidebar */
-        .sidebar {
-            width: 250px;
-            background-color: rgba(133, 129, 129, 0.06);
-            color: #000000;
-            padding: 20px;
-            height: 100vh;
-            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
-        }
-
-        .sidebar h2 {
-            font-size: 16px;
-            margin-bottom: 10px;
-            border-bottom: 1px solid #555;
-            padding-bottom: 5px;
-        }
-
-        .sidebar ul {
-            list-style: none;
-            padding: 0;
-        }
-
-        .sidebar ul li {
-            margin: 10px 0;
-            font-size: 14px;
-        }
-
-        .sidebar ul li strong {
-            font-weight: bold;
-            color: #0fbc8c;
-        }
-
-        /* Content */
-        .content {
-            flex: 1;
-            background-color: #fff;
-            margin-top: -7px;
         }
 
         .header2 {
@@ -145,30 +99,7 @@
 <!-- Sidebar -->
 
 <section class="content">
-    <div class="main-container">
-        <aside class="sidebar">
-            <h2>강의의 목록</h2>
-            <ul class="lecture-list">
-                <li><strong>강의 개요</strong></li>
-                <li><a href="#">[1주차] 개인 비전의 실현</a></li>
-                <li><a href="#">[2주차] 시장 트렌드의 발견</a></li>
-            </ul>
-            <h2>학습 활동</h2>
-            <ul class="activity-list">
-                <li><a href="#">게시판</a></li>
-                <li><a href="#">과제</a></li>
-                <li><a href="#">퀴즈</a></li>
-                <li><a href="#">토론방</a></li>
-            </ul>
-        </aside>
-
-        <div class="content">
-            <header class="header2">
-                <h1 style="margin-left: 20px;">스타트업 비즈니스 기획론</h1>
-                <div class="user-info">
-                    <span style="margin-right: 20px;">서리빈</span>
-                </div>
-            </header>
+    <div th:replace="learn/sidebar :: sidebar"></div>
 
             <div class="lecture-overview">
                 <h2>강의 개요</h2>
@@ -193,7 +124,7 @@
                 <h2>Q&A</h2>
                 <img src="professor.jpg" alt="교수자 사진">
             </div>
-        </div>
+</div>
     </div>
 
 </section>
