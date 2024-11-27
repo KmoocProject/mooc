@@ -56,6 +56,7 @@
 </head>
 <body>
 <div th:fragment="header">
+    <div th:replace="main/up :: up"></div>
 <header class="header" id="main">
     <div class="logo">
         <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
