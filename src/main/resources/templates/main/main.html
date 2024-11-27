@@ -12,11 +12,12 @@
 </head>
 
 <div th:replace="main/header :: header"></div>
+
 <body>
 <section class="banner">
-    <div class="main-banner" id="mainBanner">
-        <img th:src="@{/images/mainbanner1.png}" class="active" />
-        <img th:src="@{/images/mainbanner2.png}" />
+    <div class="main-banner" id="mainBanner" style="height: 400px; width: 2000px;">
+        <img th:src="@{/images/mainbanner1.png}" class="active" style="height: 400px;width: 2000px;"/>
+        <img th:src="@{/images/mainbanner2.png}" style="height: 400px;width: 2000px;"/>
         <div class="banner-dots" id="bannerDots"></div>
     </div>
 </section>
