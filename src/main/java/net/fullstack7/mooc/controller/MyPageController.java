@@ -6,6 +6,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.MemberDTO;
+import net.fullstack7.mooc.dto.MemberModifyDTO;
 import net.fullstack7.mooc.service.MemberServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -64,32 +65,29 @@ public class MyPageController {
         return "mypage/creditclass" ;
     }
 
-    @GetMapping("/memberModify")
-    public String memberModify(Model model, HttpSession session) {
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-
-        if(memberDTO == null) {
-            return "redirect:/login/login";
-        }
-        model.addAttribute("member", memberDTO);
-        return "mypage/memberView" ;
-    }
+//    @GetMapping("/memberModify")
+//    public String memberModify(Model model, HttpSession session) {
+//        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+//
+//        if(memberDTO == null) {
+//            return "redirect:/login/login";
+//        }
+//        MemberModifyDTO memberModifyDTO = (MemberModifyDTO) session.getAttribute("memberModifyDTO");
+//        model.addAttribute("member", memberModifyDTO);
+//        return "mypage/memberView" ;
+//    }
 
     @PostMapping("/memberModify")
-    public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         System.out.println("POST 요청 받음");
         if(bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
             return "mypage/memberView" ;
         }
-        try{
-            if(memberDTO.getPassword() == null || memberDTO.getPassword().isEmpty()) {
-                memberServiceImpl.modifyWithoutPassword(memberDTO);
-
-            } else{
+        try{ if(memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
-            }
+        }
 //            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
             session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
