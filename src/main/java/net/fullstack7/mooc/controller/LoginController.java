@@ -38,11 +38,6 @@ public class LoginController extends HttpServlet {
     @Autowired
     private MemberMapper memberMapper;
 
-    @GetMapping("/findId")
-    public String findId() {
-        return "login/findId";
-    }
-
     @GetMapping("/login")
     public String login(HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
         if (session.getAttribute("memberId") != null) {

@@ -66,6 +66,11 @@
         background-color: #f1f1f1;
     }
 
+    .important-box {
+        background-color: red;
+        color: white;
+        border-radius: 3px;
+    }
 
 </style>
 <body>
@@ -79,15 +84,18 @@
             <thead>
             <tr>
                 <th>등록일</th>
-                <th>조회수</th>
-                <th><a href="/admin/inform/view">제목</a></th>
+                <th>제목</th>
+                <th>작성자</th>
             </tr>
             </thead>
             <tbody>
-            <tr>
-                <td>63</td>
-                <td>자료집</td>
-                <td>인공지능 및 컴퓨터 분야 이수체계도 안내</td>
+            <tr th:each="item, status:${pageinfo}">
+                <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
+                <td>
+                    <a th:text="${item.title}" th:href="@{/admin/noticeView/{noticeId}(noticeId=${item.noticeId})}"></a>
+                    <span class="important-box" th:if="${item.importance == 0}" th:text="중요"></span>
+                </td>
+                <td th:text="${item.adminName}"></td>
             </tr>
             </tbody>
         </table>
