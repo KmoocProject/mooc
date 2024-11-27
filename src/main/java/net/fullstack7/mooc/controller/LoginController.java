@@ -15,6 +15,7 @@ import net.fullstack7.mooc.repository.MemberRepository;
 import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.util.CookieUtil;
 import net.fullstack7.mooc.util.JSFunc;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,10 +24,6 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
-import java.net.URLDecoder;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
 
 @Controller
 @RequestMapping("/login")
@@ -59,17 +56,6 @@ public class LoginController extends HttpServlet {
 
             String redirectURL = (String) session.getAttribute("redirectAfterLogin");
             if (redirectURL != null) {
-//                try {
-//                    session.removeAttribute("redirectAfterLogin");
-//                    redirectURL = URLDecoder.decode(URLDecoder.decode(redirectURL, "UTF-8"), "UTF-8");
-//                    log.info("redirectURL:" + redirectURL);
-//                    if (redirectURL.contains("login/regist") || redirectURL.contains("login/login")) {
-//                        return "redirect:/";
-//                    }
-//                    return "redirect:" + URLDecoder.decode(URLDecoder.decode(redirectURL, "UTF-8"), "UTF-8");
-//                } catch (Exception e) {
-//                    log.error(e);
-//                }
                 session.removeAttribute("redirectAfterLogin");
                 return "redirect:" + redirectURL;
             }
@@ -119,30 +105,37 @@ public class LoginController extends HttpServlet {
         return "login/regist";
     }
 
-    @PostMapping("/idCheck")
+    @PostMapping("/memberIdCheck")
     @ResponseBody
-    public Map<String, Object> checkId(@RequestParam("memberId")String memberId){
-        Map<String, Object> response = new HashMap<>();
-        log.info("memberId"+memberId);
-        String result = memberMapper.memberIdCheck(memberId);
-        if(result == null){
-            response.put("isAvailable", true);
-            log.info("아이디사용가능");
-        } else {
-            response.put("isAvailable", false);
-            log.info("아이디사용불가");
-        }
-        log.info("response"+response);
-        return response;
+    public String checkMemberId(@RequestParam String memberId){
+        boolean available = memberService.memberIdCheck(memberId);
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("available", available);
+        return jsonResponse.toString();
     }
 
+    @PostMapping("/emailCheck")
+    @ResponseBody
+    public String checkEmail(@RequestParam String email) {
+        boolean available = memberService.emailCheck(email); // 이메일 중복 체크 로직
+        JSONObject jsonResponse = new JSONObject();
+        jsonResponse.put("available", available);
+        return jsonResponse.toString();
+    }
 
     @PostMapping("/regist")
     public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
-//        session.setAttribute("termsAgree", true);
+        String email = memberDTO.getEmail();
+        boolean isEmailAvailable = memberService.emailCheck(email);
+        String memberId = memberDTO.getMemberId();
+        boolean isMemberIdAvailable = memberService.memberIdCheck(memberId);
+
+        if (!isEmailAvailable || !isMemberIdAvailable) {
+            redirectAttributes.addFlashAttribute("errors", "중복된 내용은 등록이 불가합니다.");
+            return "redirect:/login/regist";  // 중복된 이메일이 있으면 회원가입 페이지로 리다이렉트
+        }
 
         if(bindingResult.hasErrors()) {
-//            log.info("유효성 검사 오류: " + bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
             return "redirect:/login/regist";
@@ -158,17 +151,32 @@ public class LoginController extends HttpServlet {
         }
     }
 
-
     @GetMapping("/memberchose")
     public String memberchose() {
         return "login/memberchose";
     }
-
-
 
     @GetMapping("/finishjoin")
     public String finishjoin() {
         return "login/finishjoin";
     }
 
+//수정해
+    @GetMapping("/findId")
+    public String findId() {
+        return "login/findId";
+    }
+    @PostMapping("/findId")
+    public String findIdPost(@RequestParam String memberId, HttpSession session, Model model) {
+        return "redirect:/login/login";
+    }
+//수정해
+    @GetMapping("/findPwd")
+    public String findPwd() {
+        return "login/findPwd";
+    }
+    @PostMapping("/findPwd")
+    public String findPwdPost(@RequestParam String memberId, HttpSession session, Model model) {
+        return "redirect:/login/login";
+    }
 }

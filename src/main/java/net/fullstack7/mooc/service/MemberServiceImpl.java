@@ -45,9 +45,15 @@ public class MemberServiceImpl implements MemberServiceIf {
 
     @Override
     public boolean memberIdCheck(String memberId) {
-//        String result = memberMapper.memberIdCheck(memberId);
-//        return result == null;
-        return memberMapper.memberIdCheck(memberId) == null;
+        String result = memberMapper.memberIdCheck(memberId);
+        return result == null;
+//        return memberMapper.memberIdCheck(memberId) == null;
+    }
+
+    @Override
+    public boolean emailCheck(String email) {
+        String result = memberMapper.emailCheck(email);
+        return result == null;
     }
 
 

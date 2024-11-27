@@ -9,5 +9,6 @@ public interface MemberServiceIf {
     public int registMember(MemberDTO memberDTO);
     public int modifyMember(MemberDTO memberDTO);
     public boolean memberIdCheck(String memberId);
+    public boolean emailCheck(String email);
     void deleteMember(String memberId);
 }
