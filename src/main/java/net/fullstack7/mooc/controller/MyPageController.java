@@ -64,16 +64,46 @@ public class MyPageController {
         return "mypage/creditclass" ;
     }
 
+    @GetMapping("/memberModify")
+    public String memberModify(Model model, HttpSession session) {
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+
+        if(memberDTO == null) {
+            return "redirect:/login/login";
+        }
+        model.addAttribute("member", memberDTO);
+        return "mypage/memberView" ;
+    }
 
     @PostMapping("/memberModify")
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
-        return "redirect:/mypage/memberView";
+        System.out.println("POST 요청 받음");
+        if(bindingResult.hasErrors()) {
+            model.addAttribute("errors", bindingResult.getAllErrors());
+            model.addAttribute("member", memberDTO);
+            return "mypage/memberView" ;
+        }
+        try{
+            if(memberDTO.getPassword() == null || memberDTO.getPassword().isEmpty()) {
+                memberServiceImpl.modifyWithoutPassword(memberDTO);
+
+            } else{
+                memberServiceImpl.modifyMember(memberDTO);
+            }
+//            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
+            session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
+        } catch (Exception e) {
+//            redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+            return "redirect:/mypage/memberView";
+        }
+
+        return "redirect:/mypage/myclass";
     }
 
 
 
 
-//    @GetMapping("")
 
     @PostMapping("/memberDelete")
     public String deleteMember(@RequestParam String memberId, RedirectAttributes redirectAttributes, HttpSession session) {

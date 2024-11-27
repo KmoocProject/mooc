@@ -7,13 +7,16 @@ import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.mapper.MemberMapper;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
 @Log4j2
 public class MemberServiceImpl implements MemberServiceIf {
+    @Autowired
     private final MemberMapper memberMapper;
+    @Autowired
     private final ModelMapper modelMapper;
 
     @Override
@@ -64,9 +67,17 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
 
     @Override
+    @Transactional
     public int modifyMember(MemberDTO memberDTO) {
         Member member = modelMapper.map(memberDTO, Member.class);
         return memberMapper.modifyMember(member);
+    }
+
+    @Override
+    @Transactional
+    public int modifyWithoutPassword(MemberDTO memberDTO) {
+        Member member = modelMapper.map(memberDTO, Member.class);
+        return memberMapper.modifyMemberWithoutPassword(member);
     }
 
 

@@ -8,6 +8,7 @@ public interface MemberServiceIf {
     public boolean pwdCheck(String memberId, String password);
     public int registMember(MemberDTO memberDTO);
     public int modifyMember(MemberDTO memberDTO);
+    public int modifyWithoutPassword(MemberDTO memberDTO);
     public boolean memberIdCheck(String memberId);
     public boolean emailCheck(String email);
     void deleteMember(String memberId);
