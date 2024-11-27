@@ -9,6 +9,7 @@
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link th:href="@{/css/mypagesidebar.css}" rel="stylesheet" />
 </head>
 <style>
     * {
@@ -24,55 +25,13 @@
         color: #333;
     }
 
-    .content {
-        max-width: 1500px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-
-
-    /* Sidebar */
-    .sidebar {
-        width: 250px;
-        background-color: rgba(133, 129, 129, 0.06);
-        color: #000000;
-        height: 700px;
-        padding: 20px 15px;
-        box-sizing: border-box;
-        float: left;
-        margin-right: 45px;
-    }
-
-    .sidebar h2 {
-        font-size: 20px;
-        margin-bottom: 20px;
-    }
-
-    .sidebar ul {
-        list-style: none;
-        padding: 0;
-    }
-
-    .sidebar ul li {
-        margin: 15px 0;
-    }
-
-    .sidebar ul li a {
-        color: #000000;
-        text-decoration: none;
-        display: flex;
-        align-items: center;
-    }
-
-    .sidebar ul li a:hover {
-        color: #1abc9c;
-    }
-
-    .sidebar ul li a i {
-        margin-right: 10px;
+  .content {
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
     }
 
     /* Main Content */
@@ -186,8 +145,6 @@
         color: white;
     }
 
-
-
 </style>
 <body>
 
@@ -195,15 +152,7 @@
 <!-- Sidebar -->
 
 <section class="content">
-    <div class="sidebar">
-        <h2>마이페이지</h2>
-        <ul>
-            <li><a href="/mypage/myclass"><i class="fas fa-chalkboard"></i><img th:src="@{/images/a3.png}" style="width: 30px; margin-right: 4px;"/> 내 강의실</a></li>
-            <li><a href="#"><i class="fas fa-graduation-cap"></i><img th:src="@{/images/a2.png}" style="width: 30px; margin-right: 4px;"/> K-MOOC 학점은행제</a></li>
-            <!--<li><a href="#"><i class="fas fa-star"></i> 관심분야설정</a></li> 시간나면 하기루-->
-            <li><a href="#"><i class="fas fa-user-cog"></i><img th:src="@{/images/a1.png}" style="width: 30px; margin-right: 4px;"/> 개인정보관리</a></li>
-        </ul>
-    </div>
+    <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <!-- Main Content -->
     <div class="main-content">
