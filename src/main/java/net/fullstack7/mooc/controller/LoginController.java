@@ -67,7 +67,6 @@ public class LoginController extends HttpServlet {
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.invalidate();
-        redirectAttributes.addFlashAttribute("errors", "로그인에 실패하였습니다.");
         return "redirect:/main/main";
     }
 

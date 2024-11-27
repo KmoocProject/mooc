@@ -39,7 +39,16 @@
 
     <update id="modifyMember">
         UPDATE member
-        SET memberId = #{memberId}, email = #{email}, password = #{password}
+        SET email = #{email}, password = #{password}
+        WHERE memberId = #{memberId}
+    </update>
+
+    <update id="modifyMemberWithoutPassword">
+        UPDATE member
+        SET email = #{email}
+        <if test="password != null and password != ''">
+            , password = #{password}
+        </if>
         WHERE memberId = #{memberId}
     </update>
 
