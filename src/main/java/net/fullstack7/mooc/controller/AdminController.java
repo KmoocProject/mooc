@@ -4,13 +4,17 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.domain.Admin;
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.dto.AdminLoginDTO;
 import net.fullstack7.mooc.dto.AdminSearchDTO;
+import net.fullstack7.mooc.dto.NoticeDTO;
 import net.fullstack7.mooc.dto.PageDTO;
 import net.fullstack7.mooc.service.AdminServiceIf;
+import net.fullstack7.mooc.service.NoticeServiceIf;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,12 +24,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import java.util.stream.Collectors;
+
 @Controller
 @Log4j2
 @RequiredArgsConstructor
 @RequestMapping("/admin")
 public class AdminController {
     private final AdminServiceIf adminService;
+    private final NoticeServiceIf noticeService;
 
     @GetMapping("/login")
     public String loginGet(HttpSession session, RedirectAttributes redirectAttributes) {
@@ -193,9 +200,28 @@ public class AdminController {
     }
 
     @GetMapping("/noticeList")
-    public String noticeListGet(@Valid PageDTO<Notice> pageDTO, Model model, RedirectAttributes redirectAttributes) {
+    public String noticeListGet(@Valid PageDTO<Notice> pageDTO, BindingResult bindingResult
+            , Model model, RedirectAttributes redirectAttributes) {
 
-        model.addAttribute("pageinfo", adminService.getNotices(pageDTO));
+        if(bindingResult.hasErrors()) {
+            pageDTO = PageDTO.<Notice>builder().build();
+        }
+
+        pageDTO.initialize();
+
+        Page<NoticeDTO> notices = noticeService.getNotices(pageDTO);
+        pageDTO.setTotalCount((int)notices.getTotalElements());
+        pageDTO.setDtoList(notices.getContent().stream().map(item -> Notice.builder()
+                .noticeId(item.getNoticeId())
+                .admin(Admin.builder().adminId(item.getAdminId()).build())
+                .title(item.getTitle())
+                .content(item.getContent())
+                .createdAt(item.getCreatedAt())
+                .importance(item.getImportance())
+                .build()
+        ).collect(Collectors.toList()));
+
+        model.addAttribute("pageinfo", notices);
         model.addAttribute("searchinfo", pageDTO);
 
         return "";
