@@ -22,7 +22,7 @@ public class Course {
     private int viewCount; // INT DEFAULT 0, -- 조회수
     @Column(name="isCreditBank", columnDefinition = "tinyint(1) default 0")
     private int isCreditBank; // TINYINT(1) DEFAULT 0, -- 학점 은행 여부
-    @Column(name="title", nullable = false, length = 200)
+    @Column(name="title", nullable = false, length = 200, columnDefinition = "varchar(200) not null collate 'utf8mb4_general_ci'")
     private String title; // VARCHAR(200) NOT NULL, -- 강좌 제목
     @Column(name="thumbnail", nullable = false, length = 200)
     private String thumbnail; // VARCHAR(200), -- 썸네일 이미지
