@@ -39,18 +39,25 @@
 
     <update id="modifyMember">
         UPDATE member
-        SET email = #{email}, password = #{password}
-        WHERE memberId = #{memberId}
-    </update>
-
-    <update id="modifyMemberWithoutPassword">
-        UPDATE member
-        SET email = #{email}
+        SET
+        memberId = #{memberId}
+        <if test="email != null and email != ''">
+            , email = #{email}
+        </if>
         <if test="password != null and password != ''">
             , password = #{password}
         </if>
         WHERE memberId = #{memberId}
     </update>
+
+<!--    <update id="modifyMemberWithoutPassword">-->
+<!--        UPDATE member-->
+<!--        SET email = #{email}-->
+<!--        <if test="password != null and password != ''">-->
+<!--            , password = #{password}-->
+<!--        </if>-->
+<!--        WHERE memberId = #{memberId}-->
+<!--    </update>-->
 
     <delete id="deleteMember">
         DELETE FROM member

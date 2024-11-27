@@ -5,7 +5,9 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.MemberDTO;
+import net.fullstack7.mooc.dto.MemberModifyDTO;
 import net.fullstack7.mooc.mapper.MemberMapper;
+import net.fullstack7.mooc.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,11 +15,14 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 @Log4j2
+@Transactional
 public class MemberServiceImpl implements MemberServiceIf {
     @Autowired
     private final MemberMapper memberMapper;
     @Autowired
     private final ModelMapper modelMapper;
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Override
     public MemberDTO login(String memberId, String password) {
@@ -47,6 +52,12 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
 
     @Override
+    public int modifyMember(MemberDTO memberDTO) {
+        return 0;
+    }
+
+
+    @Override
     public boolean memberIdCheck(String memberId) {
         String result = memberMapper.memberIdCheck(memberId);
         return result == null;
@@ -67,26 +78,22 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
 
     @Override
-    @Transactional
-    public int modifyMember(MemberDTO memberDTO) {
-        Member member = modelMapper.map(memberDTO, Member.class);
+    public int modifyMember(MemberModifyDTO memberModifyDTO) {
+        Member member = modelMapper.map(memberModifyDTO, Member.class);
         return memberMapper.modifyMember(member);
     }
-
     @Override
-    @Transactional
-    public int modifyWithoutPassword(MemberDTO memberDTO) {
-        Member member = modelMapper.map(memberDTO, Member.class);
-        return memberMapper.modifyMemberWithoutPassword(member);
+    public int modifyWithoutPassword(MemberModifyDTO memberModifyDTO) {
+        Member member = modelMapper.map(memberModifyDTO, Member.class);
+        return memberMapper.modifyWithoutPassword(member);
     }
 
 
     @Override
-    @Transactional
     public void deleteMember(String memberId) {
         try {
             log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
-            memberMapper.deleteMember(memberId);
+            memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
         }catch (Exception e) {
             log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
         }
