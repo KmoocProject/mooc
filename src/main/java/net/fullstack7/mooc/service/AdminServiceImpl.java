@@ -16,6 +16,7 @@ import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.Optional;
 
 @Log4j2
@@ -127,7 +128,13 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public String insertNotice(NoticeDTO dto) {
-        Notice notice = modelMapper.map(dto, Notice.class);
+        Notice notice = Notice.builder()
+                .admin(Admin.builder().adminId(dto.getAdminId()).build())
+                .title(dto.getTitle())
+                .content(dto.getContent())
+                .createdAt(LocalDateTime.now())
+                .importance(dto.getImportance())
+                .build();
         noticeRepository.save(notice);
 
         if(notice.getNoticeId() != 0) {

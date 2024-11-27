@@ -18,10 +18,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.stream.Collectors;
@@ -210,21 +207,83 @@ public class AdminController {
         pageDTO.initialize();
 
         Page<NoticeDTO> notices = noticeService.getNotices(pageDTO);
-        pageDTO.setTotalCount((int)notices.getTotalElements());
-        pageDTO.setDtoList(notices.getContent().stream().map(item -> Notice.builder()
-                .noticeId(item.getNoticeId())
-                .admin(Admin.builder().adminId(item.getAdminId()).build())
-                .title(item.getTitle())
-                .content(item.getContent())
-                .createdAt(item.getCreatedAt())
-                .importance(item.getImportance())
-                .build()
-        ).collect(Collectors.toList()));
 
         model.addAttribute("pageinfo", notices);
         model.addAttribute("searchinfo", pageDTO);
 
-        return "";
+        return "admin/notice/noticeList";
+    }
+
+    @GetMapping("/noticeView/{noticeId}")
+    public String noticeViewGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes) {
+        if(noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
+
+        int id = Integer.parseInt(noticeId);
+
+        Notice view = noticeService.view(id);
+
+        if(view == null) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
+
+        model.addAttribute("item", view);
+
+        return "admin/notice/noticeView";
+    }
+
+    @GetMapping("/noticeRegist")
+    public String noticeRegistGet(Model model, RedirectAttributes redirectAttributes) {
+        return "admin/notice/noticeRegist";
+    }
+
+    @PostMapping("/noticeRegist")
+    public String noticeRegistPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            redirectAttributes.addFlashAttribute("item", noticeDTO);
+            return "redirect:/admin/noticeRegist";
+        }
+
+        adminService.insertNotice(noticeDTO);
+
+        return "redirect:/admin/noticeList";
+    }
+
+    @GetMapping("/noticeModify/{noticeId}")
+    public String noticeModifyGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes) {
+        if(noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
+
+        int id = Integer.parseInt(noticeId);
+
+        Notice view = noticeService.view(id);
+
+        if(view == null) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
+
+        model.addAttribute("item", view);
+
+        return "admin/notice/noticeModify";
+    }
+
+    @PostMapping("/noticeModify/{noticeId}")
+    public String noticeModifyPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+        if (bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/admin/noticeModify";
+        }
+
+        adminService.insertNotice(noticeDTO);
+
+        return "redirect:/admin/noticeList";
     }
 
 }

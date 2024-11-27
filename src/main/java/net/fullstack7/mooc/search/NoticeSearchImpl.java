@@ -12,6 +12,7 @@ import org.springframework.data.jpa.repository.support.QuerydslRepositorySupport
 
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class NoticeSearchImpl extends QuerydslRepositorySupport implements NoticeSearch {
     public NoticeSearchImpl() {
@@ -37,16 +38,23 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
             }
         }
 
-        if(bb.hasValue())
+        if (bb.hasValue())
             query.where(bb);
 
         query.orderBy(noticeq.importance.asc(), noticeq.createdAt.desc());
 
         Objects.requireNonNull(this.getQuerydsl()).applyPagination(pageable, query);
         List<Notice> notices = query.fetch();
-        List<NoticeDTO> dtos = notices.stream().map(item -> {
-            return NoticeDTO.builder().adminId(item.getAdmin().getAdminId()).build();
-        }).toList();
+        List<NoticeDTO> dtos = notices.stream().map(item ->
+                NoticeDTO.builder()
+                        .adminId(item.getAdmin().getAdminId())
+                        .noticeId(item.getNoticeId())
+                        .title(item.getTitle())
+                        .content(item.getContent())
+                        .importance(item.getImportance())
+                        .createdAt(item.getCreatedAt())
+                        .build()
+        ).collect(Collectors.toList());
 
         int total = (int) query.fetchCount();
 

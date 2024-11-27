@@ -164,15 +164,10 @@
         <form method="post" >
         <h1>공지사항</h1>
         <div class="report-header">
-            <span class="category">어드민 아이디</span>
-            <h2><input type="text" th:value="">공지 제목</h2>
-        </div>
-        <div class="report-info">
-            <span>작성일: <strong>2023.07.28</strong></span>
-            <span>수정일: <strong>2023.07.28</strong></span>
+            <h2><input type="text" value="" placeholder="제목"></h2>
         </div>
         <div class="report-content">
-            <p><input type="text" th:value="">공지내용</p>
+            <textarea type="text" placeholder="내용"></textarea>
         </div>
         <hr>
         <button class="back-modify">수정</button>
@@ -187,13 +182,5 @@
 
 <div th:replace="admin/footer :: footer"></div>
 
-<script>
-    const backBtn = document.getElementById("backBtn")
-
-        backBtn.addEventListener("click", ()=>{
-            location.href='/admin/course/courselist'
-        });
-
-</script>
 </body>
 </html>

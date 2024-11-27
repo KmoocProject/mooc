@@ -163,15 +163,15 @@
     <div class="container">
         <h1>공지사항</h1>
         <div class="report-header">
-            <span class="category">어드민 아이디</span>
-            <h2>공지 제목</h2>
+            <span class="category">관리자</span>
+            <h2>[[${item.title}]]</h2>
         </div>
         <div class="report-info">
-            <span>작성일: <strong>2023.07.28</strong></span>
-            <span>수정일: <strong>2023.07.28</strong></span>
+            <span>작성일: <strong th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></strong></span>
         </div>
         <div class="report-content">
-            <p>공지내용</p>
+            <p th:text="${item.content}">
+            </p>
         </div>
         <hr>
         <button class="back-modify" id="btnModity">수정</button>
@@ -189,14 +189,14 @@
     const backBtn = document.getElementById("backBtn")
 
         backBtn.addEventListener("click", ()=>{
-            location.href='/admin/inform/list'
+            location.href='/admin/noticeList'
         });
 
-    const btnModity = document.getElementById("btnModity")
-
-    btnModity.addEventListener("click", ()=>{
-        location.href='/admin/inform/modify'
-    });
+    // const btnModity = document.getElementById("btnModity")
+    //
+    // btnModity.addEventListener("click", ()=>{
+    //     location.href='/admin/noticeModify';
+    // });
 
 
 </script>
