@@ -12,6 +12,8 @@ import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 @Log4j2
@@ -33,6 +35,11 @@ public class MemberServiceImpl implements MemberServiceIf {
             }
         }
         return null;
+    }
+
+    public String findId(String email){
+        Optional<Member> member = memberRepository.findByMemberId(email);
+        return member.map(Member::getMemberId).orElse(null);
     }
 
     @Override
@@ -88,16 +95,30 @@ public class MemberServiceImpl implements MemberServiceIf {
         return memberMapper.modifyWithoutPassword(member);
     }
 
+//    @Override
+//    public void deleteMember(String memberId) {
+//        try {
+//            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
+//            memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
+//        }catch (Exception e) {
+//            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
+//            throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
+//        }
+//    }
 
     @Override
     public void deleteMember(String memberId) {
         try {
             log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
-            memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
-        }catch (Exception e) {
+            int updatedRows = memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
+            if (updatedRows > 0) {
+                log.info("회원 탈퇴 처리 성공, memberId: {}", memberId);
+            } else {
+                log.warn("회원 탈퇴 처리 실패, memberId: {}", memberId);
+            }
+        } catch (Exception e) {
             log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
+            throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
         }
     }
-
-
 }
