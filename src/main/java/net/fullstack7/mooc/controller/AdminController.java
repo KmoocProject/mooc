@@ -31,6 +31,11 @@ public class AdminController {
     private final AdminServiceIf adminService;
     private final NoticeServiceIf noticeService;
 
+    @GetMapping("/main")
+    public String main(Model model) {
+        return "admin/main";
+    }
+
     @GetMapping("/login")
     public String loginGet(HttpSession session, RedirectAttributes redirectAttributes) {
         if (session.getAttribute("loginAdminId") != null) {
@@ -62,10 +67,6 @@ public class AdminController {
         return "redirect:/admin/login";
     }
 
-    @GetMapping("/main")
-    public String mainGet() {
-        return "admin/main";
-    }
 
     @GetMapping("/memberList")
     public String memberListGet(Model model, @Valid AdminSearchDTO adminSearchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -168,7 +169,7 @@ public class AdminController {
             redirectAttributes.addFlashAttribute("errors", "삭제할 회원을 선택해주세요.");
             return "redirect:/admin/memberList";
         }
-        if ( (!typeSelect.equals("t") && !typeSelect.equals("s")) ) {
+        if ((!typeSelect.equals("t") && !typeSelect.equals("s"))) {
             redirectAttributes.addFlashAttribute("errors", "회원 분류 설정 오류");
             return "redirect:/admin/memberList";
         }
@@ -200,7 +201,7 @@ public class AdminController {
     public String noticeListGet(@Valid PageDTO<Notice> pageDTO, BindingResult bindingResult
             , Model model, RedirectAttributes redirectAttributes) {
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             pageDTO = PageDTO.<Notice>builder().build();
         }
 
@@ -216,7 +217,7 @@ public class AdminController {
 
     @GetMapping("/noticeView/{noticeId}")
     public String noticeViewGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes) {
-        if(noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+        if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/admin/noticeList";
         }
@@ -225,7 +226,7 @@ public class AdminController {
 
         Notice view = noticeService.view(id);
 
-        if(view == null) {
+        if (view == null) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/admin/noticeList";
         }
@@ -241,12 +242,16 @@ public class AdminController {
     }
 
     @PostMapping("/noticeRegist")
-    public String noticeRegistPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String noticeRegistPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes
+            , HttpSession session) {
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
             redirectAttributes.addFlashAttribute("item", noticeDTO);
             return "redirect:/admin/noticeRegist";
         }
+
+
+        noticeDTO.setAdminId(session.getAttribute("loginAdminId").toString());
 
         adminService.insertNotice(noticeDTO);
 
@@ -255,7 +260,7 @@ public class AdminController {
 
     @GetMapping("/noticeModify/{noticeId}")
     public String noticeModifyGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes) {
-        if(noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+        if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/admin/noticeList";
         }
@@ -264,7 +269,7 @@ public class AdminController {
 
         Notice view = noticeService.view(id);
 
-        if(view == null) {
+        if (view == null) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/admin/noticeList";
         }
@@ -275,14 +280,35 @@ public class AdminController {
     }
 
     @PostMapping("/noticeModify/{noticeId}")
-    public String noticeModifyPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+    public String noticeModifyPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes
+            , @PathVariable String noticeId
+            , HttpSession session) {
+        if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
         if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/admin/noticeModify";
         }
+        noticeDTO.setAdminId((String) session.getAttribute("loginAdminId"));
 
-        adminService.insertNotice(noticeDTO);
+        adminService.modifyNotice(noticeDTO);
 
+        return "redirect:/admin/noticeList";
+    }
+
+    @GetMapping("/noticeDelete/{noticeId}")
+    public String noticeDeleteGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes
+    , HttpSession session) {
+        if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+            redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
+            return "redirect:/admin/noticeList";
+        }
+        int id = Integer.parseInt(noticeId);
+        String result = adminService.deleteNotice(id, (String)session.getAttribute("loginAdminId"));
+        log.info("========================="+result);
+        redirectAttributes.addFlashAttribute("errors", result);
         return "redirect:/admin/noticeList";
     }
 

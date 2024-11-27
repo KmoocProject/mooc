@@ -73,7 +73,12 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     @Transactional
     public void deleteMember(String memberId) {
-        memberMapper.deleteMember(memberId);
+        try {
+            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
+            memberMapper.deleteMember(memberId);
+        }catch (Exception e) {
+            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
+        }
     }
 
 

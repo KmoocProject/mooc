@@ -70,10 +70,14 @@
         background-color: red;
         color: white;
         border-radius: 3px;
+        font-size: small;
     }
 
 </style>
 <body>
+<script th:if="${errors}">
+    alert(`[[${errors}]]`);
+</script>
 
 <div th:replace="admin/header :: header"></div>
 

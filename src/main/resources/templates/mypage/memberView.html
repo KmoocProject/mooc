@@ -130,7 +130,7 @@
             <form method="post">
                 <div class="form-group">
                     <label for="user-id">사용자 아이디</label>
-                    <input type="text" id="user-id" value="example123" readonly>
+                    <input type="text" id="user-id" th:value="${member.memberId}" readonly>
                 </div>
 
                 <div class="form-group">
@@ -140,18 +140,18 @@
 
                 <div class="form-group">
                     <label for="name">한글 이름</label>
-                    <input type="text" id="name" value="사용자">
+                    <input type="text" id="name" th:value="${member.userName}" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="email">이메일 주소</label>
-                    <input type="email" id="email" value="example123@gmail.com">
+                    <input type="email" id="email" th:value="${member.email}">
                 </div>
 
                 <!-- Actions Section -->
                 <div class="actions">
-                    <button class="btn btn-cancel">회원 탈퇴</button>
-                    <button class="btn btn-save">저장</button>
+                    <button class="btn btn-cancel" type="button" id="deleteBtn">회원 탈퇴</button>
+                    <button class="btn btn-save" type="submit">저장</button>
                 </div>
             </form>
         </div>
