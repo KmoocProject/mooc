@@ -83,4 +83,41 @@ public class TeacherApiController {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
+
+    @PutMapping("/lectures/{lectureId}")
+    public ResponseEntity<ApiResponse<Void>> updateLecture(
+            @PathVariable int lectureId,
+            @RequestBody LectureUpdateDTO dto) {
+        try {
+            courseService.updateLecture(lectureId, dto);
+            return ResponseEntity.ok(ApiResponse.success("섹션이 성공적으로 수정되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @PutMapping("/lectures/{lectureId}/contents/{contentId}")
+    public ResponseEntity<ApiResponse<Void>> updateContent(
+            @PathVariable int lectureId,
+            @PathVariable int contentId,
+            @ModelAttribute LectureContentUpdateDTO dto) {
+        try {
+            courseService.updateContent(contentId, dto);
+            return ResponseEntity.ok(ApiResponse.success("콘텐츠가 성공적으로 수정되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+
+    @DeleteMapping("/lectures/{lectureId}/contents/{contentId}")
+    public ResponseEntity<ApiResponse<Void>> deleteContent(
+            @PathVariable int lectureId,
+            @PathVariable int contentId) {
+        try {
+            courseService.deleteContent(contentId);
+            return ResponseEntity.ok(ApiResponse.success("콘텐츠가 성공적으로 삭제되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
 }
