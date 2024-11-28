@@ -57,7 +57,15 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
     
     //비밀번호 찾기
-    
+    public String findPwd(MemberDTO memberDTO) {
+        Optional<Member> memberOptional = memberRepository.findByEmail(memberDTO.getEmail());
+        if(memberOptional.isPresent()) {
+            return memberOptional.get().getPassword();
+        } else {
+            return "fail";
+        }
+    }
+
     //회원조회
     @Override
     public MemberDTO viewMember(String memberId) {

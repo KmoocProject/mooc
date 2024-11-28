@@ -128,7 +128,6 @@ public class MyPageController {
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         System.out.println("POST 요청 받음");
 
-        
         // 유효성 검사 실패 시
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());

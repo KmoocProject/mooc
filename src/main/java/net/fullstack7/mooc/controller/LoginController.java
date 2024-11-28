@@ -169,7 +169,7 @@ public class LoginController extends HttpServlet {
 
     //아이디 찾기
     @GetMapping("/findId")
-    public String findId(Model model, HttpServletRequest request) {
+    public String findId() {
         return "login/findId";
     }
 
@@ -212,7 +212,35 @@ public class LoginController extends HttpServlet {
     }
 
     @PostMapping("/findPwd")
-    public String findPwdPost(@RequestParam String memberId, HttpSession session, Model model) {
-        return "redirect:/login/login";
-    }
+        public String findPwdPost (MemberDTO memberDTO, HttpServletResponse response){
+            String findPwd = memberService.findPwd(memberDTO);
+            if (!"fail".equals(findPwd)) {
+                try {
+                    response.setContentType("text/html;charset=UTF-8");
+                    PrintWriter w = response.getWriter();
+                    w.write("<script>alert('" + memberDTO.getEmail() + "님의 비밀번호는 [" + findPwd + "] 입니다.' );</script>");
+                    w.write("<script>location.href='/login/login';</script>");
+                    w.flush();
+                    w.close();
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                try {
+                    response.setContentType("text/html;charset=UTF-8");
+                    PrintWriter w = response.getWriter();
+                    w.write("<script>alert('입력한 회원정보가 없습니다. 다시 확인해주세요.');</script>");
+                    w.write("<script>location.href='/login/findId';</script>");
+                    w.flush();
+                    w.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            return null;
+        }
+
 }
