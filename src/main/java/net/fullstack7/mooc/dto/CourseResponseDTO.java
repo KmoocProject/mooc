@@ -5,6 +5,9 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import net.fullstack7.mooc.domain.Course;
+
+import java.time.LocalDateTime;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -19,6 +22,8 @@ public class CourseResponseDTO {
     private int isCreditBank;
     private String thumbnail;
     private String status;
+    private String teacherName;
+    private LocalDateTime enrollmentDate;
     
     public static CourseResponseDTO from(Course course) {
         return CourseResponseDTO.builder()

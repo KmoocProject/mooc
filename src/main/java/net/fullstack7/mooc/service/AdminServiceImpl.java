@@ -140,7 +140,7 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO) {
-        Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null);
+        Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null, -1);
         return courses;
     }
 

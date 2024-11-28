@@ -1,8 +1,12 @@
 package net.fullstack7.mooc.service;
 
 import jakarta.transaction.Transactional;
+import net.fullstack7.mooc.dto.CourseResponseDTO;
+import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.ui.Model;
 
 public interface MemberServiceIf {
@@ -22,4 +26,6 @@ public interface MemberServiceIf {
     int modifyMember(MemberModifyDTO memberModifyDTO);
     int modifyWithoutPassword(MemberModifyDTO memberModifyDTO);
     void deleteMember(String memberId);
+
+    Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted);
 }

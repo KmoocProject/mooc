@@ -17,4 +17,30 @@ public class MainController {
         return "main/main";
     }
 
+    @GetMapping("/footer/personalrule")
+    public String personalrule() {
+        return "main/footer/personalrule";
+    }
+
+    @GetMapping("/footer/userterms")
+    public String userterms() {
+        return "main/footer/userterms";
+    }
+
+    @GetMapping("/footer/copyright")
+    public String copyright() {
+        return "main/footer/copyright";
+    }
+
+    @GetMapping("/footer/intro")
+    public String intro() {
+        return "main/footer/intro";
+    }
+
+    @GetMapping("/footer/business")
+    public String business() {
+        return "main/footer/business";
+    }
+
+
 }

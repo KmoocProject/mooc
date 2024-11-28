@@ -4,9 +4,12 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.domain.Course;
 import net.fullstack7.mooc.domain.Member;
+import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
+import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.service.MemberServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,17 +28,25 @@ import java.util.Map;
 @RequiredArgsConstructor
 @RequestMapping("/mypage")
 public class MyPageController {
-    @Autowired
-    private final MemberServiceImpl memberServiceImpl;
+    private final MemberServiceIf memberServiceImpl;
 
     //마이클래스 이동
     @GetMapping("/myclass")
-    public String mypage(Model model, HttpSession session) {
+    public String mypage(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            searchDTO = CourseSearchDTO.builder().build();
+        }
+
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
         if (memberDTO == null) {
             return "redirect:/login/login";
         }
         model.addAttribute("member", memberDTO);
+
+        searchDTO.initialize();
+        model.addAttribute("courselist", memberServiceImpl.getCourses(searchDTO, memberDTO.getMemberId(), -1));
+//        model.addAttribute("pageInfo", searchDTO);
+
         return "mypage/myclass";
     }
 
