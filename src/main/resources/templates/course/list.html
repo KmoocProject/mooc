@@ -215,7 +215,7 @@
                         <option th:value="${inst.institutionId}" th:text="${inst.institutionName}" th:selected="${pageInfo.institutionId==inst.institutionId}"></option>
                     </th:block>
                 </select>
-                <button class="reset-btn" type="reset">↻</button>
+                <button class="reset-btn">↻</button>
             </div>
         </form>
         <!-- Course List Section -->
@@ -246,6 +246,14 @@
             searchForm.submit();
         });
     }, );
+
+    document.querySelector(".reset-btn").addEventListener("click", (evt) => {
+        evt.preventDefault();
+        selectElements.forEach(value => {
+            value.firstElementChild.selected = true;
+        })
+        searchForm.submit();
+    });
 
 </script>
 
