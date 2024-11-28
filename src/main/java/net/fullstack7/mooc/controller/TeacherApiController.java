@@ -9,6 +9,7 @@ import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;  

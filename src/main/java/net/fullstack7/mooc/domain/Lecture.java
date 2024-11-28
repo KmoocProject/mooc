@@ -2,6 +2,8 @@ package net.fullstack7.mooc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -23,6 +25,11 @@ public class Lecture {
     @ManyToOne
     @JoinColumn(name="courseId", nullable = false)
     private Course course;
+
+    @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
+    @OrderBy("lectureContentId ASC")
+    @Builder.Default
+    private List<LectureContent> contents = new ArrayList<>();
 
     //courseId; // INT NOT NULL, -- 강좌 ID
 //    FOREIGN KEY (courseId) REFERENCES course(courseId) -- 강좌 ID 외래 키

@@ -12,5 +12,7 @@ import java.util.Optional;
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
     List<Quiz> findByLectureContentOrderByQuizIdAsc(LectureContent lectureContent);
     Optional<Quiz> findByQuizId(int quizId);
+    List<Quiz> findAllByLectureContent(LectureContent lectureContent);
     Optional<Quiz> findByLectureContent(LectureContent lectureContent);
+    void deleteAllByLectureContent(LectureContent lectureContent);
 }

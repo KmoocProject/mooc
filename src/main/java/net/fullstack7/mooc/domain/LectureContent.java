@@ -2,6 +2,8 @@ package net.fullstack7.mooc.domain;
 
 import jakarta.persistence.*;
 import lombok.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -17,7 +19,7 @@ public class LectureContent {
     private int lectureContentId; // INT PRIMARY KEY AUTO_INCREMENT, -- 강의 영역 콘텐츠 ID
     @Column(name="title", nullable = false, length = 200)
     private String title; // VARCHAR(200) NOT NULL, -- 강의 영역 콘텐츠 제목
-    @Column(name="description", columnDefinition = "text null default ''")
+    @Column(name="description", columnDefinition = "text")
     private String description; // TEXT NOT NULL, -- 강의 영역 콘텐츠 설명
 //    private int lectureId; // INT NOT NULL, -- 강의 영역 ID
 
@@ -28,4 +30,20 @@ public class LectureContent {
     @Column(name="isVideo", columnDefinition = "tinyint(1) default 0")
     private int isVideo; // TINYINT(1) DEFAULT 0, -- 동영상 여부
 //    FOREIGN KEY (lectureId) REFERENCES lecture(lectureId)
+
+    @OneToOne(mappedBy = "lectureContent", fetch = FetchType.LAZY)
+    private LectureFile lectureFile;
+
+    @OneToMany(mappedBy = "lectureContent", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Quiz> quizzes = new ArrayList<>();
+
+    public void addQuiz(Quiz quiz) {
+        this.quizzes.add(quiz);
+        quiz.setLectureContent(this);
+    }
+
+    public void clearQuizzes() {
+        this.quizzes.clear();
+    }
 }

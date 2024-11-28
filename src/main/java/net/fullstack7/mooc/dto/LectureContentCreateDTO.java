@@ -37,22 +37,12 @@ public class LectureContentCreateDTO {
     private MultipartFile file;
 
     // quiz 타입일 경우에만 필수
-    private String question;
-    private String answer;
+    private List<QuizDTO> quizzes;
 
     @AssertTrue(message = "동영상/문서 타입의 경우 파일은 필수입니다")
     private boolean isFileValid() {
         if ("video".equals(type) || "file".equals(type)) {
             return file != null && !file.isEmpty();
-        }
-        return true;
-    }
-
-    @AssertTrue(message = "퀴즈 타입의 경우 문제와 답변은 필수입니다")
-    private boolean isQuizValid() {
-        if ("quiz".equals(type)) {
-            return question != null && !question.isBlank() 
-                && answer != null && !answer.isBlank();
         }
         return true;
     }
