@@ -84,7 +84,7 @@ public class CourseService {
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션입니다."));
 
     if (("video".equals(dto.getType()) || "file".equals(dto.getType())) && dto.getFile() == null) {
-        throw new IllegalArgumentException("파일은 필수입니다.");
+      throw new IllegalArgumentException("파일은 필수입니다.");
     }
 
     LectureContent content = LectureContent.builder()
@@ -97,27 +97,27 @@ public class CourseService {
     LectureContent savedContent = lectureContentRepository.save(content);
 
     switch (dto.getType()) {
-        case "video", "file" -> {
-            String filePath = "video".equals(dto.getType()) 
-                ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
-                : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-            saveLectureFile(content, dto.getFile(), filePath);
+      case "video", "file" -> {
+        String filePath = "video".equals(dto.getType())
+            ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
+            : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
+        saveLectureFile(content, dto.getFile(), filePath);
+      }
+      case "quiz" -> {
+        if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
+          throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
         }
-        case "quiz" -> {
-            if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
-                throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
-            }
-            savedContent.setQuizzes(new ArrayList<>());
-            dto.getQuizzes().forEach(quizDTO -> {
-                Quiz quiz = Quiz.builder()
-                    .question(quizDTO.getQuestion())
-                    .answer(quizDTO.getAnswer())
-                    .lectureContent(savedContent)
-                    .build();
-                savedContent.getQuizzes().add(quiz);
-                quizRepository.save(quiz);
-            });
-        }
+        content.setIsVideo(0);
+
+        // 퀴즈 생성 및 연결
+        dto.getQuizzes().forEach(quizDTO -> {
+          Quiz quiz = Quiz.builder()
+              .question(quizDTO.getQuestion())
+              .answer(quizDTO.getAnswer())
+              .build();
+          content.addQuiz(quiz);
+        });
+      }
     }
     return savedContent;
   }
@@ -149,48 +149,48 @@ public class CourseService {
   public void updateContent(int contentId, LectureContentUpdateDTO dto) throws IOException {
     LectureContent content = lectureContentRepository.findById(contentId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
-    
+
     content.setTitle(dto.getTitle());
     content.setDescription(dto.getDescription());
-    
+
     switch (dto.getType()) {
-        case "video", "file" -> {
-            content.setIsVideo("video".equals(dto.getType()) ? 1 : 0);
-            if (dto.getFile() != null) {
-                LectureFile oldFile = lectureFileRepository.findByLectureContent(content)
-                    .orElse(null);
-                if (oldFile != null) {
-                    fileUploadUtil.deleteFile(oldFile.getFilePath());
-                    lectureFileRepository.delete(oldFile);
-                }
-                
-                String filePath = dto.getType().equals("video") 
-                    ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
-                    : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-                saveLectureFile(content, dto.getFile(), filePath);
-            }
+      case "video", "file" -> {
+        content.setIsVideo("video".equals(dto.getType()) ? 1 : 0);
+        if (dto.getFile() != null) {
+          LectureFile oldFile = lectureFileRepository.findByLectureContent(content)
+              .orElse(null);
+          if (oldFile != null) {
+            fileUploadUtil.deleteFile(oldFile.getFilePath());
+            lectureFileRepository.delete(oldFile);
+          }
+
+          String filePath = dto.getType().equals("video")
+              ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
+              : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
+          saveLectureFile(content, dto.getFile(), filePath);
         }
-        case "quiz" -> {
-            content.setIsVideo(0);
-            // 기존 퀴즈들 모두 삭제
-            quizRepository.deleteAllByLectureContent(content);
-            
-            // 새 퀴즈들 생성
-            if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
-                throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
-            }
-            
-            dto.getQuizzes().forEach(quizDTO -> {
-                Quiz quiz = Quiz.builder()
-                    .question(quizDTO.getQuestion())
-                    .answer(quizDTO.getAnswer())
-                    .lectureContent(content)
-                    .build();
-                quizRepository.save(quiz);
-            });
+      }
+      case "quiz" -> {
+        content.setIsVideo(0);
+        // 기존 퀴즈들 모두 삭제
+        quizRepository.deleteAllByLectureContent(content);
+
+        // 새 퀴즈들 생성
+        if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
+          throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
         }
+
+        dto.getQuizzes().forEach(quizDTO -> {
+          Quiz quiz = Quiz.builder()
+              .question(quizDTO.getQuestion())
+              .answer(quizDTO.getAnswer())
+              .lectureContent(content)
+              .build();
+          quizRepository.save(quiz);
+        });
+      }
     }
-    
+
     lectureContentRepository.save(content);
   }
 
@@ -246,7 +246,7 @@ public class CourseService {
                 } else {
                   // 퀴즈인 경우
                   List<Quiz> quizzes = quizRepository.findAllByLectureContent(content);
-                  if(!quizzes.isEmpty()) {
+                  if (!quizzes.isEmpty()) {
                     contentDTO.setQuizzes(quizzes.stream()
                         .map(quiz -> QuizDTO.builder()
                             .quizId(quiz.getQuizId())
@@ -281,8 +281,8 @@ public class CourseService {
         .lectures(lectureDTOs)
         .build();
   }
-//  public Course findByCourseId(int courseId) {
-//      return courseRepository.findByCourseId(courseId)
-//          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
-//  }
+  // public Course findByCourseId(int courseId) {
+  // return courseRepository.findByCourseId(courseId)
+  // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+  // }
 }
