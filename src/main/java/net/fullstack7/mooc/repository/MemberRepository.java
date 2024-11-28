@@ -13,6 +13,9 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, String>, MemberSearch {
     Optional<Member> findByMemberId(String memberId);
 
+    @Query("SELECT m FROM Member m WHERE m.email = :email")
+    Optional<Member> findByEmail(String email);
+
     @Modifying
     @Query("update Member M set M.status = :status where M.memberId = :memberId")
     int updateStatusByMemberId(String memberId, String status);
