@@ -127,39 +127,84 @@
         <!-- Basic Information Section -->
         <div class="section">
             <h2>기본정보</h2>
-            <form method="post">
+            <form method="post" action="/mypage/memberModify">
                 <div class="form-group">
-                    <label for="user-id">사용자 아이디</label>
-                    <input type="text" id="user-id" th:value="${member.memberId}" readonly>
+                    <label for="memberId">사용자 아이디</label>
+                    <input type="text" id="memberId" th:field="${member.memberId}" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="password">비밀번호 변경</label>
-                    <input type="password" id="password" placeholder="새 비밀번호 입력">
+                    <input type="password" id="password" th:field="${member.password}" >
                 </div>
 
                 <div class="form-group">
                     <label for="name">한글 이름</label>
-                    <input type="text" id="name" th:value="${member.userName}" readonly>
+                    <input type="text" id="name" th:field="${member.userName}" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="email">이메일 주소</label>
-                    <input type="email" id="email" th:value="${member.email}">
+                    <input type="email" id="email" th:field="${member.email}">
+                </div>
+
+                <div th:if="${errors != null}">
+                    <ul>
+                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                    </ul>
                 </div>
 
                 <!-- Actions Section -->
                 <div class="actions">
-                    <button class="btn btn-cancel" type="button" id="deleteBtn">회원 탈퇴</button>
-                    <button class="btn btn-save" type="submit" id="modifyBtn" th:onclick="mypage()">저장</button>
+                    <button class="btn btn-cancel" type="button" id="deleteBtn" th:data-member-id="${member.memberId}">회원 탈퇴</button>
+                    <button class="btn btn-save" type="submit" id="modifyBtn" >저장</button>
                 </div>
             </form>
         </div>
 
     </div>
+
+<!--    <div th:if="${successMessage != null}">-->
+<!--        <p th:text="${successMessage}"></p>-->
+<!--    </div>-->
+<!--    <div th:if="${errorMessage != null}">-->
+<!--        <p th:text="${errorMessage}"></p>-->
+<!--    </div>-->
 </section>
 
 <div th:replace="main/footer :: footer"></div>
+
+<script>
+    document.getElementById("deleteBtn").addEventListener("click", function () {
+        if (confirm("정말로 회원 탈퇴하시겠습니까?")) {
+            // 회원 탈퇴 요청을 보내기 전에 세션에서 memberId를 가져옵니다.
+            // const memberId = "${member.memberId}"; // Thymeleaf를 사용하여 서버에서 회원 ID를 동적으로 전달
+            const memberId = this.getAttribute("data-member-id");
+            console.log("삭제할 회원 ID: " + memberId);
+            fetch('/mypage/memberDelete', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `memberId=${memberId}`
+            })
+                .then(response => response.json())  // 응답을 JSON으로 파싱
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);  // 성공 메시지
+                        window.location.href = '/main/main'; // 탈퇴 후 메인 페이지로 리다이렉트
+                    } else {
+                        alert(data.message);  // 실패 메시지
+                    }
+                })
+                .catch(error => {
+                    alert("오류가 발생했습니다. 다시 시도해주세요.");
+                    console.error("Error:", error);
+                });
+        }
+    });
+
+</script>
 
 </body>
 </html>

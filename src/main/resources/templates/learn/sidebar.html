@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="ko"
+      xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+>
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<div class="main-container" th:fragment="sidebar">
+    <aside class="sidebar">
+        <h2>강의의 목록</h2>
+        <ul class="lecture-list">
+            <li><strong>강의 개요</strong></li>
+            <li><a href="#">[1주차] 개인 비전의 실현</a></li>
+            <li><a href="#">[2주차] 시장 트렌드의 발견</a></li>
+        </ul>
+        <h2>학습 활동</h2>
+        <ul class="activity-list">
+            <li><a href="#">게시판</a></li>
+            <li><a href="#">과제</a></li>
+            <li><a href="#">퀴즈</a></li>
+            <li><a href="#">성적조회</a></li>
+            <li><a href="#">QnA</a></li>
+            <li><a href="#">공지사항</a></li>
+            <li><a href="#">자료실</a></li>
+        </ul>
+    </aside>
+
+    <div class="content">
+        <header class="header2">
+            <h1 style="margin-left: 20px;">스타트업 비즈니스 기획론</h1>
+            <div class="user-info">
+                <span style="margin-right: 20px;">서리빈</span>
+            </div>
+        </header>
+
+</body>
+</html>

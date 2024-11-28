@@ -8,10 +8,7 @@ import net.fullstack7.mooc.domain.Admin;
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.domain.Teacher;
-import net.fullstack7.mooc.dto.AdminLoginDTO;
-import net.fullstack7.mooc.dto.AdminSearchDTO;
-import net.fullstack7.mooc.dto.NoticeDTO;
-import net.fullstack7.mooc.dto.PageDTO;
+import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import net.fullstack7.mooc.service.NoticeServiceIf;
 import org.springframework.data.domain.Page;
@@ -74,6 +71,8 @@ public class AdminController {
             adminSearchDTO = AdminSearchDTO.<Teacher>builder().build();
         }
 
+        adminSearchDTO.initialize();
+
         if (adminSearchDTO.getTypeSelect().equals("t"))
             model.addAttribute("pageinfo", adminService.getTeachers(adminSearchDTO));
         else
@@ -100,6 +99,7 @@ public class AdminController {
                 return "redirect:/admin/memberList";
             }
             model.addAttribute("item", item);
+            model.addAttribute("type", "t");
         } else if (typeSelect.equals("s")) {
             Member item = adminService.getMember(memberId);
             if (item == null) {
@@ -107,12 +107,13 @@ public class AdminController {
                 return "redirect:/admin/memberList";
             }
             model.addAttribute("item", item);
+            model.addAttribute("type", "s");
         } else {
             redirectAttributes.addFlashAttribute("errors", "조회 실패 - 존재하지 않는 회원 유형");
             return "redirect:/admin/memberList";
         }
 
-        return "admin/memberView";
+        return "admin/member/memberView";
     }
 
     @GetMapping("/memberModify")
@@ -182,18 +183,66 @@ public class AdminController {
     @GetMapping("/approve/{teacherId}")
     public String approveGet(@PathVariable String teacherId, Model model, RedirectAttributes redirectAttributes) {
         if (teacherId == null) {
+            redirectAttributes.addFlashAttribute("erros", "존재하지 않는 계정입니다.");
+            return "redirect:/admin/memberList";
         }
-
+        adminService.approveTeacherRegist(teacherId);
         return "redirect:/admin/memberList";
     }
 
-
-    /*
-    나중에 김경민이 다 하면 날먹하기
-     */
     @GetMapping("/courseList")
-    public String courseListGet(Model model, RedirectAttributes redirectAttributes) {
-        return "admin/course/courselist";
+    public String courseListGet(@Valid CourseSearchDTO searchDTO, BindingResult bindingResult
+            , Model model, RedirectAttributes redirectAttributes) {
+
+        if (bindingResult.hasErrors()) {
+            searchDTO = CourseSearchDTO.builder().build();
+        }
+
+        searchDTO.initialize();
+
+        model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
+        model.addAttribute("searchinfo", searchDTO);
+
+        return "admin/course/courseList";
+    }
+
+    @GetMapping("/courseView/{courseId}")
+    public String courseView(Model model, RedirectAttributes redirectAttributes, @PathVariable String courseId) {
+        if (courseId == null || !courseId.matches("^\\d+$")) {
+            redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
+            return "redirect:/admin/courseList";
+        }
+
+        int id = Integer.parseInt(courseId);
+
+        //수정
+        model.addAttribute("item", "여기에 조회한 거 넣기");
+
+        return "admin/course/courseView";
+    }
+
+    @GetMapping("/courseModify")
+    public String courseModifyGet(@RequestParam(defaultValue = "0") int courseId, Model model, RedirectAttributes redirectAttributes) {
+        if (courseId == 0) {
+            redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
+            return "redirect:/admin/courseList";
+        }
+
+        //승인해주는 코드 넣기
+
+        return "redirect:/admin/courseView/"+courseId;
+    }
+
+    @GetMapping("/courseDelete")
+    public String courseDeleteGet(@RequestParam(defaultValue = "0") int courseId, Model model, RedirectAttributes redirectAttributes) {
+        if (courseId == 0) {
+            redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
+            return "redirect:/admin/courseList";
+        }
+
+        //삭제하는 코드 넣기
+
+        return "redirect:/admin/courseList";
     }
 
     @GetMapping("/noticeList")
@@ -299,14 +348,14 @@ public class AdminController {
 
     @GetMapping("/noticeDelete/{noticeId}")
     public String noticeDeleteGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes
-    , HttpSession session) {
+            , HttpSession session) {
         if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/admin/noticeList";
         }
         int id = Integer.parseInt(noticeId);
-        String result = adminService.deleteNotice(id, (String)session.getAttribute("loginAdminId"));
-        log.info("========================="+result);
+        String result = adminService.deleteNotice(id, (String) session.getAttribute("loginAdminId"));
+        log.info("=========================" + result);
         redirectAttributes.addFlashAttribute("errors", result);
         return "redirect:/admin/noticeList";
     }

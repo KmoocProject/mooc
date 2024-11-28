@@ -10,8 +10,10 @@ public interface MemberMapper {
     int registMember(Member member);
     String pwdCheck(String memberId);
     int modifyMember(Member member);
+    int modifyWithoutPassword(Member member);
     String memberIdCheck(String memberId);
     String emailCheck(String email);
 
     void deleteMember(String memberId);
+
 }

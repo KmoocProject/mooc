@@ -5,6 +5,7 @@
     align-items: center; /* Align items vertically */
     padding: 10px 20px;
     background-color: white;
+    flex-wrap: nowrap;
     gap: 300px; /* Add space between the logo and menu */
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1); /* Add a subtle shadow for better visibility */
 }
@@ -18,12 +19,14 @@
     display: flex;
     justify-content: center; /* Center-align menu list */
     align-items: center;
+    white-space: nowrap;
     gap: 20px; /* Add space between menu items */
 }
 
 .menu-list {
     display: flex;
     list-style: none;
+    white-space: nowrap;
     gap: 20px; /* Space between menu items */
     margin: 0;
     padding: 0;
@@ -101,6 +104,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    white-space: nowrap;
     gap: 15px; /* Space between login and register */
 }
 
@@ -142,4 +146,10 @@
         gap: 10px; /* Stack login/register buttons */
     }
 }
+
+
+
+
+
+
 

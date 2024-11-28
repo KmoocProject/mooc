@@ -20,7 +20,7 @@ public class CourseEnrollment {
     private int courseEnrollmentId; // INT PRIMARY KEY AUTO_INCREMENT, -- 강좌 등록 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
-    private Member memberId;
+    private Member member;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId", nullable = false)
     private Course course;

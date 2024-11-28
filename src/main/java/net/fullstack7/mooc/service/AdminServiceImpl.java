@@ -4,14 +4,8 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.*;
-import net.fullstack7.mooc.dto.AdminLoginDTO;
-import net.fullstack7.mooc.dto.AdminSearchDTO;
-import net.fullstack7.mooc.dto.NoticeDTO;
-import net.fullstack7.mooc.dto.PageDTO;
-import net.fullstack7.mooc.repository.AdminRepository;
-import net.fullstack7.mooc.repository.MemberRepository;
-import net.fullstack7.mooc.repository.NoticeRepository;
-import net.fullstack7.mooc.repository.TeacherRepository;
+import net.fullstack7.mooc.dto.*;
+import net.fullstack7.mooc.repository.*;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -28,6 +22,7 @@ public class AdminServiceImpl implements AdminServiceIf {
     private final TeacherRepository teacherRepository;
     private final MemberRepository memberRepository;
     private final NoticeRepository noticeRepository;
+    private final CourseRepository courseRepository;
 
     public boolean existsAdmin(String id) {
         return adminRepository.existsAdminByAdminId(id);
@@ -134,8 +129,9 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
-    public Page<Course> getCourses(AdminSearchDTO adminSearchDTO) {
-        return null;
+    public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO) {
+        Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null);
+        return courses;
     }
 
     @Override

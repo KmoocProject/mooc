@@ -39,12 +39,34 @@
 
     <update id="modifyMember">
         UPDATE member
-        SET memberId = #{memberId}, email = #{email}, password = #{password}
+        SET
+        memberId = #{memberId}
+        <if test="email != null and email != ''">
+            , email = #{email}
+        </if>
+        <if test="password != null and password != ''">
+            , password = #{password}
+        </if>
         WHERE memberId = #{memberId}
     </update>
+
+<!--    <update id="modifyMemberWithoutPassword">-->
+<!--        UPDATE member-->
+<!--        SET email = #{email}-->
+<!--        <if test="password != null and password != ''">-->
+<!--            , password = #{password}-->
+<!--        </if>-->
+<!--        WHERE memberId = #{memberId}-->
+<!--    </update>-->
 
     <delete id="deleteMember">
         DELETE FROM member
         WHERE memberId = #{memberId}
     </delete>
+
+    <select id="findId">
+        select *
+        from member
+        where email = #{email}
+    </select>
 </mapper>

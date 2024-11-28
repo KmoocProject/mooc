@@ -67,7 +67,6 @@ public class LoginController extends HttpServlet {
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.invalidate();
-        redirectAttributes.addFlashAttribute("errors", "로그인에 실패하였습니다.");
         return "redirect:/main/main";
     }
 
@@ -162,12 +161,20 @@ public class LoginController extends HttpServlet {
 
 //수정해
     @GetMapping("/findId")
-    public String findId() {
+    public String findId(Model model, HttpServletRequest request) {
         return "login/findId";
     }
     @PostMapping("/findId")
-    public String findIdPost(@RequestParam String memberId, HttpSession session, Model model) {
-        return "redirect:/login/login";
+    public String findIdPost(@RequestParam String email, Model model) {
+        String memberId = memberService.findId(email);
+        if(memberId != null){
+            model.addAttribute("memberId", memberId);
+            return "login/showMemberId";
+        } else {
+            model.addAttribute("errorMessage", "입력하신 이메일에 해당하는 아이디를 찾을 수 없습니다.");
+            return "login/findId";
+        }
+//        return "redirect:/login/login";
     }
 //수정해
     @GetMapping("/findPwd")
