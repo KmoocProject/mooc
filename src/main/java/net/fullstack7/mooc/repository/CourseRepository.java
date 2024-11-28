@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,4 +27,9 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
            "ORDER BY l.lectureId ASC, lc.lectureContentId ASC")
     Optional<Course> findCourseWithContentsById(@Param("courseId") int courseId);
     Optional<Course> findByCourseId(int courseId);
+
+    @Modifying
+    @Query("update Course C set C.status = :status where C.courseId = :courseId")
+    int updateStatus(int courseId, String status);
+
 }

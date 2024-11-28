@@ -165,12 +165,20 @@
                 <td th:text="${item.adminName}"></td>
             </tr>
             </tbody>
+            <button class="search-button" id="nRegist" style="font-size: 18px;">공지사항 등록</button>
         </table>
     </div>
 
 </section>
 
 <div th:replace="admin/footer :: footer"></div>
+
+<script>
+    const nRegist = document.getElementById("nRegist")
+    nRegist.addEventListener("click", ()=>{
+       location.href='/admin/noticeRegist'
+    });
+</script>
 
 </body>
 </html>

@@ -6,7 +6,7 @@ import net.fullstack7.mooc.dto.MemberModifyDTO;
 
 public interface MemberServiceIf {
     public MemberDTO login(String memberId, String password);
-    public String findId(String email);
+    public String findId(MemberDTO memberDTO);
     public MemberDTO viewMember(String memberId);
     public boolean pwdCheck(String memberId, String password);
     public int registMember(MemberDTO memberDTO);
@@ -15,8 +15,6 @@ public interface MemberServiceIf {
     public boolean emailCheck(String email);
 
     int modifyMember(MemberModifyDTO memberModifyDTO);
-
     int modifyWithoutPassword(MemberModifyDTO memberModifyDTO);
-
     void deleteMember(String memberId);
 }

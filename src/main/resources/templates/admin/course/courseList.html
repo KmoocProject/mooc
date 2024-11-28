@@ -87,7 +87,7 @@
         padding: 5px;
         border-radius: 5px;
         width: 100%;
-        max-width: 600px;
+        max-width: 800px;
         margin: 0 auto;
     }
 
@@ -135,21 +135,38 @@
 
 </style>
 <body>
+<script th:if="${errors}">
+    alert(`[[${errors}]]`);
+</script>
 
 <div th:replace="admin/header :: header"></div>
 
 <section class="content">
     <div class="container">
         <h1>강의 리스트</h1>
+        <form>
         <div class="search-bar">
-            <select class="category-dropdown">
-                <option value="all">전체</option>
-                <option value="category1">카테고리1</option>
-                <option value="category2">카테고리2</option>
-            </select>
-            <input type="text" class="search-input" placeholder="검색어를 입력하세요.">
-            <button class="search-button">찾기</button>
+
+
+                <input type="checkbox" name="isCreditBank" value="1" style="margin-right: 10px;"><span style="margin-right: 10px;">학점은행제</span>
+                <select class="category-dropdown" name="subjectId">
+                    <option value="" disabled selected>과목</option>
+                    <th:block th:each="subject, status:${subjects}">
+                        <option th:value="${subject.subjectId}" th:text="${subject.subjectName}"></option>
+                    </th:block>
+                </select>
+                <select class="category-dropdown" name="status">
+                    <option value="" disabled selected>상태</option>
+                    <option value="DRAFT">등록(미승인)</option>
+                    <option value="PUBLISHED">강의중(승인완료)</option>
+                    <option value="DELETED">강의종료(삭제)</option>
+                </select>
+                <input type="hidden" class="search-input" name="searchField" value="title">
+                <input type="text" class="search-input" name="searchValue" placeholder="강의명 검색">
+                <button class="search-button" type="submit">찾기</button>
+
         </div>
+        </form>
         <table id="result-table">
             <thead>
             <tr>

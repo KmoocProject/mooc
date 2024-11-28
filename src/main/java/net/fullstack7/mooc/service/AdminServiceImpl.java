@@ -25,7 +25,7 @@ public class AdminServiceImpl implements AdminServiceIf {
     private final CourseRepository courseRepository;
 
     public boolean existsAdmin(String id) {
-        return adminRepository.existsAdminByAdminId(id);
+        return adminRepository.existsById(id);
     }
 
     @Override
@@ -82,9 +82,25 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
+    public String modifyMemberStatus(String type, String userId) {
+        String status = type.substring(0, type.length() -1);
+        if(type.endsWith("t") && teacherRepository.existsByTeacherId(userId) ) {
+            teacherRepository.updateStatusByTeacherId(userId, status);
+        }
+        else if(type.endsWith("s") && memberRepository.existsById(userId)) {
+            memberRepository.updateStatusByMemberId(userId, status);
+        }
+        else {
+            return "변경 불가";
+        }
+        return "변경되었습니다.";
+    }
+
+    @Override
     public String approveTeacherRegist(String teacherId) {
         if(teacherRepository.existsByTeacherId(teacherId)){
             teacherRepository.updateIsApprovedByTeacherId(teacherId, 1);
+            teacherRepository.updateStatusByTeacherId(teacherId, "ACTIVE");
             return teacherId + " 승인 완료";
         }
         return "존재하지 않는 계정입니다.";
@@ -93,19 +109,13 @@ public class AdminServiceImpl implements AdminServiceIf {
     @Override
     public Teacher getTeacher(String id) {
         Optional<Teacher> teacher = teacherRepository.findByTeacherId(id);
-        if(teacher.isPresent()) {
-            return teacher.get();
-        }
-        return null;
+        return teacher.orElse(null);
     }
 
     @Override
     public Member getMember(String id) {
-        Optional<Member> member = memberRepository.findByMemberId(id);
-        if(member.isPresent()) {
-            return member.get();
-        }
-        return null;
+        Optional<Member> member = memberRepository.findById(id);
+        return member.orElse(null);
     }
 
     @Override
@@ -135,6 +145,24 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
+    public Course getCourse(int id) {
+        return courseRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public String modifyCourseStatus(String type, int courseId) {
+        if(!type.equals("DRAFT") && !type.equals("PUBLISHED") && !type.equals("DELETED")) {
+            return "타입 오류";
+        }
+
+        if(courseRepository.existsById(courseId)) {
+            courseRepository.updateStatus(courseId, type);
+            return "변경 완료";
+        }
+        return "없는 강의";
+    }
+
+    @Override
     public String insertNotice(NoticeDTO dto) {
         Notice notice = Notice.builder()
                 .admin(Admin.builder().adminId(dto.getAdminId()).build())
@@ -154,10 +182,10 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public String modifyNotice(NoticeDTO dto) {
-        if(noticeRepository.findByNoticeId(dto.getNoticeId()) == null) {
+        if(noticeRepository.findById(dto.getNoticeId()) == null) {
             return "존재하지 않는 게시글입니다.";
         }
-        if(!adminRepository.existsAdminByAdminId(dto.getAdminId())) {
+        if(!adminRepository.existsById(dto.getAdminId())) {
             return "관리자 권한 계정만 수정 가능합니다.";
         }
         noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent(), dto.getImportance());
@@ -166,10 +194,10 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public String deleteNotice(int noticeId, String adminId) {
-        if(!adminRepository.existsAdminByAdminId(adminId))
+        if(!adminRepository.existsById(adminId))
             return "관리자 권한 계정만 삭제 가능합니다.";
-        if(noticeRepository.existsNoticeByNoticeId(noticeId)) {
-            noticeRepository.delete(noticeRepository.findByNoticeId(noticeId).get());
+        if(noticeRepository.existsById(noticeId)) {
+            noticeRepository.delete(noticeRepository.findById(noticeId).get());
             return "삭제 완료";
         }
         return "존재하지 않는 게시글입니다.";

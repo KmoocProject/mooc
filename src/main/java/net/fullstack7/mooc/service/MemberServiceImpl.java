@@ -25,7 +25,8 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final ModelMapper modelMapper;
     @Autowired
     private MemberRepository memberRepository;
-
+    
+    //로그인
     @Override
     public MemberDTO login(String memberId, String password) {
         Member member = memberMapper.login(memberId);
@@ -37,11 +38,19 @@ public class MemberServiceImpl implements MemberServiceIf {
         return null;
     }
 
-    public String findId(String email){
-        Optional<Member> member = memberRepository.findByMemberId(email);
-        return member.map(Member::getMemberId).orElse(null);
+    //아이디 찾기
+    public String findId(MemberDTO memberDTO) {
+        Optional<Member> memberOptional = memberRepository.findByEmail(memberDTO.getEmail());
+        if(memberOptional.isPresent()) {
+            return memberOptional.get().getMemberId();
+        } else {
+            return "fail";
+        }
     }
-
+    
+    //비밀번호 찾기
+    
+    //회원조회
     @Override
     public MemberDTO viewMember(String memberId) {
         Member member = memberMapper.viewMember(memberId);
@@ -50,7 +59,8 @@ public class MemberServiceImpl implements MemberServiceIf {
         }
         return null;
     }
-
+    
+    //회원등록
     @Override
     public int registMember(MemberDTO memberDTO) {
 //        log.info("memberDTO: {}", memberDTO);
@@ -58,12 +68,8 @@ public class MemberServiceImpl implements MemberServiceIf {
         return memberMapper.registMember(member);
     }
 
-    @Override
-    public int modifyMember(MemberDTO memberDTO) {
-        return 0;
-    }
 
-
+    //아이디 중복체크
     @Override
     public boolean memberIdCheck(String memberId) {
         String result = memberMapper.memberIdCheck(memberId);
@@ -71,41 +77,41 @@ public class MemberServiceImpl implements MemberServiceIf {
 //        return memberMapper.memberIdCheck(memberId) == null;
     }
 
+    //이메일 중복체크
     @Override
     public boolean emailCheck(String email) {
         String result = memberMapper.emailCheck(email);
         return result == null;
     }
 
-
+    //비밀번호 확인
     @Override
     public boolean pwdCheck(String memberId, String password) {
         String result = memberMapper.pwdCheck(memberId);
         return result != null && result.equals(password);
     }
 
+    //회원수정
+    @Override
+    public int modifyMember(MemberDTO memberDTO) {
+        return 0;
+    }
+    
+    //회원 수정
     @Override
     public int modifyMember(MemberModifyDTO memberModifyDTO) {
         Member member = modelMapper.map(memberModifyDTO, Member.class);
         return memberMapper.modifyMember(member);
     }
+    
+    //비밀번호 없이 회원수정
     @Override
     public int modifyWithoutPassword(MemberModifyDTO memberModifyDTO) {
         Member member = modelMapper.map(memberModifyDTO, Member.class);
         return memberMapper.modifyWithoutPassword(member);
     }
-
-//    @Override
-//    public void deleteMember(String memberId) {
-//        try {
-//            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
-//            memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
-//        }catch (Exception e) {
-//            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
-//            throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
-//        }
-//    }
-
+    
+    //회원 탈퇴
     @Override
     public void deleteMember(String memberId) {
         try {

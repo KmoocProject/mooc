@@ -4,13 +4,11 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.fullstack7.mooc.domain.Admin;
-import net.fullstack7.mooc.domain.Member;
-import net.fullstack7.mooc.domain.Notice;
-import net.fullstack7.mooc.domain.Teacher;
+import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import net.fullstack7.mooc.service.NoticeServiceIf;
+import net.fullstack7.mooc.service.SubjectServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -27,6 +25,7 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final AdminServiceIf adminService;
     private final NoticeServiceIf noticeService;
+    private final SubjectServiceImpl subjectService;
 
     @GetMapping("/main")
     public String main(Model model) {
@@ -80,11 +79,11 @@ public class AdminController {
 
         model.addAttribute("searchinfo", adminSearchDTO);
 
-        return "admin/memberList";
+        return "admin/member/memberList";
     }
 
-    @GetMapping("/memberView")
-    public String memberViewGet(@RequestParam(defaultValue = "0") String memberId, @RequestParam(defaultValue = "t") String typeSelect
+    @GetMapping("/memberView/{type}")
+    public String memberViewGet(@RequestParam(defaultValue = "0") String memberId, @PathVariable String type
             , Model model, RedirectAttributes redirectAttributes) {
 
         if (memberId.equals("0")) {
@@ -92,7 +91,7 @@ public class AdminController {
             return "redirect:/admin/memberList";
         }
 
-        if (typeSelect.equals("t")) {
+        if (type.equals("t")) {
             Teacher item = adminService.getTeacher(memberId);
             if (item == null) {
                 redirectAttributes.addFlashAttribute("존재하지 않는 회원입니다.");
@@ -100,7 +99,7 @@ public class AdminController {
             }
             model.addAttribute("item", item);
             model.addAttribute("type", "t");
-        } else if (typeSelect.equals("s")) {
+        } else if (type.equals("s")) {
             Member item = adminService.getMember(memberId);
             if (item == null) {
                 redirectAttributes.addFlashAttribute("존재하지 않는 회원입니다.");
@@ -116,78 +115,45 @@ public class AdminController {
         return "admin/member/memberView";
     }
 
-    @GetMapping("/memberModify")
-    public String memberModifyGet(@RequestParam(defaultValue = "0") String memberId, Model model, RedirectAttributes redirectAttributes) {
+    @GetMapping("/memberModify/{type}")
+    public String memberModifyGet(@PathVariable String type, @RequestParam(defaultValue = "0") String id
+            , Model model, RedirectAttributes redirectAttributes) {
 
-        if (memberId.equals("0")) {
-            redirectAttributes.addFlashAttribute("errors", "수정할 계정을 선택하세요.");
+        if (id.equals("0")) {
+            redirectAttributes.addFlashAttribute("errors", "상태 변경할 계정 선택하세요.");
             return "redirect:/admin/memberList";
         }
 
+        redirectAttributes.addFlashAttribute("errors", adminService.modifyMemberStatus(type, id));
 
-        Member item = adminService.getMember(memberId);
-        if (item == null) {
-            redirectAttributes.addFlashAttribute("존재하지 않는 회원입니다.");
-            model.addAttribute("item", item);
-        } else {
-            redirectAttributes.addFlashAttribute("errors", "조회 실패 - 존재하지 않는 회원 유형");
-            return "redirect:/admin/memberList";
-        }
+        return "redirect:/admin/memberView/"+type.substring(type.length()-1)+"?"+"memberId="+id;
 
-        return "admin/memberModify";
     }
 
-    @PostMapping("/memberModify")
-    public String memberModifyPost(@Valid Member member, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
-        if (bindingResult.hasErrors()) {
-
-        }
-
-        return "redirect:/admin/memberList";
-    }
-
-    @GetMapping("/teacherModify")
-    public String teacherModifyGet(@RequestParam(defaultValue = "0") String memberId, Model model, RedirectAttributes redirectAttributes) {
-        if (memberId.equals("0")) {
-            redirectAttributes.addFlashAttribute("errors", "수정할 계정을 선택하세요.");
-            return "redirect:/admin/memberList";
-        }
-        Teacher item = adminService.getTeacher(memberId);
-        if (item == null) {
-            redirectAttributes.addFlashAttribute("존재하지 않는 회원입니다.");
-            model.addAttribute("item", item);
-        } else {
-            redirectAttributes.addFlashAttribute("errors", "조회 실패 - 존재하지 않는 회원 유형");
-            return "redirect:/admin/memberList";
-        }
-
-        return "admin/teacherModify";
-    }
-
-    @GetMapping("/memberDelete")
-    public String memberDeleteGet(@RequestParam(defaultValue = "0") String memberId, @RequestParam(defaultValue = "") String typeSelect, Model model, RedirectAttributes redirectAttributes) {
-        if (memberId.equals("0")) {
+    @GetMapping("/memberDelete/{type}")
+    public String memberDeleteGet(@RequestParam(defaultValue = "0") String id, @PathVariable String type, Model model, RedirectAttributes redirectAttributes) {
+        if (id.equals("0")) {
             redirectAttributes.addFlashAttribute("errors", "삭제할 회원을 선택해주세요.");
             return "redirect:/admin/memberList";
         }
-        if ((!typeSelect.equals("t") && !typeSelect.equals("s"))) {
+        if ((!type.equals("t") && !type.equals("s"))) {
             redirectAttributes.addFlashAttribute("errors", "회원 분류 설정 오류");
             return "redirect:/admin/memberList";
         }
 
 
-        redirectAttributes.addFlashAttribute("errors", adminService.deleteMember(memberId, typeSelect));
-        return "redirect:/admin/memberList";
+        redirectAttributes.addFlashAttribute("errors", adminService.deleteMember(id, type));
+        return "redirect:/admin/memberView/"+type+"?memberId="+id;
     }
 
     @GetMapping("/approve/{teacherId}")
     public String approveGet(@PathVariable String teacherId, Model model, RedirectAttributes redirectAttributes) {
         if (teacherId == null) {
-            redirectAttributes.addFlashAttribute("erros", "존재하지 않는 계정입니다.");
+            redirectAttributes.addFlashAttribute("errors", "존재하지 않는 계정입니다.");
             return "redirect:/admin/memberList";
         }
-        adminService.approveTeacherRegist(teacherId);
-        return "redirect:/admin/memberList";
+        redirectAttributes.addFlashAttribute("errors", adminService.approveTeacherRegist(teacherId));
+        return "redirect:/admin/memberView/t?memberId="+teacherId;
     }
 
     @GetMapping("/courseList")
@@ -202,6 +168,7 @@ public class AdminController {
 
         model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
         model.addAttribute("searchinfo", searchDTO);
+        model.addAttribute("subjects", subjectService.getAllSubjects());
 
         return "admin/course/courseList";
     }
@@ -215,20 +182,29 @@ public class AdminController {
 
         int id = Integer.parseInt(courseId);
 
+        Course item = adminService.getCourse(id);
+
         //수정
-        model.addAttribute("item", "여기에 조회한 거 넣기");
+        if(item == null) {
+            redirectAttributes.addFlashAttribute("errors", "없는 강의");
+            return "redirect:/admin/courseList";
+        }
+
+        model.addAttribute("item", item);
 
         return "admin/course/courseView";
     }
 
-    @GetMapping("/courseModify")
-    public String courseModifyGet(@RequestParam(defaultValue = "0") int courseId, Model model, RedirectAttributes redirectAttributes) {
-        if (courseId == 0) {
+    @GetMapping("/courseApprove/{courseId}")
+    public String courseModifyGet(@PathVariable String courseId, Model model, RedirectAttributes redirectAttributes) {
+        if (courseId == null || !courseId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
             return "redirect:/admin/courseList";
         }
 
-        //승인해주는 코드 넣기
+        int id = Integer.parseInt(courseId);
+
+        redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("PUBLISHED", id));
 
         return "redirect:/admin/courseView/"+courseId;
     }
@@ -240,7 +216,7 @@ public class AdminController {
             return "redirect:/admin/courseList";
         }
 
-        //삭제하는 코드 넣기
+        redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("DELETED", courseId));
 
         return "redirect:/admin/courseList";
     }
