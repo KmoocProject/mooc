@@ -118,11 +118,11 @@
             <li><a href="#"><img th:src="@{/images/search.png}"></a></li>
         </ul>
     </nav>
-    <div  class="user-actions">
+    <div th:if="${session.memberDTO == null}" class="user-actions">
         <a href="/login/login" id="loginBtn">로그인</a>
         <a href="/login/memberchose" id="registBtn">회원가입</a>
     </div>
-    <div class="user-actions">
+    <div th:if="${session.memberDTO != null}" class="user-actions">
         <nav class="navbar">
             <ul class="menu-list">
                 <a href="/mypage/myclass" style="color: black;margin-right: -15px;margin-top: 20px;">나의 강의실</a>
