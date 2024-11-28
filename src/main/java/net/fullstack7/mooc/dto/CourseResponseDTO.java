@@ -23,7 +23,8 @@ public class CourseResponseDTO {
     private String thumbnail;
     private String status;
     private String teacherName;
-    private LocalDateTime enrollmentDate;
+    private String institutionName;
+    private LocalDateTime createdAt;
     
     public static CourseResponseDTO from(Course course) {
         return CourseResponseDTO.builder()
