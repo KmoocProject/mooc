@@ -9,6 +9,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.PostMapping;
 import jakarta.validation.Valid;
+import net.fullstack7.mooc.dto.CourseDetailDTO;
 import net.fullstack7.mooc.dto.TeacherJoinDTO;
 import net.fullstack7.mooc.service.TeacherService;
 import net.fullstack7.mooc.domain.Teacher;
@@ -105,22 +106,20 @@ public class TeacherController {
         return "teacher/registLecture";
     }
 
-    @GetMapping("/lectures/edit/{courseId}")
-    public String editLecture(@PathVariable int courseId, Model model, HttpSession session) {
-        Teacher teacher = (Teacher) session.getAttribute("teacher");
-        if (teacher == null) {
-            return "redirect:/teacher/login";
-        }
-        
-        // 강좌 정보와 섹션, 콘텐츠 정보를 모두 가져옴
-        Course course = courseService.getCourseWithContents(courseId);
-        
-        // 해당 강좌가 현재 로그인한 강사의 것인지 확인
-        if (!course.getTeacher().getTeacherId().equals(teacher.getTeacherId())) {
-            return "redirect:/teacher/myLectures";
-        }
-        
-        model.addAttribute("course", course);
-        return "teacher/updateLecture";
+@GetMapping("/lectures/edit/{courseId}")
+public String editLecture(@PathVariable int courseId, Model model, HttpSession session) {
+    Teacher teacher = (Teacher) session.getAttribute("teacher");
+    if (teacher == null) {
+        return "redirect:/teacher/login";
     }
+    
+    CourseDetailDTO courseDetail = courseService.getCourseWithContents(courseId);
+    
+    if (!courseDetail.getTeacherId().equals(teacher.getTeacherId())) {
+        return "redirect:/teacher/myLectures";
+    }
+    
+    model.addAttribute("course", courseDetail);
+    return "teacher/updateLecture";
+}
 }

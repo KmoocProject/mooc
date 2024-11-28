@@ -5,6 +5,8 @@ import lombok.*;
 import org.springframework.data.annotation.CreatedDate;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -49,4 +51,9 @@ public class Course {
     @CreatedDate
     @Column(name="createdAt", columnDefinition = "datetime not null default now()")
     private LocalDateTime createdAt; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 생성일
+
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
+    @OrderBy("lectureId ASC")
+    @Builder.Default
+    private List<Lecture> lectures = new ArrayList<>();
 }

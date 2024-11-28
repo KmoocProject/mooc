@@ -7,16 +7,23 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import java.util.List;
+import jakarta.validation.constraints.Pattern;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class LectureContentUpdateDTO {
+    @NotBlank(message = "제목은 필수입니다")
     private String title;
+    
     private String description;
-    private String type;  // video, file, quiz
+    
+    @Pattern(regexp = "^(video|file|quiz)$")
+    private String type;
+    
     private MultipartFile file;
-    private String question;
-    private String answer;
+    
+    private List<QuizDTO> quizzes;
 }
