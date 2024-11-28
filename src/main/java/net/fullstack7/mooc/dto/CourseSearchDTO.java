@@ -25,7 +25,7 @@ public class CourseSearchDTO extends PageDTO<Course> {
         super.initialize();
 
         StringBuilder sb = new StringBuilder();
-        sb.append("searchCategory="+ getSearchField() +"&searchWord="+getSearchValue()+"&sortField="+getSortField()+"&sortOrder="+getSortDirection());
+        sb.append("searchField="+ getSearchField() +"&searchValue="+getSearchValue()+"&sortField="+getSortField());
         if(isCreditBank >= 0) {
             sb.append("&isCreditBank="+isCreditBank);
         }

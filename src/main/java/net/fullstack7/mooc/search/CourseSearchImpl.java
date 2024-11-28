@@ -56,7 +56,7 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
         if(builder.hasValue())
             query.where(builder);
 
-        if(courseSearchDTO.getSortField() != null && !courseSearchDTO.getSortField().isEmpty() && courseSearchDTO.getSortDirection() != null && !courseSearchDTO.getSortDirection().isEmpty()) {
+        if(courseSearchDTO.getSortField() != null && !courseSearchDTO.getSortField().isEmpty()) {
             switch (courseSearchDTO.getSortField()) {
 //                기본순, 최신등록순, 가나다순
                 case "title":
