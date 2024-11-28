@@ -18,7 +18,10 @@
                         </div>
                         <div class="col-md-7">
                             <div class="card-body">
-                                <h5 class="card-title" th:text="${lecture.title}">강좌 제목</h5>
+                                <h5 class="card-title">
+                                    <a th:href="@{/teacher/courses/{id}/detail(id=${lecture.courseId})}" 
+                                       th:text="${lecture.title}">강좌 제목</a>
+                                </h5>
                                 <p class="card-text">
                                     <small class="text-muted" 
                                            th:text="${lecture.subject.subjectName + ' | ' + lecture.weeks + '주차'}">

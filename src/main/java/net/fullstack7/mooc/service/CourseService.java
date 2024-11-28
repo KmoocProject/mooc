@@ -186,46 +186,45 @@ public class CourseService {
 
     List<LectureDTO> lectureDTOs = course.getLectures().stream()
         .map(lecture -> {
-          List<LectureContentDTO> contentDTOs = lecture.getContents().stream()
-              .map(content -> {
-                LectureContentDTO contentDTO = LectureContentDTO.builder()
-                    .lectureContentId(content.getLectureContentId())
-                    .title(content.getTitle())
-                    .description(content.getDescription())
-                    .isVideo(content.getIsVideo())
-                    .build();
+            List<LectureContentDTO> contentDTOs = lecture.getContents().stream()
+                .map(content -> {
+                    LectureContentDTO contentDTO = LectureContentDTO.builder()
+                        .lectureContentId(content.getLectureContentId())
+                        .title(content.getTitle())
+                        .description(content.getDescription())
+                        .type(content.getIsVideo() == 1 ? "video" : 
+                             content.getIsVideo() == 0 ? "quiz" : "file")
+                        .build();
 
-                // 비디오나 파일인 경우
-                if (content.getIsVideo() == 1) {
-                  lectureFileRepository.findByLectureContent(content)
-                      .ifPresent(file -> contentDTO.setFile(
-                          LectureFileDTO.builder()
-                              .fileName(file.getFileName())
-                              .filePath(file.getFilePath())
-                              .fileExtension(file.getFileExtension())
-                              .build()));
-                } else if (content.getIsVideo() == 0) {
+                    // 비디오나 파일인 경우
+                    if (content.getIsVideo() != 0) {
+                        lectureFileRepository.findByLectureContent(content)
+                            .ifPresent(file -> contentDTO.setFile(
+                                LectureFileDTO.builder()
+                                    .fileName(file.getFileName())
+                                    .filePath(file.getFilePath())
+                                    .fileExtension(file.getFileExtension())
+                                    .build()));
+                    }
+                    return contentDTO;
+                })
+                .collect(Collectors.toList());
 
-                }
-                return contentDTO;
-              })
-              .collect(Collectors.toList());
+            List<QuizDTO> quizDTOs = lecture.getQuizzes().stream()
+                .map(quiz -> QuizDTO.builder()
+                    .quizId(quiz.getQuizId())
+                    .question(quiz.getQuestion())
+                    .answer(quiz.getAnswer())
+                    .build())
+                .collect(Collectors.toList());
 
-          List<QuizDTO> quizDTOs = lecture.getQuizzes().stream()
-              .map(quiz -> QuizDTO.builder()
-                  .quizId(quiz.getQuizId())
-                  .question(quiz.getQuestion())
-                  .answer(quiz.getAnswer())
-                  .build())
-              .collect(Collectors.toList());
-
-          return LectureDTO.builder()
-              .lectureId(lecture.getLectureId())
-              .title(lecture.getTitle())
-              .description(lecture.getDescription())
-              .contents(contentDTOs)
-              .quizzes(quizDTOs)
-              .build();
+            return LectureDTO.builder()
+                .lectureId(lecture.getLectureId())
+                .title(lecture.getTitle())
+                .description(lecture.getDescription())
+                .contents(contentDTOs)
+                .quizzes(quizDTOs)
+                .build();
         })
         .collect(Collectors.toList());
 
@@ -237,15 +236,11 @@ public class CourseService {
         .weeks(course.getWeeks())
         .learningTime(course.getLearningTime())
         .language(course.getLanguage())
+        .isCreditBank(course.getIsCreditBank())
         .teacherId(course.getTeacher().getTeacherId())
         .lectures(lectureDTOs)
         .build();
   }
-
-  // public Course findByCourseId(int courseId) {
-  // return courseRepository.findByCourseId(courseId)
-  // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
-  // }
 
   @Transactional
   public void createQuizzes(QuizCreateDTO dto) {

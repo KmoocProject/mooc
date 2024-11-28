@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head th:replace="teacher/common/header :: head"></head>
+<style>
+    .content-preview {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: contain;
+    }
+    .section-card {
+        margin-bottom: 1.5rem;
+    }
+</style>
+<body>
+    <nav th:replace="teacher/common/nav :: nav"></nav>
+    <div class="container mt-5">
+        <!-- 강좌 기본 정보 -->
+        <div class="card mb-4">
+            <div class="card-header d-flex justify-content-between align-items-center">
+                <h3 th:text="${course.title}">강좌 제목</h3>
+                <a th:href="@{/teacher/courses/{id}/edit(id=${course.courseId})}" 
+                   class="btn btn-primary">수정</a>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4">
+                        <img th:src="${course.thumbnail}" class="img-fluid" alt="강좌 썸네일">
+                    </div>
+                    <div class="col-md-8">
+                        <p th:text="${course.description}">강좌 설명</p>
+                        <div class="row mt-3">
+                            <div class="col-md-4">
+                                <p>주차: <span th:text="${course.weeks}"></span>주</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>학습시간: <span th:text="${course.learningTime}"></span>분</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p>학점은행제: 
+                                    <span th:text="${course.isCreditBank == 1 ? '예' : '아니오'}"></span>
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 섹션 목록 -->
+        <div class="accordion" id="lectureAccordion">
+            <div th:each="lecture : ${course.lectures}" class="accordion-item">
+                <h2 class="accordion-header">
+                    <button class="accordion-button collapsed" type="button" 
+                            data-bs-toggle="collapse" 
+                            th:data-bs-target="'#lecture' + ${lecture.lectureId}">
+                        <span th:text="${lecture.title}">섹션 제목</span>
+                    </button>
+                </h2>
+                <div th:id="'lecture' + ${lecture.lectureId}" 
+                     class="accordion-collapse collapse">
+                    <div class="accordion-body">
+                        <!-- 콘텐츠 목록 -->
+                        <div class="list-group">
+                            <div th:each="content : ${lecture.contents}" 
+                                 class="list-group-item">
+                                <h5 class="mb-1" th:text="${content.title}">콘텐츠 제목</h5>
+                                <p class="mb-1" th:text="${content.description}">설명</p>
+                                <div th:if="${content.file != null}" class="mt-2">
+                                    <a th:href="${content.file.filePath}" 
+                                       class="btn btn-sm btn-primary" 
+                                       target="_blank">파일 보기</a>
+                                </div>
+                            </div>
+                            <!-- 퀴즈 목록 -->
+                            <div th:if="${!lecture.quizzes.empty}" class="mt-3">
+                                <h5>퀴즈</h5>
+                                <div th:each="quiz : ${lecture.quizzes}" 
+                                     class="card mb-2">
+                                    <div class="card-body">
+                                        <p class="mb-1">Q: <span th:text="${quiz.question}"></span></p>
+                                        <p class="mb-0">A: <span th:text="${quiz.answer}"></span></p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
