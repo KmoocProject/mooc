@@ -11,8 +11,11 @@ import net.fullstack7.mooc.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.ui.Model;
 
 import java.util.Optional;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 @RequiredArgsConstructor
@@ -96,7 +99,41 @@ public class MemberServiceImpl implements MemberServiceIf {
     public int modifyMember(MemberDTO memberDTO) {
         return 0;
     }
-    
+
+    //이메일 유효성 검사
+    @Override
+    public boolean isValidEmail(String email) {
+        String emailRegex = "^(?=.{1,254}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        Matcher matcher = pattern.matcher(email);
+        return matcher.matches();
+    }
+
+    //비밀번호 유효성 검사
+    @Override
+    public boolean isValidPassword(String password) {
+        String passwordRegex = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$";
+        Pattern pattern = Pattern.compile(passwordRegex);
+        Matcher matcher = pattern.matcher(password);
+        return matcher.matches();
+    }
+
+    //유효성 검사 후 결과 반환
+    @Override
+    public String validateMember(MemberModifyDTO memberDTO, Model model) {
+        if(!isValidEmail(memberDTO.getEmail())) {
+            model.addAttribute("error", "유효한 이메일 형식이 아닙니다.");
+            return "mypage/memberView";
+        }
+        if(!isValidPassword(memberDTO.getPassword())) {
+            model.addAttribute("error", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자 이내로 입력하세요.");
+            return "mypage/memberView";
+        }
+        return "mypage/myclass";
+
+    }
+
+
     //회원 수정
     @Override
     public int modifyMember(MemberModifyDTO memberModifyDTO) {
