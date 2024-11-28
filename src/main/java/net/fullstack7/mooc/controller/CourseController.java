@@ -23,7 +23,7 @@ public class CourseController {
             , @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if(bindingResult.hasErrors()) {
-            searchDTO = CourseSearchDTO.builder().build();
+            searchDTO = CourseSearchDTO.builder().subjectId(searchDTO.getSubjectId()).institutionId(searchDTO.getInstitutionId()).build();
         }
 
         if(type.equals("credit")) searchDTO.setIsCreditBank(1);

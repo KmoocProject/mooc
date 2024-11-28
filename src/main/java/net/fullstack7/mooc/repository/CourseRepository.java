@@ -4,6 +4,8 @@ import net.fullstack7.mooc.domain.Course;
 import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.search.CourseSearch;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -32,5 +34,6 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
     @Query("update Course C set C.status = :status where C.courseId = :courseId")
     int updateStatus(int courseId, String status);
 
-
+    int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
+    int countByStatusIn(List<String> status);
 }
