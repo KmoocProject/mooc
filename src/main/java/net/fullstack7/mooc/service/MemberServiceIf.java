@@ -8,6 +8,7 @@ import org.springframework.ui.Model;
 public interface MemberServiceIf {
     public MemberDTO login(String memberId, String password);
     public String findId(MemberDTO memberDTO);
+    public String findPwd(MemberDTO memberDTO);
     public MemberDTO viewMember(String memberId);
     public boolean pwdCheck(String memberId, String password);
     public int registMember(MemberDTO memberDTO);

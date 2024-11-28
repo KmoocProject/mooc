@@ -58,13 +58,13 @@ public class LoginController extends HttpServlet {
                 session.removeAttribute("redirectAfterLogin");
                 return "redirect:" + redirectURL;
             }
-                return "redirect:/main/main";
-            } else {
-                model.addAttribute("errors", "아이디 또는 비밀번호가 일치하지 않습니다.");
-                return "login/login";
-            }
+            return "redirect:/main/main";
+        } else {
+            model.addAttribute("errors", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            return "login/login";
+        }
     }
-    
+
     //로그아웃
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
@@ -85,11 +85,11 @@ public class LoginController extends HttpServlet {
     }
 
     @PostMapping("/memberterms")
-    public String membertermsPost(@RequestParam(value="termsAgreement", defaultValue = "false" )boolean termsAgreement, HttpSession session, Model model) {
-        if(termsAgreement){
+    public String membertermsPost(@RequestParam(value = "termsAgreement", defaultValue = "false") boolean termsAgreement, HttpSession session, Model model) {
+        if (termsAgreement) {
             session.setAttribute("termsAgree", true);
             return "redirect:/login/regist";
-        } else{
+        } else {
             model.addAttribute("errors", "약관동의 후 회원가입이 가능합니다.");
             return "redirect:/login/memberterms";
         }
@@ -110,7 +110,7 @@ public class LoginController extends HttpServlet {
     //아이디 중복체크
     @PostMapping("/memberIdCheck")
     @ResponseBody
-    public String checkMemberId(@RequestParam String memberId){
+    public String checkMemberId(@RequestParam String memberId) {
         boolean available = memberService.memberIdCheck(memberId);
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("available", available);
@@ -140,17 +140,17 @@ public class LoginController extends HttpServlet {
             return "redirect:/login/regist";  // 중복된 이메일이 있으면 회원가입 페이지로 리다이렉트
         }
 
-        if(bindingResult.hasErrors()) {
+        if (bindingResult.hasErrors()) {
             redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
             redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
             return "redirect:/login/regist";
         }
         int result = memberService.registMember(memberDTO);
 
-        if(result >0){
-            redirectAttributes.addFlashAttribute("errors","회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+        if (result > 0) {
+            redirectAttributes.addFlashAttribute("errors", "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
             return "redirect:/login/login";
-        }else {
+        } else {
             redirectAttributes.addFlashAttribute("errors", "회원가입에 실패했습니다.");
             return "redirect:/login/regist";
         }
@@ -169,15 +169,15 @@ public class LoginController extends HttpServlet {
 
     //아이디 찾기
     @GetMapping("/findId")
-    public String findId(Model model, HttpServletRequest request) {
+    public String findId() {
         return "login/findId";
     }
 
     @PostMapping("/findId")
-    public String findIdPost(MemberDTO memberDTO,HttpServletResponse response) {
+    public String findIdPost(MemberDTO memberDTO, HttpServletResponse response) {
         String findId = memberService.findId(memberDTO);
-        if(!"fail".equals(findId)) {
-            try{
+        if (!"fail".equals(findId)) {
+            try {
                 response.setContentType("text/html;charset=UTF-8");
                 PrintWriter w = response.getWriter();
                 w.write("<script>alert('" + memberDTO.getEmail() + "님의 아이디는 [" + findId + "] 입니다.' );</script>");
@@ -185,12 +185,12 @@ public class LoginController extends HttpServlet {
                 w.flush();
                 w.close();
                 return null;
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
                 return null;
             }
         } else {
-            try{
+            try {
                 response.setContentType("text/html;charset=UTF-8");
                 PrintWriter w = response.getWriter();
                 w.write("<script>alert('입력한 회원정보가 없습니다. 다시 확인해주세요.');</script>");
@@ -210,8 +210,37 @@ public class LoginController extends HttpServlet {
     public String findPwd() {
         return "login/findPwd";
     }
+
     @PostMapping("/findPwd")
-    public String findPwdPost(@RequestParam String memberId, HttpSession session, Model model) {
-        return "redirect:/login/login";
-    }
+        public String findPwdPost (MemberDTO memberDTO, HttpServletResponse response){
+            String findPwd = memberService.findPwd(memberDTO);
+            if (!"fail".equals(findPwd)) {
+                try {
+                    response.setContentType("text/html;charset=UTF-8");
+                    PrintWriter w = response.getWriter();
+                    w.write("<script>alert('" + memberDTO.getEmail() + "님의 비밀번호는 [" + findPwd + "] 입니다.' );</script>");
+                    w.write("<script>location.href='/login/login';</script>");
+                    w.flush();
+                    w.close();
+                    return null;
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            } else {
+                try {
+                    response.setContentType("text/html;charset=UTF-8");
+                    PrintWriter w = response.getWriter();
+                    w.write("<script>alert('입력한 회원정보가 없습니다. 다시 확인해주세요.');</script>");
+                    w.write("<script>location.href='/login/findId';</script>");
+                    w.flush();
+                    w.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+            return null;
+        }
+
 }
