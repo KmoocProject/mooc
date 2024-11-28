@@ -105,6 +105,9 @@
 
 </style>
 <body>
+<script th:if="${errors}">
+    alert(`[[${errors}]]`);
+</script>
 
 <div th:replace="admin/header :: header"></div>
 
@@ -113,19 +116,18 @@
     <div class="container">
         <h1>강의</h1>
         <div class="report-header">
-            <span class="category">강의 종류(학점은행, 일반강의)</span>
-            <h2>강의명</h2>
+            <span class="category" th:text="${item.isCreditBank == 1 ? '학점은행제강의' : '일반강의'}"></span>
+            <h2>[[${item.title}]]</h2>
         </div>
         <div class="report-info">
-            <span>작성일: <strong>2023.07.28</strong></span>
-            <span>수정일: <strong>2023.07.28</strong></span>
+            <span>등록일: <strong th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></strong></span>
         </div>
         <div class="report-content">
-            <p>강의내용</p>
+            <p th:text="${item.description}"></p>
         </div>
         <hr>
-        <button class="back-modify">수정</button>
-        <button class="back-delete">삭제</button>
+        <button class="back-modify" th:if="${item.status=='DRAFT'}" th:onclick="|location.href='@{/admin/courseApprove/{courseId}(courseId=${item.courseId})}'|">승인</button>
+        <button class="back-delete" th:onclick="|location.href='@{/admin/courseDelete(courseId=${item.courseId})}'|">삭제</button>
         <button class="back-button" id="backBtn">목록</button>
     </div>
 

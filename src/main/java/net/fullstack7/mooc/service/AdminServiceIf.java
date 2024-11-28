@@ -23,6 +23,7 @@ public interface AdminServiceIf {
 
     Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO);
     Course getCourse(int id);
+    String modifyCourseStatus(String type, int courseId);
 
     String insertNotice(NoticeDTO dto);
     String modifyNotice(NoticeDTO dto);
