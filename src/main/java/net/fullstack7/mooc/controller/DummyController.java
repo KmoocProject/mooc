@@ -37,4 +37,17 @@ public class DummyController {
   public String memberList() {
     return "admin/memberList";
   }
+  @GetMapping("/qna/regist")
+  public String list() {
+    return "qna/regist";
+  }
+  @GetMapping("/course/view")
+  public String view() {
+    return "course/view";
+  }
+  @GetMapping("/learn/view")
+  public String learn() {
+    return "learn/view";
+  }
+
 }

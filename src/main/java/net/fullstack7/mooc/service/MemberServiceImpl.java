@@ -9,6 +9,7 @@ import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
 import net.fullstack7.mooc.mapper.MemberMapper;
+import net.fullstack7.mooc.repository.CourseEnrollmentRepository;
 import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
@@ -31,14 +32,15 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final ModelMapper modelMapper;
     private final MemberRepository memberRepository;
     private final CourseRepository courseRepository;
-    
+    private final CourseEnrollmentRepository courseEnrollmentRepository;
+
     //로그인
     @Override
     public MemberDTO login(String memberId, String password) {
         Member member = memberMapper.login(memberId);
         if(member != null && member.getPassword().equals(password)) {
             if(member.getStatus().equals("ACTIVE")){
-            return modelMapper.map(member, MemberDTO.class);
+                return modelMapper.map(member, MemberDTO.class);
             }
         }
         return null;
@@ -55,7 +57,15 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
     
     //비밀번호 찾기
-    
+    public String findPwd(MemberDTO memberDTO) {
+        Optional<Member> memberOptional = memberRepository.findByEmail(memberDTO.getEmail());
+        if(memberOptional.isPresent()) {
+            return memberOptional.get().getPassword();
+        } else {
+            return "fail";
+        }
+    }
+
     //회원조회
     @Override
     public MemberDTO viewMember(String memberId) {
@@ -171,5 +181,17 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted) {
         return courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+    }
+
+    @Override
+    public int getMyCourseCount(String memberId, int isCompleted) {
+        return courseEnrollmentRepository.countAllByMember_MemberIdAndIsCompleted(memberId, isCompleted);
+    }
+
+    @Override
+    public String modifyToCredit(String memberId) {
+        int result = memberRepository.updateMemberTypeById(memberId);
+        if(result > 0) return "학점은행제 회원으로 전환 완료!";
+        return "다시 시도해주세요.";
     }
 }

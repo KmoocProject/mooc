@@ -179,7 +179,7 @@
         <div class="stats" style="width: 1000px;">
             <div class="stat-card" style="background-color: #1abc9c">
                 <h3>수강중인 강좌 수</h3>
-                <p>1</p>
+                <p th:text="${notcompleted}"></p>
             </div>
             <div class="stat-card" style="background-color: #cccccc">
                 <h3>청강중인 강좌 수</h3>
@@ -187,7 +187,7 @@
             </div>
             <div class="stat-card" style="background-color: #cccccc">
                 <h3>종료한 강좌 수</h3>
-                <p>0</p>
+                <p th:text="${completed}"></p>
             </div>
         </div>
 
@@ -199,11 +199,10 @@
                     <h4 th:text="${item.title}"></h4>
                     <p th:text="${item.teacherName}"></p>
 <!--                    <p th:text="${item.enrollmentDate}"></p>-->
-                    <p>주차: [[${item.weeks}]]</p>
+                    <p>주차: [[${item.weeks}]]주</p>
                 </div>
                 <div class="course-actions">
                     <button class="learn-btn" id="learnGoBtn" >학습하기</button>
-                    <button class="cancel-btn">수강취소</button>
                 </div>
             </div>
         </div>

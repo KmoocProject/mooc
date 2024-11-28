@@ -17,4 +17,8 @@ public interface MemberRepository extends JpaRepository<Member, String>, MemberS
     @Modifying
     @Query("update Member M set M.status = :status where M.memberId = :memberId")
     int updateStatusByMemberId(String memberId, String status);
+
+    @Modifying
+    @Query("update Member M set M.memberType = 1 where M.memberId = :memberId")
+    int updateMemberTypeById(String memberId);
 }

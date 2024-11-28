@@ -12,6 +12,7 @@ import org.springframework.ui.Model;
 public interface MemberServiceIf {
     public MemberDTO login(String memberId, String password);
     public String findId(MemberDTO memberDTO);
+    public String findPwd(MemberDTO memberDTO);
     public MemberDTO viewMember(String memberId);
     public boolean pwdCheck(String memberId, String password);
     public int registMember(MemberDTO memberDTO);
@@ -28,4 +29,7 @@ public interface MemberServiceIf {
     void deleteMember(String memberId);
 
     Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted);
+    int getMyCourseCount(String memberId, int isCompleted);
+
+    String modifyToCredit(String memberId);
 }
