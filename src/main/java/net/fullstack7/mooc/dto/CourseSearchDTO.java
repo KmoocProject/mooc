@@ -19,6 +19,8 @@ public class CourseSearchDTO extends PageDTO<Course> {
     @Builder.Default
     private int subjectId = -1;
     private String status;
+    @Builder.Default
+    private int institutionId = -1;
 
     @Override
     public void initialize() {
@@ -34,6 +36,9 @@ public class CourseSearchDTO extends PageDTO<Course> {
         }
         if(status != null) {
             sb.append("&status="+URLEncoder.encode(status, StandardCharsets.UTF_8));
+        }
+        if(institutionId >= 0) {
+            sb.append("&institutionId="+institutionId);
         }
 
         this.setQueryString(URLEncoder.encode(sb.toString(), StandardCharsets.UTF_8));

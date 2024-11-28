@@ -1,19 +1,10 @@
 package net.fullstack7.mooc.service;
 
 import net.fullstack7.mooc.domain.*;
-import net.fullstack7.mooc.dto.CourseCreateDTO;
-import net.fullstack7.mooc.dto.CourseDetailDTO;
-import net.fullstack7.mooc.dto.LectureContentCreateDTO;
-import net.fullstack7.mooc.dto.LectureContentDTO;
-import net.fullstack7.mooc.dto.LectureContentUpdateDTO;
-import net.fullstack7.mooc.dto.LectureCreateDTO;
-import net.fullstack7.mooc.dto.LectureDTO;
-import net.fullstack7.mooc.dto.LectureFileDTO;
-import net.fullstack7.mooc.dto.LectureUpdateDTO;
-import net.fullstack7.mooc.dto.QuizCreateDTO;
-import net.fullstack7.mooc.dto.QuizDTO;
+import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.util.FileUploadUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import net.fullstack7.mooc.repository.*;
@@ -39,6 +30,7 @@ public class CourseService {
   private final QuizRepository quizRepository;
   private final SubjectRepository subjectRepository;
   private final FileUploadUtil fileUploadUtil;
+  private final InstitutionRepository institutionRepository;
 
   public Course createCourse(CourseCreateDTO dto, Teacher teacher) throws IOException {
     // 과목 조회
@@ -285,4 +277,16 @@ public class CourseService {
   // return courseRepository.findByCourseId(courseId)
   // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
   // }
+
+  public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
+    return courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+  }
+
+  public List<Institution> getInstitutions() {
+    return institutionRepository.findAllByOrderByInstitutionIdAsc();
+  }
+
+  public List<Subject> getSubjects() {
+    return subjectRepository.findAll();
+  }
 }

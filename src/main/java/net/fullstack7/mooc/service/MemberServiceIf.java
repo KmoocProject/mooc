@@ -28,4 +28,7 @@ public interface MemberServiceIf {
     void deleteMember(String memberId);
 
     Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted);
+    int getMyCourseCount(String memberId, int isCompleted);
+
+    String modifyToCredit(String memberId);
 }

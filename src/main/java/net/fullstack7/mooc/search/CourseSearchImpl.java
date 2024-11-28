@@ -49,6 +49,9 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
         //과목
         if(courseSearchDTO.getSubjectId() > -1)
             builder.and(qCourse.subject.subjectId.eq(courseSearchDTO.getSubjectId()));
+        //기관
+        if(courseSearchDTO.getInstitutionId() > -1)
+            builder.and(qCourse.teacher.institution.institutionId.eq(courseSearchDTO.getInstitutionId()));
 
         if(courseSearchDTO.getSearchField() != null && courseSearchDTO.getSearchValue() != null && !courseSearchDTO.getSearchValue().isEmpty()) {
             switch (courseSearchDTO.getSearchField()) {
@@ -87,6 +90,8 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
                 .language(entity.getLanguage())
                 .status(entity.getStatus())
                 .teacherName(entity.getTeacher().getTeacherName())
+                .institutionName(entity.getTeacher().getInstitution().getInstitutionName())
+                .createdAt(entity.getCreatedAt())
                 .build()
         ).toList();
 
