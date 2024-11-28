@@ -115,8 +115,9 @@
 </head>
 <body>
 <div th:replace="main/header :: header"></div>
-
-
+<script th:if="${errors}">
+    alert(`[[${errors}]]`);
+</script>
 <div class="content">
     <form class="login-form" action="/login/login" method="post">
     <h1>로그인</h1>
@@ -134,10 +135,9 @@
         function goRegist(){
             window.location.href = '/login/memberchose';
         }
+
     </script>
 </div>
-
-
 <div th:replace="main/footer :: footer"></div>
 </body>
 </html>

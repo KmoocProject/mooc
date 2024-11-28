@@ -87,7 +87,7 @@
         padding: 5px;
         border-radius: 5px;
         width: 100%;
-        max-width: 600px;
+        max-width: 800px;
         margin: 0 auto;
     }
 
@@ -142,10 +142,19 @@
     <div class="container">
         <h1>강의 리스트</h1>
         <div class="search-bar">
+
+            <input type="checkbox" name="hmember" style="margin-right: 10px;"><span style="margin-right: 10px;">학점은행제</span>
             <select class="category-dropdown">
-                <option value="all">전체</option>
-                <option value="category1">카테고리1</option>
-                <option value="category2">카테고리2</option>
+                <option value="all">과목</option>
+                <option value="category1">인문</option>
+                <option value="category1">사회</option>
+                <option value="category1">공학</option>
+                <option value="category2">자연</option>
+            </select>
+            <select class="category-dropdown">
+                <option value="all">상태</option>
+                <option value="category1">강의중</option>
+                <option value="category2">강의종료</option>
             </select>
             <input type="text" class="search-input" placeholder="검색어를 입력하세요.">
             <button class="search-button">찾기</button>
