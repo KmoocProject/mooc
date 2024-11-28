@@ -44,23 +44,22 @@
     <footer class="footer">
     <div class="footer-top">
         <ul class="footer-links">
-            <li><a href="#">개인정보처리방침</a></li>
-            <li><a href="#">이용약관</a></li>
-            <li><a href="#">저작권보호 정책</a></li>
-            <li><a href="#">이수증검증</a></li>
-            <li><a href="#">원격도우미</a></li>
+            <li><a href="/main/footer/personalrule">개인정보처리방침</a></li>
+            <li><a href="/main/footer/userterms">이용약관</a></li>
+            <li><a href="/main/footer/copyright">저작권보호 정책</a></li>
+            <li><a href="/admin/login">관리자 페이지</a></li>
+            <li><a href="/main/main">K-MOOC 페이지</a></li>
         </ul>
         <div class="footer-logos">
-            <img src="logo1.png" alt="교육부 로고">
-            <img src="logo2.png" alt="국가평생교육진흥원 로고">
+            <img th:src="@{/images/flogo1.png}" alt="교육부 로고"><span style="color: white;">교육부</span>
+            <img th:src="@{/images/flogo2.png}" alt="국가평생교육진흥원 로고"><span style="color: white;">국가평생교육진흥원</span>
         </div>
     </div>
     <div class="footer-middle">
         <ul class="footer-menu">
-            <li><a href="#">K-MOOC소개</a></li>
-            <li><a href="#">전체메뉴</a></li>
+            <li><a href="/main/footer/intro">K-MOOC소개</a></li>
             <li><a href="#">커뮤니티</a></li>
-            <li><a href="#">사업공고</a></li>
+            <li><a href="/main/footer/business">사업공고</a></li>
         </ul>
         <div class="contact-info">
             <p>(04520) 서울특별시 중구 정계로 14 (무교로77)</p>
@@ -70,12 +69,6 @@
     </div>
     <div class="footer-bottom">
         <p>COPYRIGHT © 2022 NATIONAL INSTITUTE FOR LIFELONG EDUCATION. ALL RIGHTS RESERVED</p>
-        <div class="social-icons">
-            <a href="#">Facebook</a>
-            <a href="#">Youtube</a>
-            <a href="#">Instagram</a>
-            <a href="#">Blog</a>
-        </div>
         <div class="family-site">
             <label for="family-select">패밀리 사이트</label>
             <select id="family-select">

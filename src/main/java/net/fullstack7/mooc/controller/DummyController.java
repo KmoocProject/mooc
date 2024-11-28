@@ -29,9 +29,9 @@ public class DummyController {
     return "teacher/myLectures";
   }
 
-  @GetMapping("/admin/notice/noticeList")
+  @GetMapping("/learn/quizview")
   public String noticeList() {
-    return "admin/notice/noticeList";
+    return "learn/quizview";
   }
   @GetMapping("/admin/memberList")
   public String memberList() {

@@ -7,6 +7,7 @@
     <meta charset="UTF-8">
     <title>Title</title>
     <link th:href="@{/css/header.css}" rel="stylesheet" />
+    <link th:href="@{/css/modal.css}" rel="stylesheet" />
     <style>
         * {
             margin: 0;
@@ -72,6 +73,7 @@
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
         }
+
     </style>
 </head>
 <body>
@@ -110,12 +112,14 @@
             <div class="menu-icon dropdown">
                 <a href="#">커뮤니티</a>
                 <ul class="dropdown-menu">
-                    <li><a href="#">사업 공고</a></li>
+                    <li><a href="/main/footer/business">사업 공고</a></li>
                     <li><a href="#">공지 사항</a></li>
-                    <li><a href="#">Q n A</a></li>
+                    <li><a href="/main/footer/intro">K-MOOC 소개</a></li>
                 </ul>
             </div>
-            <li><a href="#"><img th:src="@{/images/search.png}"></a></li>
+            <li><a href="#" id="search-button">
+                <img th:src="@{/images/search.png}" alt="검색">
+            </a></li>
         </ul>
     </nav>
     <div th:if="${session.memberDTO == null}" class="user-actions">
@@ -143,9 +147,30 @@
             </ul>
         </nav>
     </div>
-
 </header>
+
 </div>
 </section>
+
+<script>
+    // JavaScript 코드 추가
+    document.getElementById('search-button').addEventListener('click', function (e) {
+        e.preventDefault();
+
+        // header 요소 가져오기
+        const headerElement = document.getElementById('main');
+
+        // 새로운 div 요소 생성
+        const modalDiv = document.createElement('div');
+        modalDiv.setAttribute('th:replace', 'main/modal :: modal');
+
+        // header 아래에 div 추가
+        headerElement.insertAdjacentElement('afterend', modalDiv);
+
+        // 확인용 (콘솔 출력)
+        console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
+    });
+</script>
+
 </body>
 </html>

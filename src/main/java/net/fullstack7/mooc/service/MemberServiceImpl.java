@@ -34,7 +34,7 @@ public class MemberServiceImpl implements MemberServiceIf {
     public MemberDTO login(String memberId, String password) {
         Member member = memberMapper.login(memberId);
         if(member != null && member.getPassword().equals(password)) {
-            if(member.getStatus().equals("ACTIVE")&&member.getMemberType() == 0){
+            if(member.getStatus().equals("ACTIVE")){
             return modelMapper.map(member, MemberDTO.class);
             }
         }
