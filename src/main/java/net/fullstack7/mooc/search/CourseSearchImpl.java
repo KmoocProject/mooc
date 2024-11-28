@@ -20,7 +20,7 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
         super(Course.class);
     }
     @Override
-    public Page<CourseResponseDTO> coursePage(Pageable pageable, CourseSearchDTO courseSearchDTO, String memberId) {
+    public Page<CourseResponseDTO> coursePage(Pageable pageable, CourseSearchDTO courseSearchDTO, String memberId, int isCompleted) {
 
         QCourse qCourse = QCourse.course;
 
@@ -32,6 +32,11 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
             QCourseEnrollment qCourseEnrollment = QCourseEnrollment.courseEnrollment;
             query.innerJoin(qCourseEnrollment).on(qCourseEnrollment.course.eq(qCourse));
             builder.and(qCourseEnrollment.member.memberId.eq(memberId));
+
+            if(isCompleted == 0)
+                builder.and(qCourseEnrollment.isCompleted.eq(0));
+            else if(isCompleted == 1)
+                builder.and(qCourseEnrollment.isCompleted.eq(1));
         }
 
 
@@ -81,6 +86,7 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
                 .description(entity.getDescription())
                 .language(entity.getLanguage())
                 .status(entity.getStatus())
+                .teacherName(entity.getTeacher().getTeacherName())
                 .build()
         ).toList();
 

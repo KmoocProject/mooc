@@ -196,14 +196,14 @@
         </div>
 
         <!-- Courses -->
-        <div class="course-section">
+        <div class="course-section" >
             <h3>수강중인 강좌</h3>
-            <div class="course-card">
+            <div class="course-card"th:each="item, status:${courselist.content}">
                 <div class="course-details">
-                    <h4>스타트업 비즈니스 기획론</h4>
-                    <p>서리빈</p>
-                    <p>2024-11-11 ~ 2024-12-31</p>
-                    <p>주차: 16주 | 학습활동진척율: 0%</p>
+                    <h4 th:text="${item.title}"></h4>
+                    <p th:text="${item.teacherName}"></p>
+<!--                    <p th:text="${item.enrollmentDate}"></p>-->
+                    <p>주차: [[${item.weeks}]]</p>
                 </div>
                 <div class="course-actions">
                     <button class="learn-btn" id="learnGoBtn" >학습하기</button>
