@@ -151,13 +151,23 @@
           formData.append('type', contentElement.querySelector('[name="contentType"]').value);
           
           const type = contentElement.querySelector('[name="contentType"]').value;
-          if (type !== 'quiz') {
-              formData.append('description', contentElement.querySelector('[name="contentDescription"]').value);
-              const file = contentElement.querySelector('input[type="file"]').files[0];
-              if (file) formData.append('file', file);
+          if (type === 'quiz') {
+              // 퀴즈 데이터 처리
+              const quizzes = [];
+              contentElement.querySelectorAll('.quiz-item').forEach(quizItem => {
+                  quizzes.push({
+                      question: quizItem.querySelector('[name="question"]').value,
+                      answer: quizItem.querySelector('[name="answer"]').value
+                  });
+              });
+              formData.append('quizzes', JSON.stringify(quizzes));
           } else {
-              formData.append('question', contentElement.querySelector('[name="question"]').value);
-              formData.append('answer', contentElement.querySelector('[name="answer"]').value);
+              // 비디오/파일 데이터 처리
+              formData.append('description', contentElement.querySelector('[name="contentDescription"]').value);
+              const fileInput = contentElement.querySelector('input[type="file"]');
+              if (fileInput.files[0]) {
+                  formData.append('file', fileInput.files[0]);
+              }
           }
           
           try {
@@ -166,11 +176,14 @@
                   body: formData
               });
               
-              if (!response.ok) throw new Error('콘텐츠 수정 실패');
+              if (!response.ok) {
+                  const error = await response.json();
+                  throw new Error(error.message || '콘텐츠 수정 실패');
+              }
               alert('콘텐츠가 수정되었습니다.');
           } catch (error) {
               console.error('Error:', error);
-              alert('콘텐츠 수정에 실패했습니다.');
+              alert(error.message || '콘텐츠 수정에 실패했습니다.');
           }
       }
 
@@ -241,17 +254,47 @@
                   break;
               case 'quiz':
                   fieldsContainer.innerHTML = `
-                      <div class="mb-3">
-                          <label class="form-label">문제</label>
-                          <textarea class="form-control" name="question" rows="2" required></textarea>
+                      <div class="quiz-list">
+                          <div class="quiz-item mb-3">
+                              <div class="mb-2">
+                                  <label class="form-label">문제</label>
+                                  <textarea class="form-control" name="question" rows="2" required></textarea>
+                              </div>
+                              <div class="mb-2">
+                                  <label class="form-label">정답</label>
+                                  <input type="text" class="form-control" name="answer" required>
+                              </div>
+                              <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.quiz-item').remove()">
+                                  삭제
+                              </button>
+                          </div>
                       </div>
-                      <div class="mb-3">
-                          <label class="form-label">정답</label>
-                          <input type="text" class="form-control" name="answer" required>
-                      </div>
+                      <button type="button" class="btn btn-secondary btn-sm" onclick="addQuizItem(this)">
+                          문제 추가
+                      </button>
                   `;
                   break;
           }
+      }
+
+      function addQuizItem(button) {
+          const quizList = button.previousElementSibling;
+          const quizItem = `
+              <div class="quiz-item mb-3">
+                  <div class="mb-2">
+                      <label class="form-label">문제</label>
+                      <textarea class="form-control" name="question" rows="2" required></textarea>
+                  </div>
+                  <div class="mb-2">
+                      <label class="form-label">정답</label>
+                      <input type="text" class="form-control" name="answer" required>
+                  </div>
+                  <button type="button" class="btn btn-danger btn-sm" onclick="this.closest('.quiz-item').remove()">
+                      삭제
+                  </button>
+              </div>
+          `;
+          quizList.insertAdjacentHTML('beforeend', quizItem);
       }
     </script>
 </body>

@@ -16,12 +16,4 @@ public class QuizDTO {
     private String question;
     @NotBlank(message = "답은 필수입니다")
     private String answer;
-    
-    public static QuizDTO from(Quiz quiz) {
-        return QuizDTO.builder()
-            .quizId(quiz.getQuizId())
-            .question(quiz.getQuestion())
-            .answer(quiz.getAnswer())
-            .build();
-    }
 }

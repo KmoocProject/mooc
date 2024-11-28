@@ -79,14 +79,17 @@ public class CourseService {
     return lectureRepository.save(lecture);
   }
 
+  @Transactional
   public LectureContent createContent(LectureContentCreateDTO dto) throws IOException {
-    Lecture lecture = lectureRepository.findByLectureId(dto.getLectureId())
+    Lecture lecture = lectureRepository.findById(dto.getLectureId())
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션입니다."));
 
-    if (("video".equals(dto.getType()) || "file".equals(dto.getType())) && dto.getFile() == null) {
+    // video나 file 타입 검증
+    if (dto.getFile() == null) {
       throw new IllegalArgumentException("파일은 필수입니다.");
     }
 
+    // LectureContent 생성
     LectureContent content = LectureContent.builder()
         .title(dto.getTitle())
         .description(dto.getDescription())
@@ -96,29 +99,13 @@ public class CourseService {
 
     LectureContent savedContent = lectureContentRepository.save(content);
 
-    switch (dto.getType()) {
-      case "video", "file" -> {
-        String filePath = "video".equals(dto.getType())
-            ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
-            : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-        saveLectureFile(content, dto.getFile(), filePath);
-      }
-      case "quiz" -> {
-        if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
-          throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
-        }
-        content.setIsVideo(0);
+    // 파일 처리
+    String filePath = dto.getType().equals("video")
+        ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
+        : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
 
-        // 퀴즈 생성 및 연결
-        dto.getQuizzes().forEach(quizDTO -> {
-          Quiz quiz = Quiz.builder()
-              .question(quizDTO.getQuestion())
-              .answer(quizDTO.getAnswer())
-              .build();
-          content.addQuiz(quiz);
-        });
-      }
-    }
+    saveLectureFile(savedContent, dto.getFile(), filePath);
+
     return savedContent;
   }
 
@@ -152,43 +139,20 @@ public class CourseService {
 
     content.setTitle(dto.getTitle());
     content.setDescription(dto.getDescription());
+    content.setIsVideo("video".equals(dto.getType()) ? 1 : 0);
 
-    switch (dto.getType()) {
-      case "video", "file" -> {
-        content.setIsVideo("video".equals(dto.getType()) ? 1 : 0);
-        if (dto.getFile() != null) {
-          LectureFile oldFile = lectureFileRepository.findByLectureContent(content)
-              .orElse(null);
-          if (oldFile != null) {
-            fileUploadUtil.deleteFile(oldFile.getFilePath());
-            lectureFileRepository.delete(oldFile);
-          }
-
-          String filePath = dto.getType().equals("video")
-              ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
-              : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-          saveLectureFile(content, dto.getFile(), filePath);
-        }
+    if (dto.getFile() != null) {
+      LectureFile oldFile = lectureFileRepository.findByLectureContent(content)
+          .orElse(null);
+      if (oldFile != null) {
+        fileUploadUtil.deleteFile(oldFile.getFilePath());
+        lectureFileRepository.delete(oldFile);
       }
-      case "quiz" -> {
-        content.setIsVideo(0);
-        // 기존 퀴즈들 모두 삭제
-        quizRepository.deleteAllByLectureContent(content);
 
-        // 새 퀴즈들 생성
-        if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
-          throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
-        }
-
-        dto.getQuizzes().forEach(quizDTO -> {
-          Quiz quiz = Quiz.builder()
-              .question(quizDTO.getQuestion())
-              .answer(quizDTO.getAnswer())
-              .lectureContent(content)
-              .build();
-          quizRepository.save(quiz);
-        });
-      }
+      String filePath = dto.getType().equals("video")
+          ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
+          : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
+      saveLectureFile(content, dto.getFile(), filePath);
     }
 
     lectureContentRepository.save(content);
@@ -198,23 +162,28 @@ public class CourseService {
   public void deleteContent(int contentId) {
     try {
       LectureContent content = lectureContentRepository.findById(contentId)
-          .orElseThrow(() -> new IllegalArgumentException("존재하지 않 텐츠입니다."));
+          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
 
-      // 연관된 파일이나 퀴즈 삭제
       LectureFile file = lectureFileRepository.findByLectureContent(content).orElse(null);
       if (file != null) {
         fileUploadUtil.deleteFile(file.getFilePath());
         lectureFileRepository.delete(file);
       }
 
-      // 모든 퀴즈 삭제
-      quizRepository.deleteAllByLectureContent(content);
-
       lectureContentRepository.delete(content);
     } catch (Exception e) {
       log.error("콘텐츠 삭제 실패", e);
       throw new RuntimeException("콘텐츠 삭제에 실패했습니다.", e);
     }
+  }
+
+  public void deleteQuiz(int quizId) {
+    quizRepository.deleteByQuizId(quizId);
+  }
+
+  public void deleteQuizzes(int lectureId){
+    Lecture lecture = lectureRepository.findByLectureId(lectureId).orElseThrow(()->new IllegalArgumentException("존제하지 않는 강좌입니다."));
+    quizRepository.deleteAllByLecture(lecture);
   }
 
   // 읽기 전용 트랜잭션 (CUD방지 및 내부최적화)
@@ -243,21 +212,19 @@ public class CourseService {
                               .filePath(file.getFilePath())
                               .fileExtension(file.getFileExtension())
                               .build()));
-                } else {
-                  // 퀴즈인 경우
-                  List<Quiz> quizzes = quizRepository.findAllByLectureContent(content);
-                  if (!quizzes.isEmpty()) {
-                    contentDTO.setQuizzes(quizzes.stream()
-                        .map(quiz -> QuizDTO.builder()
-                            .quizId(quiz.getQuizId())
-                            .question(quiz.getQuestion())
-                            .answer(quiz.getAnswer())
-                            .build())
-                        .collect(Collectors.toList()));
-                  }
+                } else if (content.getIsVideo() == 0) {
+
                 }
                 return contentDTO;
               })
+              .collect(Collectors.toList());
+
+          List<QuizDTO> quizDTOs = lecture.getQuizzes().stream()
+              .map(quiz -> QuizDTO.builder()
+                  .quizId(quiz.getQuizId())
+                  .question(quiz.getQuestion())
+                  .answer(quiz.getAnswer())
+                  .build())
               .collect(Collectors.toList());
 
           return LectureDTO.builder()
@@ -265,6 +232,7 @@ public class CourseService {
               .title(lecture.getTitle())
               .description(lecture.getDescription())
               .contents(contentDTOs)
+              .quizzes(quizDTOs)
               .build();
         })
         .collect(Collectors.toList());
@@ -281,8 +249,31 @@ public class CourseService {
         .lectures(lectureDTOs)
         .build();
   }
+
   // public Course findByCourseId(int courseId) {
   // return courseRepository.findByCourseId(courseId)
   // .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
   // }
+  @Transactional
+  public void createQuizzes(QuizCreateDTO dto) {
+    Lecture lecture = lectureRepository.findById(dto.getLectureId())
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션입니다."));
+
+    if (dto.getQuizzes() == null || dto.getQuizzes().isEmpty()) {
+      throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
+    }
+
+    // 기존 퀴즈가 있다면 모두 삭제
+    quizRepository.deleteAllByLecture(lecture);
+
+    // 새 퀴즈 생성
+    dto.getQuizzes().forEach(quizDTO -> {
+      Quiz quiz = Quiz.builder()
+          .question(quizDTO.getQuestion())
+          .answer(quizDTO.getAnswer())
+          .lecture(lecture)
+          .build();
+      quizRepository.save(quiz);
+    });
+  }
 }

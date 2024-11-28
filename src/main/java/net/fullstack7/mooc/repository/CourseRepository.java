@@ -22,7 +22,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
            "LEFT JOIN FETCH c.lectures l " +
            "LEFT JOIN FETCH l.contents lc " +
            "LEFT JOIN FETCH lc.lectureFile lf " +
-           "LEFT JOIN FETCH lc.quizzes q " +
+           "LEFT JOIN FETCH l.quizzes q " +
            "WHERE c.courseId = :courseId " +
            "ORDER BY l.lectureId ASC, lc.lectureContentId ASC")
     Optional<Course> findCourseWithContentsById(@Param("courseId") int courseId);

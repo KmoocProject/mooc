@@ -16,4 +16,5 @@ public class LectureDTO {
     private String title;
     private String description;
     private List<LectureContentDTO> contents;
+    private List<QuizDTO> quizzes;
 }

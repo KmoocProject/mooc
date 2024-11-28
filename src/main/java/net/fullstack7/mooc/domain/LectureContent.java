@@ -33,17 +33,4 @@ public class LectureContent {
 
     @OneToOne(mappedBy = "lectureContent", fetch = FetchType.LAZY)
     private LectureFile lectureFile;
-
-    @OneToMany(mappedBy = "lectureContent", cascade = CascadeType.ALL, orphanRemoval = true)
-    @Builder.Default
-    private List<Quiz> quizzes = new ArrayList<>();
-
-    public void addQuiz(Quiz quiz) {
-        this.quizzes.add(quiz);
-        quiz.setLectureContent(this);
-    }
-
-    public void clearQuizzes() {
-        this.quizzes.clear();
-    }
 }
