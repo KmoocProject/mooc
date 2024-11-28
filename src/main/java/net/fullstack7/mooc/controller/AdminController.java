@@ -8,6 +8,7 @@ import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.AdminServiceIf;
 import net.fullstack7.mooc.service.NoticeServiceIf;
+import net.fullstack7.mooc.service.SubjectServiceImpl;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -24,6 +25,7 @@ import java.util.stream.Collectors;
 public class AdminController {
     private final AdminServiceIf adminService;
     private final NoticeServiceIf noticeService;
+    private final SubjectServiceImpl subjectService;
 
     @GetMapping("/main")
     public String main(Model model) {
@@ -166,6 +168,7 @@ public class AdminController {
 
         model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
         model.addAttribute("searchinfo", searchDTO);
+        model.addAttribute("subjects", subjectService.getAllSubjects());
 
         return "admin/course/courseList";
     }
@@ -192,14 +195,16 @@ public class AdminController {
         return "admin/course/courseView";
     }
 
-    @GetMapping("/courseModify")
-    public String courseModifyGet(@RequestParam(defaultValue = "0") int courseId, Model model, RedirectAttributes redirectAttributes) {
-        if (courseId == 0) {
+    @GetMapping("/courseApprove/{courseId}")
+    public String courseModifyGet(@PathVariable String courseId, Model model, RedirectAttributes redirectAttributes) {
+        if (courseId == null || !courseId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
             return "redirect:/admin/courseList";
         }
 
-        //승인해주는 코드 넣기
+        int id = Integer.parseInt(courseId);
+
+        redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("PUBLISHED", id));
 
         return "redirect:/admin/courseView/"+courseId;
     }
@@ -211,7 +216,7 @@ public class AdminController {
             return "redirect:/admin/courseList";
         }
 
-        //삭제하는 코드 넣기
+        redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("DELETED", courseId));
 
         return "redirect:/admin/courseList";
     }

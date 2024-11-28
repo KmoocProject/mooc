@@ -150,6 +150,19 @@ public class AdminServiceImpl implements AdminServiceIf {
     }
 
     @Override
+    public String modifyCourseStatus(String type, int courseId) {
+        if(!type.equals("DRAFT") && !type.equals("PUBLISHED") && !type.equals("DELETED")) {
+            return "타입 오류";
+        }
+
+        if(courseRepository.existsById(courseId)) {
+            courseRepository.updateStatus(courseId, type);
+            return "변경 완료";
+        }
+        return "없는 강의";
+    }
+
+    @Override
     public String insertNotice(NoticeDTO dto) {
         Notice notice = Notice.builder()
                 .admin(Admin.builder().adminId(dto.getAdminId()).build())
