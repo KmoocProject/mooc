@@ -166,7 +166,7 @@
             <!-- 검색 결과가 여기에 출력됩니다 -->
             <th:block th:if="${searchinfo.typeSelect == 't'}">
                 <tr th:each="item, status:${pageinfo.content}">
-                    <td th:text="${item.teacherId}"></td>
+                    <td><a th:href="@{/admin/memberView(memberId=${item.teacherId})}" th:text="${item.teacherId}"></a></td>
                     <td th:text="${item.isApproved}"></td>
                     <td th:text="${item.status}"></td>
                     <td th:text="${item.createdAt}"></td>
@@ -174,7 +174,7 @@
             </th:block>
             <th:block th:unless="${searchinfo.typeSelect == 't'}">
                 <tr th:each="item, status:${pageinfo.content}">
-                    <td th:text="${item.memberId}"></td>
+                    <td><a th:href="@{/admin/memberView(memberId=${item.memberId})}" th:text="${item.memberId}"></a></td>
                     <td th:text="${item.memberType}"></td>
                     <td th:text="${item.status}"></td>
                     <td th:text="${item.createdAt}"></td>
