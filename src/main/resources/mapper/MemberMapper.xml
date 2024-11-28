@@ -63,4 +63,10 @@
         DELETE FROM member
         WHERE memberId = #{memberId}
     </delete>
+
+    <select id="findId">
+        select *
+        from member
+        where email = #{email}
+    </select>
 </mapper>
