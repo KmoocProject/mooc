@@ -11,7 +11,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.*;
 
 @Log4j2
 @Service
@@ -201,6 +201,26 @@ public class AdminServiceImpl implements AdminServiceIf {
             return "삭제 완료";
         }
         return "존재하지 않는 게시글입니다.";
+    }
+
+    @Override
+    public Map<String, Integer> mainPageInfo() {
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime minus1month = now.toLocalDate().atStartOfDay().minusMonths(1);
+        int newMemberOneMonth = memberRepository.countByCreatedAtIsBetween(minus1month, now)
+                + teacherRepository.countByCreatedAtIsBetween(minus1month, now);
+        int totalMemberCount = memberRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})));
+
+        int newCourseOneMonth = courseRepository.countByCreatedAtIsBetween(minus1month, now);
+        int totalCourseCount = courseRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"PUBLISHED"})));
+
+        Map<String, Integer> map = new HashMap<>();
+        map.put("newMemberOneMonth", newMemberOneMonth);
+        map.put("totalMemberCount", totalMemberCount);
+        map.put("totalCourseCount", totalCourseCount);
+        map.put("newCourseOneMonth", newCourseOneMonth);
+
+        return map;
     }
 
 

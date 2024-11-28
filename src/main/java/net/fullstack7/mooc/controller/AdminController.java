@@ -29,6 +29,7 @@ public class AdminController {
 
     @GetMapping("/main")
     public String main(Model model) {
+        model.addAttribute("mainPageInfo", adminService.mainPageInfo());
         return "admin/main";
     }
 

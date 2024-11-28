@@ -8,6 +8,8 @@ import net.fullstack7.mooc.dto.*;
 import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 
+import java.util.Map;
+
 public interface AdminServiceIf {
     boolean existsAdmin(String id);
 
@@ -28,4 +30,6 @@ public interface AdminServiceIf {
     String insertNotice(NoticeDTO dto);
     String modifyNotice(NoticeDTO dto);
     String deleteNotice(int noticeId, String adminId);
+
+    Map<String, Integer> mainPageInfo();
 }

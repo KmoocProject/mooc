@@ -8,6 +8,8 @@ import org.springframework.stereotype.Repository;
 
 import net.fullstack7.mooc.domain.Teacher;
 
+import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 @Repository
 public interface TeacherRepository extends JpaRepository<Teacher, String>, TeacherSearch {
@@ -23,4 +25,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, Teach
     @Modifying
     @Query("update Teacher T set T.isApproved = :isApproved where T.teacherId = :teacherId")
     int updateIsApprovedByTeacherId(String teacherId, int isApproved);
+
+    int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
+    int countByStatusIn(List<String> status);
 }
