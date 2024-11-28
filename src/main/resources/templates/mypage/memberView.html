@@ -124,10 +124,17 @@
     <div class="container">
         <h1>개인정보관리</h1>
 
+        <div th:if="${successMessage}" class="alert alert-success">
+            <p th:text="${successMessage}"></p>
+        </div>
+
+        <div th:if="${errorMessage}" class="alert alert-danger">
+            <p th:text="${errorMessage}"></p>
+        </div>
         <!-- Basic Information Section -->
         <div class="section">
             <h2>기본정보</h2>
-            <form method="post" action="/mypage/memberModify">
+            <form method="post" th:action="@{/mypage/memberModify}">
                 <div class="form-group">
                     <label for="memberId">사용자 아이디</label>
                     <input type="text" id="memberId" th:field="${member.memberId}" readonly>
@@ -155,11 +162,11 @@
                     <input type="text" id="gender" th:value="${member.gender == 0 ? '남성' : '여성'}" readonly>
                 </div>
 
-                <div th:if="${errors != null}">
-                    <ul>
-                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
-                    </ul>
-                </div>
+<!--                <div th:if="${errors != null}">-->
+<!--                    <ul>-->
+<!--                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>-->
+<!--                    </ul>-->
+<!--                </div>-->
 
                 <!-- Actions Section -->
                 <div class="actions">
