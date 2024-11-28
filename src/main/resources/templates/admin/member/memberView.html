@@ -202,6 +202,9 @@
 
 </style>
 <body>
+<script th:if="${errors != null}">
+    alert(`[[${errors}]]`);
+</script>
 
 <div th:replace="admin/header :: header"></div>
 
@@ -212,6 +215,17 @@
         <div class="form-section">
             <h2 class="section-title">기본정보</h2>
 
+            <div class="form-group">
+                <label >회원상태 : [[${item.status}]]</label>
+            </div>
+
+            <th:block th:if="${type=='t'}">
+                <div class="form-group">
+                    <label >승인상태 : [[${item.isApproved}]]</label>
+                    <button th:if="${item.isApproved == 0}" th:onclick="|location.href='@{/admin/approve/{teacherId}(teacherId=${item.teacherId})}'|">가입승인</button>
+                </div>
+
+
                 <!-- Username -->
                 <div class="form-group">
                     <label >아이디 : [[${item.teacherId}]]</label>
@@ -221,9 +235,40 @@
                     <label>이름 : [[${item.teacherName}]]</label>
                 </div>
 
+                <!-- Email -->
+                <div class="form-group">
+                    <label>이메일 : [[${item.email}]]</label>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label>비밀번호 : [[${item.password}]]</label>
+                </div>
+
+                <div class="form-group">
+                    <label>기관번호 : [[${item.institution.institutionId}]]</label>
+                </div>
+
+                <div class="actions">
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberModify/{type}(type='ACTIVEt',id=${item.teacherId})}'|">활성화</button>
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberModify/{type}(type='INACTIVEt',id=${item.teacherId})}'|">비활성화</button>
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberDelete/{type}(type='t',id=${item.teacherId})}'|">탈퇴</button>
+                </div>
+            </th:block>
+
+            <th:block th:if="${type=='s'}">
+                <!-- Username -->
+                <div class="form-group">
+                    <label >아이디 : [[${item.memberId}]]</label>
+                </div>
+                <!-- Name -->
+                <div class="form-group">
+                    <label>이름 : [[${item.userName}]]</label>
+                </div>
+
                 <!-- Gender -->
                 <div class="form-group">
-                    <label>성별 : </label>
+                    <label>성별 : [[${item.gender}]]</label>
                 </div>
 
                 <!-- Email -->
@@ -233,14 +278,15 @@
 
                 <!-- Password -->
                 <div class="form-group">
-                    <label>비밀번호 : [[${item.institution.institutionId}]]</label>
+                    <label>비밀번호 : [[${item.password}]]</label>
                 </div>
 
                 <div class="actions">
-                    <button type="button" class="btn confirm" th:onclick="@{/admin/memberModify(id=${'t'+teacherId},status='ACTIVE')}">활성화</button>
-                    <button type="button" class="btn confirm" th:onclick="@{/admin/memberModify(id=${'t'+teacherId},status='INACTIVE')}">비활성화</button>
-                    <button type="button" class="btn confirm" th:onclick="@{/admin/memberDelete(id=${'t'+teacherId})}">탈퇴</button>
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberModify/{type}(type='ACTIVEs',id=${item.memberId})}'|">활성화</button>
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberModify/{type}(type='INACTIVEs',id=${item.memberId})}'|">비활성화</button>
+                    <button type="button" class="btn confirm" th:onclick="|location.href='@{/admin/memberDelete/{type}(type='s',id=${item.memberId})}'|">탈퇴</button>
                 </div>
+            </th:block>
 
             </form>
         </div>

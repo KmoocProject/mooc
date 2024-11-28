@@ -38,8 +38,7 @@ public class MemberServiceImpl implements MemberServiceIf {
     }
 
     public String findId(String email){
-        Optional<Member> member = memberRepository.findByMemberId(email);
-        return member.map(Member::getMemberId).orElse(null);
+        return null;
     }
 
     @Override

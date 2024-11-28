@@ -9,8 +9,6 @@ import org.springframework.data.jpa.repository.Query;
 import java.util.Optional;
 
 public interface NoticeRepository extends JpaRepository<Notice, Integer>, NoticeSearch {
-    Optional<Notice> findByNoticeId(Integer noticeId);
-    boolean existsNoticeByNoticeId(int noticeId);
     @Modifying
     @Query("update Notice N set N.title = :title, N.content = :content, N.importance = :importance where N.noticeId = :noticeId")
     int updateNotice(int noticeId, String title, String content, int importance);
