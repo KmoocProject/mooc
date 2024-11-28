@@ -9,6 +9,7 @@ import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
+import net.fullstack7.mooc.service.CourseService;
 import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.service.MemberServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,6 +30,7 @@ import java.util.Map;
 @RequestMapping("/mypage")
 public class MyPageController {
     private final MemberServiceIf memberServiceImpl;
+    private final CourseService courseService;
 
     //마이클래스 이동
     @GetMapping("/myclass")
@@ -44,10 +46,26 @@ public class MyPageController {
         model.addAttribute("member", memberDTO);
 
         searchDTO.initialize();
-        model.addAttribute("courselist", memberServiceImpl.getCourses(searchDTO, memberDTO.getMemberId(), -1));
+        model.addAttribute("courselist", memberServiceImpl.getCourses(searchDTO, memberDTO.getMemberId(), 0));
+        model.addAttribute("notcompleted", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 0));
+        model.addAttribute("completed", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 1));
 //        model.addAttribute("pageInfo", searchDTO);
 
         return "mypage/myclass";
+    }
+
+    @GetMapping("/creditclass")
+    public String creditclass(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult) {
+        if(bindingResult.hasErrors()) {
+            searchDTO = CourseSearchDTO.builder().build();
+        }
+        searchDTO.setIsCreditBank(1);
+        String memberId = ((MemberDTO) session.getAttribute("memberDTO")).getMemberId();
+        searchDTO.initialize();
+
+        model.addAttribute("courselist", memberServiceImpl.getCourses(searchDTO, memberId, 0));
+//        model.addAttribute("pageInfo", searchDTO);
+        return "mypage/creditclass";
     }
 
     //회원 조회
@@ -73,10 +91,6 @@ public class MyPageController {
     @GetMapping("/creditTransform3")
     public String creditTransform3() {
         return "mypage/creditTransform3" ;
-    }
-    @GetMapping("/creditclass")
-    public String creditclass() {
-        return "mypage/creditclass" ;
     }
 
 
