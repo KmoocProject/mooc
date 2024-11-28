@@ -32,4 +32,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
     @Query("update Course C set C.status = :status where C.courseId = :courseId")
     int updateStatus(int courseId, String status);
 
+
 }
