@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+<head th:replace="teacher/common/header :: head"></head>
+<style>
+    .section-card {
+        margin-bottom: 1.5rem;
+        border: 1px solid #dee2e6;
+        border-radius: 0.25rem;
+    }
+    .content-item {
+        padding: 1rem;
+        margin-bottom: 1rem;
+        background-color: #f8f9fa;
+        border-radius: 0.25rem;
+    }
+    .content-preview {
+        max-width: 200px;
+        max-height: 200px;
+        object-fit: contain;
+    }
+</style>
+<body>
+    <nav th:replace="teacher/common/nav :: nav"></nav>
+    <div class="container mt-5">
+        <h2 class="mb-4">강좌 수정</h2>
+        
+        <!-- 섹션 목록 -->
+        <div id="sectionContainer">
+            <div th:each="section, sectionStat : ${sections}" class="section-card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <h5 class="mb-0">섹션 [[${sectionStat.count}]]</h5>
+                        <button type="button" class="btn btn-danger btn-sm ms-3" 
+                                th:onclick="'deleteSection(' + ${section.lectureId} + ')'">섹션 삭제</button>
+                    </div>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">섹션 제목</label>
+                        <input type="text" class="form-control" th:value="${section.title}" 
+                               th:onchange="'updateSectionTitle(' + ${section.lectureId} + ', this.value)'">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">섹션 설명</label>
+                        <textarea class="form-control" rows="2" 
+                                th:text="${section.description}"
+                                th:onchange="'updateSectionDescription(' + ${section.lectureId} + ', this.value)'"></textarea>
+                    </div>
+                    
+                    <!-- 콘텐츠 목록 -->
+                    <div class="content-list">
+                        <div th:each="content : ${section.contents}" class="content-item">
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h6 class="mb-0">콘텐츠 정보</h6>
+                                <button type="button" class="btn btn-danger btn-sm" 
+                                        th:onclick="'deleteContent(' + ${content.lectureContentId} + ')'">삭제</button>
+                            </div>
+                            <div class="mb-3">
+                                <label class="form-label">제목</label>
+                                <input type="text" class="form-control" th:value="${content.title}">
+                            </div>
+                            <div th:if="${content.type != 'quiz'}" class="mb-3">
+                                <label class="form-label">설명</label>
+                                <textarea class="form-control" rows="2" th:text="${content.description}"></textarea>
+                            </div>
+                            <div th:if="${content.type == 'quiz'}" class="quiz-content">
+                                <div class="mb-3">
+                                    <label class="form-label">문제</label>
+                                    <textarea class="form-control" rows="2" th:text="${content.question}"></textarea>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label">정답</label>
+                                    <input type="text" class="form-control" th:value="${content.answer}">
+                                </div>
+                            </div>
+                            <div th:if="${content.type != 'quiz'}" class="mb-3">
+                                <label class="form-label">파일 변경</label>
+                                <input type="file" class="form-control" 
+                                       th:accept="${content.type == 'video' ? 'video/*' : '*'}">
+                                <div class="current-file mt-2">
+                                    <small class="text-muted">현재 파일: </small>
+                                    <span th:text="${content.fileName}"></span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <button type="button" class="btn btn-primary btn-sm mt-3" 
+                            th:onclick="'addContent(' + ${section.lectureId} + ')'">콘텐츠 추가</button>
+                </div>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between mt-4">
+            <button type="button" class="btn btn-secondary" onclick="location.href='/teacher/myLectures'">취소</button>
+            <div>
+                <button type="button" class="btn btn-primary me-2" onclick="addSection()">섹션 추가</button>
+                <button type="button" class="btn btn-success" onclick="saveChanges()">변경사항 저장</button>
+            </div>
+        </div>
+    </div>
+
+          <script th:inline="javascript">
+              // 섹션 제목 수정
+      async function updateSectionTitle(lectureId, title) {
+          try {
+              const response = await fetch(`/api/teacher/lectures/${lectureId}`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      title: title,
+                      description: document.querySelector(`[data-section-id="${lectureId}"] textarea`).value
+                  })
+              });
+              
+              if (!response.ok) throw new Error('섹션 수정 실패');
+          } catch (error) {
+              console.error('Error:', error);
+              alert('섹션 수정에 실패했습니다.');
+          }
+      }
+
+      // 섹션 설명 수정
+      async function updateSectionDescription(lectureId, description) {
+          try {
+              const response = await fetch(`/api/teacher/lectures/${lectureId}`, {
+                  method: 'PUT',
+                  headers: {
+                      'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                      title: document.querySelector(`[data-section-id="${lectureId}"] input[type="text"]`).value,
+                      description: description
+                  })
+              });
+              
+              if (!response.ok) throw new Error('섹션 수정 실패');
+          } catch (error) {
+              console.error('Error:', error);
+              alert('섹션 수정에 실패했습니다.');
+          }
+      }
+
+      // 콘텐츠 수정
+      async function updateContent(contentId, lectureId) {
+          const contentElement = document.querySelector(`[data-content-id="${contentId}"]`);
+          const formData = new FormData();
+          
+          formData.append('title', contentElement.querySelector('[name="contentTitle"]').value);
+          formData.append('type', contentElement.querySelector('[name="contentType"]').value);
+          
+          const type = contentElement.querySelector('[name="contentType"]').value;
+          if (type !== 'quiz') {
+              formData.append('description', contentElement.querySelector('[name="contentDescription"]').value);
+              const file = contentElement.querySelector('input[type="file"]').files[0];
+              if (file) formData.append('file', file);
+          } else {
+              formData.append('question', contentElement.querySelector('[name="question"]').value);
+              formData.append('answer', contentElement.querySelector('[name="answer"]').value);
+          }
+          
+          try {
+              const response = await fetch(`/api/teacher/lectures/${lectureId}/contents/${contentId}`, {
+                  method: 'PUT',
+                  body: formData
+              });
+              
+              if (!response.ok) throw new Error('콘텐츠 수정 실패');
+              alert('콘텐츠가 수정되었습니다.');
+          } catch (error) {
+              console.error('Error:', error);
+              alert('콘텐츠 수정에 실패했습니다.');
+          }
+      }
+
+      // 콘텐츠 삭제
+      async function deleteContent(contentId, lectureId) {
+          if (!confirm('정말 이 콘텐츠를 삭제하시겠습니까?')) return;
+          
+          try {
+              const response = await fetch(`/api/teacher/lectures/${lectureId}/contents/${contentId}`, {
+                  method: 'DELETE'
+              });
+              
+              if (!response.ok) throw new Error('콘텐츠 삭제 실패');
+              
+              document.querySelector(`[data-content-id="${contentId}"]`).remove();
+              alert('콘텐츠가 삭제되었습니다.');
+          } catch (error) {
+              console.error('Error:', error);
+              alert('콘텐츠 삭제에 실패했습니다.');
+          }
+      }
+
+      // 새 콘텐츠 추가
+      async function addContent(lectureId) {
+          const contentTemplate = `
+              <div class="content-item" data-content-id="new">
+                  <div class="mb-3">
+                      <label class="form-label">제목</label>
+                      <input type="text" class="form-control" name="contentTitle" required>
+                  </div>
+                  <div class="mb-3">
+                      <label class="form-label">타입</label>
+                      <select class="form-control" name="contentType" onchange="handleContentTypeChange(this)">
+                          <option value="video">동영상</option>
+                          <option value="file">파일</option>
+                          <option value="quiz">퀴즈</option>
+                      </select>
+                  </div>
+                  <div class="content-type-fields">
+                      <!-- 동적으로 채워질 영역 -->
+                  </div>
+              </div>
+          `;
+          
+          const section = document.querySelector(`[data-section-id="${lectureId}"] .content-list`);
+          section.insertAdjacentHTML('beforeend', contentTemplate);
+      }
+
+      // 콘텐츠 타입 변경 처리
+      function handleContentTypeChange(select) {
+          const contentItem = select.closest('.content-item');
+          const fieldsContainer = contentItem.querySelector('.content-type-fields');
+          
+          switch (select.value) {
+              case 'video':
+              case 'file':
+                  fieldsContainer.innerHTML = `
+                      <div class="mb-3">
+                          <label class="form-label">설명</label>
+                          <textarea class="form-control" name="contentDescription" rows="2" required></textarea>
+                      </div>
+                      <div class="mb-3">
+                          <label class="form-label">파일</label>
+                          <input type="file" class="form-control" name="contentFile" 
+                                accept="${select.value === 'video' ? 'video/*' : '*'}" required>
+                      </div>
+                  `;
+                  break;
+              case 'quiz':
+                  fieldsContainer.innerHTML = `
+                      <div class="mb-3">
+                          <label class="form-label">문제</label>
+                          <textarea class="form-control" name="question" rows="2" required></textarea>
+                      </div>
+                      <div class="mb-3">
+                          <label class="form-label">정답</label>
+                          <input type="text" class="form-control" name="answer" required>
+                      </div>
+                  `;
+                  break;
+          }
+      }
+    </script>
+</body>
+</html>

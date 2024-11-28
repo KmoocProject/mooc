@@ -5,20 +5,16 @@ import net.fullstack7.mooc.domain.Course;
 import net.fullstack7.mooc.domain.Lecture;
 import net.fullstack7.mooc.domain.LectureContent;
 import net.fullstack7.mooc.domain.Teacher;
-import net.fullstack7.mooc.dto.CourseCreateDTO;
-import net.fullstack7.mooc.dto.LectureContentCreateDTO;
-import net.fullstack7.mooc.dto.LectureCreateDTO;
+import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.CourseService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import net.fullstack7.mooc.dto.CourseResponseDTO;
-import net.fullstack7.mooc.dto.ApiResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;  
 
 import lombok.RequiredArgsConstructor;
-import net.fullstack7.mooc.dto.LectureResponseDTO;
 import lombok.extern.log4j.Log4j2;
 import java.io.IOException;
 

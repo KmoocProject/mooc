@@ -17,11 +17,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 import net.fullstack7.mooc.domain.Subject;
 import net.fullstack7.mooc.repository.SubjectRepository;
-
+import net.fullstack7.mooc.service.CourseService;
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/teacher")
@@ -29,6 +30,7 @@ public class TeacherController {
     private final TeacherService teacherService;
     private final InstitutionRepository institutionRepository;
     private final SubjectRepository subjectRepository;
+    private final CourseService courseService;
     @GetMapping("/login")
     public String loginForm() {
         return "teacher/login";
@@ -101,5 +103,24 @@ public class TeacherController {
         List<Subject> subjects = subjectRepository.findAllByOrderBySubjectIdAsc();
         model.addAttribute("subjects", subjects);
         return "teacher/registLecture";
+    }
+
+    @GetMapping("/lectures/edit/{courseId}")
+    public String editLecture(@PathVariable int courseId, Model model, HttpSession session) {
+        Teacher teacher = (Teacher) session.getAttribute("teacher");
+        if (teacher == null) {
+            return "redirect:/teacher/login";
+        }
+        
+        // 강좌 정보와 섹션, 콘텐츠 정보를 모두 가져옴
+        Course course = courseService.getCourseWithContents(courseId);
+        
+        // 해당 강좌가 현재 로그인한 강사의 것인지 확인
+        if (!course.getTeacher().getTeacherId().equals(teacher.getTeacherId())) {
+            return "redirect:/teacher/myLectures";
+        }
+        
+        model.addAttribute("course", course);
+        return "teacher/updateLecture";
     }
 }

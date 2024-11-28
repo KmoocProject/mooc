@@ -60,7 +60,7 @@ public class CourseService {
 
     public Lecture createLecture(LectureCreateDTO dto) {
         Course course = courseRepository.findById(dto.getCourseId())
-            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입��다."));
 
         Lecture lecture = Lecture.builder()
             .title(dto.getTitle())
@@ -187,7 +187,7 @@ public void updateContent(int contentId, LectureContentUpdateDTO dto) throws IOE
 public void deleteContent(int contentId) {
   try {
     LectureContent content = lectureContentRepository.findById(contentId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 콘텐츠입니다."));
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않�� ��텐츠입니다."));
     
     // 연관된 파일이나 퀴즈 삭제
     LectureFile file = lectureFileRepository.findByLectureContent(content).orElse(null);
@@ -206,5 +206,11 @@ public void deleteContent(int contentId) {
         log.error("콘텐츠 삭제 실패", e);
         throw new RuntimeException("콘텐츠 삭제에 실패했습니다.", e);
     }
+  }
+
+  @Transactional(readOnly = true)
+  public Course getCourseWithContents(int courseId) {
+      return courseRepository.findById(courseId)
+          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
   }
 }
