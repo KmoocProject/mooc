@@ -4,12 +4,17 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Member;
+import net.fullstack7.mooc.dto.CourseResponseDTO;
+import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
 import net.fullstack7.mooc.mapper.MemberMapper;
+import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -22,19 +27,17 @@ import java.util.regex.Pattern;
 @Log4j2
 @Transactional
 public class MemberServiceImpl implements MemberServiceIf {
-    @Autowired
     private final MemberMapper memberMapper;
-    @Autowired
     private final ModelMapper modelMapper;
-    @Autowired
-    private MemberRepository memberRepository;
+    private final MemberRepository memberRepository;
+    private final CourseRepository courseRepository;
     
     //로그인
     @Override
     public MemberDTO login(String memberId, String password) {
         Member member = memberMapper.login(memberId);
         if(member != null && member.getPassword().equals(password)) {
-            if(member.getStatus().equals("ACTIVE")&&member.getMemberType() == 0){
+            if(member.getStatus().equals("ACTIVE")){
             return modelMapper.map(member, MemberDTO.class);
             }
         }
@@ -163,5 +166,10 @@ public class MemberServiceImpl implements MemberServiceIf {
             log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
             throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
         }
+    }
+
+    @Override
+    public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted) {
+        return courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
     }
 }
