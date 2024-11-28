@@ -21,19 +21,15 @@ public class LectureContentDTO {
     private String description;
     private int isVideo;
     private LectureFileDTO file;
-    private List<QuizDTO> quizzes;
     private String type;
     
     public static LectureContentDTO from(LectureContent content) {
-        String type = content.getIsVideo() == 1 ? "video" : 
-                     content.getQuizzes() != null && !content.getQuizzes().isEmpty() ? "quiz" : "file";
-        
         return LectureContentDTO.builder()
             .lectureContentId(content.getLectureContentId())
             .title(content.getTitle())
             .description(content.getDescription())
             .isVideo(content.getIsVideo())
-            .type(type)
+            .type(content.getIsVideo() == 1 ? "video" : "file")
             .build();
     }
 }

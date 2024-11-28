@@ -30,20 +30,20 @@ public class LectureContentCreateDTO {
     private String description;
 
     @NotNull(message = "콘텐츠 타입은 필수입니다")
-    @Pattern(regexp = "^(video|file|quiz)$", message = "콘텐츠 타입은 video, file, quiz 중 하나여야 합니다")
+    @Pattern(regexp = "^(video|file)$", message = "콘텐츠 타입은 video, file 중 하나여야 합니다")
     private String type;
 
-    // video나 file 타입일 경우에만 필수
     private MultipartFile file;
 
-    // quiz 타입일 경우에만 필수
-    private List<QuizDTO> quizzes;
+    // private List<QuizDTO> quizzes;
 
-    @AssertTrue(message = "동영상/문서 타입의 경우 파일은 필수입니다")
-    private boolean isFileValid() {
-        if ("video".equals(type) || "file".equals(type)) {
-            return file != null && !file.isEmpty();
-        }
-        return true;
-    }
+    // @AssertTrue(message = "동영상/문서 타입일 경우 제목, 설명 및 파일은 필수입니다")
+    // public boolean isValid() {
+    //     if ("quiz".equals(type)) {
+    //         return true;
+    //     }
+    //     return (title != null && !title.trim().isEmpty() 
+    //             && description != null && !description.trim().isEmpty() 
+    //             && file != null && !file.isEmpty());
+    // }
 }

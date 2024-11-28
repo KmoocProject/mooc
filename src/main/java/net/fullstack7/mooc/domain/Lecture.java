@@ -5,6 +5,8 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.querydsl.core.types.OrderSpecifier.NullHandling.Default;
+
 @Entity
 @Data
 @Builder
@@ -30,6 +32,15 @@ public class Lecture {
     @OrderBy("lectureContentId ASC")
     @Builder.Default
     private List<LectureContent> contents = new ArrayList<>();
+
+    @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
+    @Builder.Default
+    private List<Quiz> quizzes = new ArrayList<>();
+
+    public void addQuiz(Quiz quiz) {
+        quizzes.add(quiz);
+        quiz.setLecture(this);
+    }
 
     //courseId; // INT NOT NULL, -- 강좌 ID
 //    FOREIGN KEY (courseId) REFERENCES course(courseId) -- 강좌 ID 외래 키
