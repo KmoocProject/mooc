@@ -246,31 +246,47 @@
         }
 
         function validateStep(step) {
-            if (step === 1) {
-                const form = document.getElementById('courseForm');
-                return form.checkValidity();
-            } else if (step === 2) {
-                const sections = document.querySelectorAll('.section-item');
-                return sections.length > 0 && Array.from(sections).every(section => {
-                    return section.querySelector('[name="sectionTitle"]').value.trim() !== '' &&
-                        section.querySelector('[name="sectionDescription"]').value.trim() !== '';
-                });
+            try {
+                if (step === 1) {
+                    const form = document.getElementById('courseForm');
+                    const thumbnail = form.querySelector('input[name="thumbnail"]').files[0];
+                    if (!thumbnail) {
+                        throw new Error('썸네일 이미지를 선택해주세요.');
+                    }
+                    if (!form.checkValidity()) {
+                        throw new Error('모든 필수 항목을 입력해주세요.');
+                    }
+                    return true;
+                } else if (step === 2) {
+                    const sections = document.querySelectorAll('.section-item');
+                    if (sections.length === 0) {
+                        throw new Error('최소 1개의 섹션이 필요합니다.');
+                    }
+                    const isValid = Array.from(sections).every(section => {
+                        const title = section.querySelector('[name="sectionTitle"]').value.trim();
+                        const description = section.querySelector('[name="sectionDescription"]').value.trim();
+                        return title !== '' && description !== '';
+                    });
+                    if (!isValid) {
+                        throw new Error('모든 섹션의 제목과 설명을 입력해주세요.');
+                    }
+                    return true;
+                }
+                return true;
+            } catch (error) {
+                alert(error.message);
+                return false;
             }
-            return true;
         }
 
         async function saveBasicInfo() {
             if (isSubmitting) return false;
 
-            const form = document.getElementById('courseForm');
-            if (!form.checkValidity()) {
-                form.classList.add('was-validated');
-                return false;
-            }
-
             try {
                 isSubmitting = true;
+                const form = document.getElementById('courseForm');
                 const formData = new FormData(form);
+
                 const response = await fetch('/api/teacher/courses', {
                     method: 'POST',
                     body: formData
@@ -299,6 +315,47 @@
             }
         }
 
+        function addSection() {
+            const container = document.getElementById('sectionContainer');
+            const sectionCount = container.children.length + 1;
+
+            const sectionTemplate = `
+        <div class="section-item mb-3">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="section-title">섹션 ${sectionCount}</h5>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeSection(this)">삭제</button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">섹션 제목</label>
+                        <input type="text" class="form-control" name="sectionTitle" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">섹션 설명</label>
+                        <textarea class="form-control" name="sectionDescription" rows="2" required></textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+    `;
+
+            container.insertAdjacentHTML('beforeend', sectionTemplate);
+        }
+
+        function removeSection(button) {
+            const container = document.getElementById('sectionContainer');
+            if (container.children.length > 1) {
+                button.closest('.section-item').remove();
+                // 섹션 번호 재정렬
+                container.querySelectorAll('.section-item').forEach((item, index) => {
+                    item.querySelector('.section-title').textContent = `섹션 ${index + 1}`;
+                });
+            } else {
+                alert('최소 1개의 섹션이 필요합니다.');
+            }
+        }
+
         async function saveSections() {
             if (!courseData?.courseId) {
                 alert('강좌 기본 정보가 없습니다.');
@@ -320,15 +377,17 @@
                     body: JSON.stringify(sections)
                 });
 
-                if (response.ok) {
-                    const lectureData = await response.json();
-                    sectionLectureIds = lectureData.map(lecture => lecture.lectureId);
-                    return true;
+                if (!response.ok) {
+                    const error = await response.json();
+                    throw new Error(error.message || '섹션 저장에 실패했습니다.');
                 }
-                throw new Error('섹션 저장에 실패했습니다.');
+
+                const lectureData = await response.json();
+                sectionLectureIds = lectureData.map(lecture => lecture.lectureId);
+                return true;
             } catch (error) {
                 console.error('섹션 저장 에러:', error);
-                alert('섹션 저장에 실패했습니다.');
+                alert(error.message || '섹션 저장에 실패했습니다.');
                 return false;
             }
         }
@@ -392,6 +451,7 @@
 
         function getContentTemplate(sectionIndex, contentIndex, type) {
             const isQuiz = type === 'quiz';
+
             return `
         <div class="content-item mb-3" data-type="${type}">
             <div class="card">
@@ -400,6 +460,12 @@
                         <h6>콘텐츠 ${contentIndex + 1} (${type === 'video' ? '동영상' : type === 'file' ? '문서' : '퀴즈'})</h6>
                         <button type="button" class="btn btn-danger btn-sm" onclick="removeContent(this)">삭제</button>
                     </div>
+                    ${!isQuiz ? `
+                    <div class="mb-3">
+                        <label class="form-label">제목</label>
+                        <input type="text" class="form-control" name="contentTitle" required>
+                    </div>
+                    ` : ''}
                     ${isQuiz ? getQuizTemplate() : getFileTemplate(type)}
                 </div>
             </div>
@@ -407,93 +473,86 @@
     `;
         }
 
-        function getFileTemplate(type) {
-            return `
-        <div class="mb-3">
-            <label class="form-label">콘텐츠 제목</label>
-            <input type="text" class="form-control" name="contentTitle" required>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">콘텐츠 설명</label>
-            <textarea class="form-control" name="contentDescription" required></textarea>
-        </div>
-        <div class="mb-3">
-            <label class="form-label">${type === 'video' ? '동영상' : '문서'} 파일</label>
-            <input type="file" class="form-control" 
-                   accept="${type === 'video' ? 'video/*' : '*'}" required>
-            <div class="preview-area mt-2"></div>
-        </div>
-    `;
-        }
-
         function getQuizTemplate() {
             return `
-        <div class="quiz-container">
-            <div class="quiz-list">
-                <div class="quiz-item mb-3">
-                    <div class="mb-3">
-                        <label class="form-label">문제 1</label>
-                        <textarea class="form-control" name="question" rows="3" required></textarea>
-                    </div>
-                    <div class="mb-3">
-                        <label class="form-label">정답</label>
-                        <input type="text" class="form-control" name="answer" required>
+        <div class="quiz-list">
+            <div class="quiz-item mb-3">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center mb-3">
+                            <label class="form-label">문제 1</label>
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeQuizItem(this)">삭제</button>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">질문</label>
+                            <input type="text" class="form-control" name="question" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">답변</label>
+                            <input type="text" class="form-control" name="answer" required>
+                        </div>
                     </div>
                 </div>
             </div>
-            <button type="button" class="btn btn-outline-primary btn-sm mt-2" 
-                    onclick="addQuizItem(this)">+ 문제 추가</button>
         </div>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="addQuizItem(this)">문제 추가</button>
     `;
         }
 
-        function removeContent(button) {
-            const contentList = button.closest('.content-list');
-            if (contentList.children.length > 1) {
-                const contentItem = button.closest('.content-item');
-                contentItem.remove();
-
-                contentList.querySelectorAll('.content-item').forEach((item, index) => {
-                    const type = item.dataset.type;
-                    item.querySelector('h6').textContent =
-                        `콘텐츠 ${index + 1} (${type === 'video' ? '동영상' : type === 'file' ? '문서' : '퀴즈'})`;
-                });
-            } else {
-                alert('최소 1개의 콘텐츠가 필요합니다.');
-            }
+        function getFileTemplate(type) {
+            return `
+        <div class="mb-3">
+            <label class="form-label">설명</label>
+            <textarea class="form-control" name="contentDescription" rows="2" required></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">${type === 'video' ? '동영상' : '문서'} 파일</label>
+            <input type="file" class="form-control" accept="${type === 'video' ? 'video/*' : '*'}" required>
+        </div>
+    `;
         }
 
         function addQuizItem(button) {
             const quizList = button.previousElementSibling;
             const quizCount = quizList.children.length + 1;
 
-            const quizItem = `
+            quizList.insertAdjacentHTML('beforeend', `
         <div class="quiz-item mb-3">
-            <div class="mb-3">
-                <label class="form-label">문제 ${quizCount}</label>
-                <textarea class="form-control" name="question" rows="3" required></textarea>
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <label class="form-label">문제 ${quizCount}</label>
+                        <button type="button" class="btn btn-danger btn-sm" onclick="removeQuizItem(this)">삭제</button>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">질문</label>
+                        <input type="text" class="form-control" name="question" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">답변</label>
+                        <input type="text" class="form-control" name="answer" required>
+                    </div>
+                </div>
             </div>
-            <div class="mb-3">
-                <label class="form-label">정답</label>
-                <input type="text" class="form-control" name="answer" required>
-            </div>
-            <button type="button" class="btn btn-outline-danger btn-sm" 
-                    onclick="removeQuizItem(this)">문제 삭제</button>
         </div>
-    `;
-            quizList.insertAdjacentHTML('beforeend', quizItem);
+    `);
         }
 
         function removeQuizItem(button) {
             const quizList = button.closest('.quiz-list');
             if (quizList.children.length > 1) {
                 button.closest('.quiz-item').remove();
+                // 문제 번호 재정렬
                 quizList.querySelectorAll('.quiz-item').forEach((item, index) => {
                     item.querySelector('.form-label').textContent = `문제 ${index + 1}`;
                 });
             } else {
                 alert('최소 1개의 문제가 필요합니다.');
             }
+        }
+
+        function removeContent(button) {
+            button.closest('.content-item').remove();
         }
 
         async function submitCourse() {
@@ -514,12 +573,12 @@
 
                         try {
                             if (type === 'quiz') {
-                                await submitQuiz(lectureId, content);
+                                await submitQuizzes(lectureId, content);
                             } else {
                                 await submitContent(lectureId, content);
                             }
                         } catch (error) {
-                            throw new Error(`섹션 ${i + 1}의 콘텐츠 등록 실패: ${error.message}`);
+                            throw new Error(`${section.querySelector('h5').textContent}의 콘텐츠 저장 중 오류가 발생했습니다: ${error.message}`);
                         }
                     }
                 }
@@ -527,75 +586,78 @@
                 alert('강좌가 성공적으로 등록되었습니다.');
                 window.location.href = '/teacher/myLectures';
             } catch (error) {
-                console.error('Error submitting course:', error);
-                alert(error.message);
+                console.error('Error:', error);
+                alert(error.message || '강좌 등록에 실패했습니다.');
             }
         }
 
-        async function submitContent(lectureId, contentItem) {
+        async function submitContent(lectureId, contentElement) {
             const formData = new FormData();
-            formData.append('title', contentItem.querySelector('[name="contentTitle"]').value.trim());
-            formData.append('description', contentItem.querySelector('[name="contentDescription"]').value.trim());
-            formData.append('type', contentItem.dataset.type);
+            formData.append('title', contentElement.querySelector('[name="contentTitle"]').value);
+            formData.append('type', contentElement.dataset.type);
+            formData.append('description', contentElement.querySelector('[name="contentDescription"]').value);
+            formData.append('file', contentElement.querySelector('input[type="file"]').files[0]);
+            formData.append('lectureId', lectureId);
 
-            const file = contentItem.querySelector('input[type="file"]').files[0];
-            formData.append('file', file);
-
-            const response = await fetch(`/api/teacher/lectures/${lectureId}/contents`, {
+            const response = await fetch('/api/teacher/lectures/' + lectureId + '/contents', {
                 method: 'POST',
                 body: formData
             });
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.message || '콘텐츠 등록에 실패했습니다.');
+                throw new Error(error.message || '콘텐츠 저장에 실패했습니다.');
             }
-
-            return response.json();
         }
 
-        async function submitQuiz(lectureId, contentItem) {
-            const quizzes = Array.from(contentItem.querySelectorAll('.quiz-item')).map(quizItem => ({
-                question: quizItem.querySelector('[name="question"]').value.trim(),
-                answer: quizItem.querySelector('[name="answer"]').value.trim()
-            }));
+        async function submitQuizzes(lectureId, contentElement) {
+            const quizzes = [];
+            contentElement.querySelectorAll('.quiz-item').forEach(quizItem => {
+                quizzes.push({
+                    question: quizItem.querySelector('[name="question"]').value,
+                    answer: quizItem.querySelector('[name="answer"]').value
+                });
+            });
 
             const response = await fetch(`/api/teacher/lectures/${lectureId}/quizzes`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(quizzes)
+                body: JSON.stringify({ quizzes })
             });
 
             if (!response.ok) {
                 const error = await response.json();
-                throw new Error(error.message || '퀴즈 등록에 실패했습니다.');
+                throw new Error(error.message || '퀴즈 저장에 실패했습니다.');
             }
-
-            return response.json();
         }
 
         function validateContents() {
             try {
                 const sections = document.querySelectorAll('.card[data-section-index]');
+                if (sections.length === 0) {
+                    throw new Error('최소 1개의 섹션이 필요합니다.');
+                }
 
-                for (let section of sections) {
+                sections.forEach(section => {
                     const contents = section.querySelectorAll('.content-item');
                     if (contents.length === 0) {
-                        throw new Error('각 섹션에는 최소 1개의 콘텐츠가 필요합니다.');
+                        throw new Error(`${section.querySelector('h5').textContent}에 최소 1개의 콘텐츠가 필요합니다.`);
                     }
 
-                    for (let content of contents) {
-                        const type = content.dataset.type;
-
-                        if (type === 'quiz') {
+                    contents.forEach(content => {
+                        if (content.dataset.type === 'quiz') {
                             validateQuiz(content);
                         } else {
+                            const title = content.querySelector('[name="contentTitle"]').value.trim();
+                            if (!title) {
+                                throw new Error(`${section.querySelector('h5').textContent}의 모든 콘텐츠에 제목이 필요합니다.`);
+                            }
                             validateFileContent(content);
                         }
-                    }
-                }
+                    });
+                });
                 return true;
             } catch (error) {
                 alert(error.message);
@@ -629,10 +691,10 @@
             if (!file) throw new Error('파일을 선택해주세요.');
         }
 
+        // 페이지 로드 시 폼 초기화
         document.addEventListener('DOMContentLoaded', function () {
             const form = document.getElementById('courseForm');
-            const oldForm = form.cloneNode(true);
-            form.parentNode.replaceChild(oldForm, form);
+            form.reset();
         });
     </script>
 </body>
