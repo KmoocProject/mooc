@@ -28,6 +28,7 @@ public class MyPageController {
     @Autowired
     private final MemberServiceImpl memberServiceImpl;
 
+    //마이클래스 이동
     @GetMapping("/myclass")
     public String mypage(Model model, HttpSession session) {
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
@@ -38,6 +39,7 @@ public class MyPageController {
         return "mypage/myclass";
     }
 
+    //회원 조회
     @GetMapping("/memberView")
     public String memberView(Model model, HttpSession session) {
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
@@ -46,7 +48,6 @@ public class MyPageController {
         } else {
             return "redirect:/login/login";
         }
-
         return "mypage/memberView" ;
     }
 
@@ -67,54 +68,70 @@ public class MyPageController {
         return "mypage/creditclass" ;
     }
 
-//    @GetMapping("/memberModify")
-//    public String memberModify(Model model, HttpSession session) {
-//        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-//
-//        if(memberDTO == null) {
-//            return "redirect:/login/login";
+
+    //회원 수정
+//    @PostMapping("/memberModify")
+//    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+//        System.out.println("POST 요청 받음");
+//        if(bindingResult.hasErrors()) {
+//            model.addAttribute("errors", bindingResult.getAllErrors());
+//            model.addAttribute("member", memberDTO);
+//            return "mypage/memberView" ;
 //        }
-//        MemberModifyDTO memberModifyDTO = (MemberModifyDTO) session.getAttribute("memberModifyDTO");
-//        model.addAttribute("member", memberModifyDTO);
-//        return "mypage/memberView" ;
+//        try{ if(memberDTO != null) {
+//                memberServiceImpl.modifyMember(memberDTO);
+//        }
+////            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
+//            session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
+//        } catch (Exception e) {
+////            redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+//            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+//            return "redirect:/mypage/memberView";
+//        }
+//
+//        return "redirect:/mypage/myclass";
+//    }
+//
+//    //되나?
+//    @PostMapping("/memberModify")
+//    public String modifyMember(MemberModifyDTO memberDTO, Model model){
+//        return memberServiceImpl.validateMember(memberDTO, model);
 //    }
 
     @PostMapping("/memberModify")
-    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
+    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult,
+                               RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         System.out.println("POST 요청 받음");
-        if(bindingResult.hasErrors()) {
+
+        
+        // 유효성 검사 실패 시
+        if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
-            return "mypage/memberView" ;
+            return "mypage/memberView";
         }
-        try{ if(memberDTO != null) {
+
+        try {
+            // 유효성 검사 통과하면 회원 정보 수정
+            if (memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
-        }
-//            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
+            }
+
+            // 수정 성공 메시지
             session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
+
         } catch (Exception e) {
-//            redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+            // 예외 발생 시 실패 메시지
             session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             return "redirect:/mypage/memberView";
         }
 
+        // 수정 후 myclass 페이지로 리다이렉트
         return "redirect:/mypage/myclass";
     }
 
-//    @PostMapping("/memberDelete")
-//    public String deleteMember(@RequestParam String memberId, RedirectAttributes redirectAttributes, HttpSession session) {
-//        log.info("회원 탈퇴 요청, memberId: {}", memberId);
-//        try {
-//            memberServiceImpl.deleteMember(memberId);
-//            session.invalidate();
-//            redirectAttributes.addFlashAttribute("errors", "탈퇴가 완료되었습니다.");
-//        } catch (Exception e) {
-//            log.error("회원 탈퇴 처리 중 오류 발생, memberId: {}", memberId, e);
-//            redirectAttributes.addFlashAttribute("errorMessage", "회원 탈퇴 처리 중 오류가 발생했습니다.");
-//        }
-//        return "redirect:/login/login";
-//    }
 
+    //회원 탈퇴
     @PostMapping("/memberDelete")
     @ResponseBody
     public Map<String, Object> deleteMember(@RequestParam String memberId, HttpSession session) {
@@ -134,6 +151,4 @@ public class MyPageController {
         }
         return response;
     }
-
-
 }
