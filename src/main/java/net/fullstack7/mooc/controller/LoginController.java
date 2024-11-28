@@ -5,10 +5,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
-import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.mapper.MemberMapper;
 import net.fullstack7.mooc.repository.MemberRepository;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.io.IOException;
+import java.io.PrintWriter;
 
 @Controller
 @RequestMapping("/login")
@@ -38,6 +37,7 @@ public class LoginController extends HttpServlet {
     @Autowired
     private MemberMapper memberMapper;
 
+    //로그인
     @GetMapping("/login")
     public String login(HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
         if (session.getAttribute("memberId") != null) {
@@ -64,12 +64,15 @@ public class LoginController extends HttpServlet {
                 return "login/login";
             }
     }
+    
+    //로그아웃
     @GetMapping("/logout")
     public String logout(HttpSession session, RedirectAttributes redirectAttributes) {
         session.invalidate();
         return "redirect:/main/main";
     }
 
+    //약관동의
     @GetMapping("/memberterms")
     public String memberterms(HttpSession session, RedirectAttributes redirectAttributes) {
         String loginCheck = (String) session.getAttribute("memberId");
@@ -92,6 +95,7 @@ public class LoginController extends HttpServlet {
         }
     }
 
+    //회원등록
     @GetMapping("/regist")
     public String regist(HttpSession session, HttpServletResponse res, Model model, RedirectAttributes redirectAttributes) throws IOException {
         Boolean termsAgree = (Boolean) session.getAttribute("termsAgree");
@@ -103,6 +107,7 @@ public class LoginController extends HttpServlet {
         return "login/regist";
     }
 
+    //아이디 중복체크
     @PostMapping("/memberIdCheck")
     @ResponseBody
     public String checkMemberId(@RequestParam String memberId){
@@ -112,6 +117,7 @@ public class LoginController extends HttpServlet {
         return jsonResponse.toString();
     }
 
+    //이메일 중복체크
     @PostMapping("/emailCheck")
     @ResponseBody
     public String checkEmail(@RequestParam String email) {
@@ -121,6 +127,7 @@ public class LoginController extends HttpServlet {
         return jsonResponse.toString();
     }
 
+    //회원 등록
     @PostMapping("/regist")
     public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
         String email = memberDTO.getEmail();
@@ -149,6 +156,7 @@ public class LoginController extends HttpServlet {
         }
     }
 
+    //회원선택
     @GetMapping("/memberchose")
     public String memberchose() {
         return "login/memberchose";
@@ -159,24 +167,45 @@ public class LoginController extends HttpServlet {
         return "login/finishjoin";
     }
 
-//수정해
+    //아이디 찾기
     @GetMapping("/findId")
     public String findId(Model model, HttpServletRequest request) {
         return "login/findId";
     }
+
     @PostMapping("/findId")
-    public String findIdPost(@RequestParam String email, Model model) {
-        String memberId = memberService.findId(email);
-        if(memberId != null){
-            model.addAttribute("memberId", memberId);
-            return "login/showMemberId";
+    public String findIdPost(MemberDTO memberDTO,HttpServletResponse response) {
+        String findId = memberService.findId(memberDTO);
+        if(!"fail".equals(findId)) {
+            try{
+                response.setContentType("text/html;charset=UTF-8");
+                PrintWriter w = response.getWriter();
+                w.write("<script>alert('" + memberDTO.getEmail() + "님의 아이디는 [" + findId + "] 입니다.' );</script>");
+                w.write("<script>location.href='/login/login';</script>");
+                w.flush();
+                w.close();
+                return null;
+            } catch (Exception e){
+                e.printStackTrace();
+                return null;
+            }
         } else {
-            model.addAttribute("errorMessage", "입력하신 이메일에 해당하는 아이디를 찾을 수 없습니다.");
-            return "login/findId";
+            try{
+                response.setContentType("text/html;charset=UTF-8");
+                PrintWriter w = response.getWriter();
+                w.write("<script>alert('입력한 회원정보가 없습니다. 다시 확인해주세요.');</script>");
+                w.write("<script>location.href='/login/findId';</script>");
+                w.flush();
+                w.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+                return null;
+            }
         }
-//        return "redirect:/login/login";
+        return null;
     }
-//수정해
+
+    //비밀번호 찾기
     @GetMapping("/findPwd")
     public String findPwd() {
         return "login/findPwd";

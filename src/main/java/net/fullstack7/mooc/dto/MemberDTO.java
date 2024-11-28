@@ -7,6 +7,7 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import net.fullstack7.mooc.domain.Member;
 import org.apache.logging.log4j.core.config.plugins.validation.constraints.NotBlank;
 
 import java.sql.Timestamp;
@@ -42,4 +43,11 @@ public class MemberDTO {
     private String status;
     private int credit;
     private Timestamp createdAt;
+
+    public Member toEntityForFindId(){
+        return Member.builder()
+//                .memberId(memberId)
+                .email(email)
+                .build();
+    }
 }
