@@ -170,9 +170,8 @@
         <div class="user-info">
             <div>
                 <img th:src="@{/images/man.png}" style="width: 130px;" />
-                <h2>최사랑님 안녕하세요.</h2>
-                <p>이메일 주소: sarang1126611@naver.com</p>
-                <p>최근 접속일: 2024-11-26 09:10:02</p>
+                <h2>[[${member.userName}]]님 안녕하세요.</h2>
+                <p>이메일 주소: [[${member.email}]]</p>
             </div>
         </div>
 

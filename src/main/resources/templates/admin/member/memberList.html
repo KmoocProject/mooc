@@ -102,6 +102,9 @@
 
 </style>
 <body>
+<script th:if="${errors != null}">
+    alert(`[[${errors}]]`);
+</script>
 
 <div th:replace="admin/header :: header"></div>
 
@@ -166,7 +169,7 @@
             <!-- 검색 결과가 여기에 출력됩니다 -->
             <th:block th:if="${searchinfo.typeSelect == 't'}">
                 <tr th:each="item, status:${pageinfo.content}">
-                    <td><a th:href="@{/admin/memberView(memberId=${item.teacherId})}" th:text="${item.teacherId}"></a></td>
+                    <td><a th:href="@{/admin/memberView/{type}(type='t',memberId=${item.teacherId})}" th:text="${item.teacherId}"></a></td>
                     <td th:text="${item.isApproved}"></td>
                     <td th:text="${item.status}"></td>
                     <td th:text="${item.createdAt}"></td>
@@ -174,7 +177,7 @@
             </th:block>
             <th:block th:unless="${searchinfo.typeSelect == 't'}">
                 <tr th:each="item, status:${pageinfo.content}">
-                    <td><a th:href="@{/admin/memberView(memberId=${item.memberId})}" th:text="${item.memberId}"></a></td>
+                    <td><a th:href="@{/admin/memberView/{type}(type='s',memberId=${item.memberId})}" th:text="${item.memberId}"></a></td>
                     <td th:text="${item.memberType}"></td>
                     <td th:text="${item.status}"></td>
                     <td th:text="${item.createdAt}"></td>

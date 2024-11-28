@@ -43,7 +43,7 @@ public class NoticeServiceImpl implements NoticeServiceIf {
 
     @Override
     public Notice view(int noticeId) {
-        Optional<Notice> byNoticeId = noticeRepository.findByNoticeId(noticeId);
+        Optional<Notice> byNoticeId = noticeRepository.findById(noticeId);
 
         if(byNoticeId != null)
             return byNoticeId.get();
