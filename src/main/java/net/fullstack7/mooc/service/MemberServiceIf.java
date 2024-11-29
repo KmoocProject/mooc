@@ -14,7 +14,7 @@ public interface MemberServiceIf {
     public String findId(MemberDTO memberDTO);
     public String findPwd(MemberDTO memberDTO);
     public MemberDTO viewMember(String memberId);
-    public boolean pwdCheck(String memberId, String password);
+    public boolean pwdCheck(String memberId, String currentPassword);
     public int registMember(MemberDTO memberDTO);
 
     //새 비밀번호

@@ -2,6 +2,9 @@ package net.fullstack7.mooc.repository;
 
 import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.search.MemberSearch;
+import org.apache.ibatis.annotations.Param;
+import org.apache.ibatis.annotations.Select;
+import org.apache.ibatis.annotations.Update;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -15,6 +18,12 @@ import java.util.Optional;
 public interface MemberRepository extends JpaRepository<Member, String>, MemberSearch {
     @Query("SELECT m FROM Member m WHERE m.email = :email")
     Optional<Member> findByEmail(String email);
+
+    @Query("SELECT m FROM Member m WHERE m.memberId = :memberId")
+    String pwdCheck(String memberId);
+
+    @Query("UPDATE Member M SET M.password = :newPassword WHERE M.memberId = :memberId")
+    void updatePassword(@Param("memberId")String memberId, @Param("newPassword")String newPassword);
 
     @Modifying
     @Query("update Member M set M.status = :status where M.memberId = :memberId")
