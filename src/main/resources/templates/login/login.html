@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -12,11 +13,11 @@
 
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
-<script th:if="${errors}">
+
+<script th:if="${errors}" layout:fragment="script" th:inline="javascript">
     alert(`[[${errors}]]`);
 </script>
-<div class="content">
+<div class="content" layout:fragment="maincontent">
     <form class="login-form" action="/login/login" method="post">
     <h1>로그인</h1>
     <div class="login-form">
@@ -30,17 +31,18 @@
         <button class="signup-button" type="button" onclick="goTeacher()" style="margin-top: 10px;">선생님 로그인</button>
     </div>
     </form>
-    <script>
-        function goRegist(){
-            window.location.href = '/login/memberchose';
-        }
 
-        function goTeacher(){
-            window.location.href = '/teacher/login';
-        }
-
-    </script>
 </div>
-<div th:replace="main/footer :: footer"></div>
+<script layout:fragment="script" th:inline="javascript">
+    function goRegist(){
+        window.location.href = '/login/memberchose';
+    }
+
+    function goTeacher(){
+        window.location.href = '/teacher/login';
+    }
+
+</script>
+
 </body>
 </html>

@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -10,54 +11,53 @@
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .content {
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        .is-valid {
+            border-color: #198754 !important;
+        }
+        .is-invalid {
+            border-color: #dc3545 !important;
+        }
+        .validation-feedback {
+            display: none;
+            margin-top: 0.25rem;
+            font-size: 0.875em;
+        }
+        .invalid-feedback {
+            color: #dc3545;
+        }
+        .valid-feedback {
+            color: #198754;
+        }
+
+
+    </style>
 </head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
 
-    body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f9f9f9;
-        color: #333;
-    }
-
-    .content {
-        max-width: 1500px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-    .is-valid {
-        border-color: #198754 !important;
-    }
-    .is-invalid {
-        border-color: #dc3545 !important;
-    }
-    .validation-feedback {
-        display: none;
-        margin-top: 0.25rem;
-        font-size: 0.875em;
-    }
-    .invalid-feedback {
-        color: #dc3545;
-    }
-    .valid-feedback {
-        color: #198754;
-    }
-
-
-</style>
 <body class="bg-light">
 
-<div th:replace="main/header :: header"></div>
-
-<section class="content">
+<section class="content" layout:fragment="maincontent">
 
     <div class="container">
         <div class="row justify-content-center mt-5">
@@ -121,9 +121,8 @@
 
 </section>
 
-<div th:replace="main/footer :: footer"></div>
 
-<script>
+<script layout:fragment="script" th:inline="javascript">
     const idRegex = /^[a-z0-9]{5,15}$/;
     const pwRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[!@#$%^&*(),.?":{}|<>])[A-Za-z\d!@#$%^&*(),.?":{}|<>]{10,20}$/;
     const nameRegex = /^[가-힣]{2,5}$/;

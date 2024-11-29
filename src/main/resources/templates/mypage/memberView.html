@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -118,10 +119,8 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
-<!-- Sidebar -->
 
-<section class="content">
+<section class="content" layout:fragment="maincontent">
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <div class="container">
@@ -186,9 +185,7 @@
 
 </section>
 
-<div th:replace="main/footer :: footer"></div>
-
-<script>
+<script layout:fragment="script" th:inline="javascript">
     document.getElementById("togglePassword").addEventListener("click", function() {
         var passwordField = document.getElementById("password");
         var toggleButton = document.getElementById("togglePassword");
