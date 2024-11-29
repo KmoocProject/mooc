@@ -274,22 +274,23 @@ public class CourseService {
 
   @Transactional
   public void updateQuiz(int quizId, QuizDTO dto) {
-      Quiz quiz = quizRepository.findById(quizId)
-          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈입니다."));
-          
-      quiz.setQuestion(dto.getQuestion());
-      quiz.setAnswer(dto.getAnswer());
+    Quiz quiz = quizRepository.findById(quizId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈입니다."));
 
-      quizRepository.save(quiz);
+    quiz.setQuestion(dto.getQuestion());
+    quiz.setAnswer(dto.getAnswer());
+
+    quizRepository.save(quiz);
   }
 
   @Transactional
   public void deleteQuiz(int quizId) {
-      quizRepository.deleteById(quizId);
+    quizRepository.deleteById(quizId);
   }
 
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
-    Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null,
+        -1);
     courseSearchDTO.setTotalCount((int) courses.getTotalElements());
     courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
     return courses;
@@ -303,14 +304,16 @@ public class CourseService {
     return subjectRepository.findAll();
   }
 
-  public CourseDTO getCourseById(int courseId){
-    return modelMapper.map(courseRepository.getReferenceById(courseId),CourseDTO.class);
+  public CourseDTO getCourseById(int courseId) {
+    return modelMapper.map(courseRepository.getReferenceById(courseId), CourseDTO.class);
   }
 
-  public CourseViewDTO getCourseViewById(int courseId){
-    CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId),CourseViewDTO.class);
-    List<CourseDTO> recommendations = courseRepository.findBySubjectOrderByCreatedAtDesc(courseViewDTO.getSubject(),PageRequest.of(0,5))
-            .stream().filter(c->c.getCourseId() != courseViewDTO.getCourseId()).map(course -> modelMapper.map(course,CourseDTO.class)).toList();
+  public CourseViewDTO getCourseViewById(int courseId) {
+    CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId), CourseViewDTO.class);
+    List<CourseDTO> recommendations = courseRepository
+        .findBySubjectOrderByCreatedAtDesc(courseViewDTO.getSubject(), PageRequest.of(0, 5))
+        .stream().filter(c -> c.getCourseId() != courseViewDTO.getCourseId())
+        .map(course -> modelMapper.map(course, CourseDTO.class)).toList();
     courseViewDTO.setRecommendations(recommendations);
     return courseViewDTO;
   }
@@ -365,8 +368,8 @@ public class CourseService {
 
     courseRepository.save(course);
   }
+
   public List<CourseResponseDTO> mainCourseList(int n) {
     return courseRepository.randomCourses(n);
   }
-
 }

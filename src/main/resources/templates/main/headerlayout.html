@@ -77,7 +77,16 @@
     </style>
 </head>
 <body>
-
+<script>
+    const error = [[${errors ?: ''}]];
+    if (error && error.trim() !== '') {
+        alert(error);
+    }
+    const error = [[${errorr ?: ''}]];
+    if (error && error.trim() !== '') {
+        alert(error);
+    }
+</script>
 <header class="header" id="main">
     <div th:replace="main/up :: up"></div>
     <div class="logo">

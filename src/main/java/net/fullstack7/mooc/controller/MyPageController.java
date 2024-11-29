@@ -50,6 +50,7 @@ public class MyPageController {
 
         searchDTO.initialize();
         model.addAttribute("courselist", memberServiceImpl.getCourses(searchDTO, memberDTO.getMemberId(), 0));
+        model.addAttribute("pageDTO", searchDTO);
         model.addAttribute("notcompleted", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 0));
         model.addAttribute("completed", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 1));
 //        model.addAttribute("pageInfo", searchDTO);
@@ -142,17 +143,18 @@ public class MyPageController {
 
         return "redirect:/mypage/creditclass";
     }
-    @GetMapping("/creditTransform3")
-    public String creditTransform3(HttpSession session, RedirectAttributes redirectAttributes) {
-        if(session.getAttribute("memberDTO") == null) {
-            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
-            return "redirect:/login/login";
-        }
-        if(((MemberDTO)session.getAttribute("memberDTO")).getMemberType() == 1) {
-            return "redirect:/mypage/creditclass";
-        }
-        return "mypage/creditTransform3" ;
-    }
+
+//    @GetMapping("/creditTransform3")
+//    public String creditTransform3(HttpSession session, RedirectAttributes redirectAttributes) {
+//        if(session.getAttribute("memberDTO") == null) {
+//            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+//            return "redirect:/login/login";
+//        }
+//        if(((MemberDTO)session.getAttribute("memberDTO")).getMemberType() == 1) {
+//            return "redirect:/mypage/creditclass";
+//        }
+//        return "mypage/creditTransform3" ;
+//    }
 
     //회원 조회
     @GetMapping("/memberView")

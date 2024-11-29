@@ -196,23 +196,23 @@
                 <div class="course-details">
                     <h4 th:text="${item.title}"></h4>
                     <p th:text="${item.teacherName}"></p>
-                    <p>주차: [[${item.weeks}]]주</p>
+                    <p th:text="'등록일 ' + ${#temporals.format(item.createdAt, 'yyyy-MM-dd')}"></p>
+                    <p>[[${item.weeks}]]주</p>
                 </div>
                 <div class="course-actions">
-                    <button class="learn-btn" id="learnGoBtn">학습하기</button>
+                    <button class="learn-btn" id="learnGoBtn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
                 </div>
             </div>
         </div>
     </div>
+
+    <div th:replace="main/paging :: paging"></div>
+
+    <form action="/mypage/myclass" method="get"></form>
 </section>
 
+<script th:src="@{/js/paging.js}" layout:fragment="pagingscript" th:inline="javascript"></script>
 
-<script layout:fragment="script" th:inline="javascript">
-    const learnGoBtn = document.getElementById("learnGoBtn")
-    learnGoBtn.addEventListener("click", ()=>{
-        location.href='/learn/view'
-    })
-</script>
 
 </body>
 </html>

@@ -201,7 +201,6 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
 <!-- Sidebar -->
 
 <section class="content" layout:fragment="maincontent">
@@ -251,14 +250,6 @@
 
 
 </section>
-
-
-<script layout:fragment="script" th:inline="javascript">
-    const error = [[${errors ?: ''}]];
-    if (error && error.trim() !== '') {
-        alert(error);
-    }
-</script>
 
 </body>
 </html>

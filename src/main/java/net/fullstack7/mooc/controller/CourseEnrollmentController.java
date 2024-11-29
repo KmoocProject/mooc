@@ -2,16 +2,17 @@ package net.fullstack7.mooc.controller;
 
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.Course;
 import net.fullstack7.mooc.domain.Member;
-import net.fullstack7.mooc.dto.ApiResponse;
-import net.fullstack7.mooc.dto.CourseEnrollmentDTO;
-import net.fullstack7.mooc.dto.MemberDTO;
+import net.fullstack7.mooc.domain.Teacher;
+import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.CourseEnrollmentServiceIf;
 import net.fullstack7.mooc.service.CourseService;
 import org.modelmapper.ModelMapper;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -28,8 +29,11 @@ public class CourseEnrollmentController {
     public ResponseEntity<?> regist(@PathVariable int courseId
     , HttpSession session
     ) {
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
         try{
+            MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+            if (memberDTO == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+            }
             courseEnrollmentService.regist(
                     CourseEnrollmentDTO
                             .builder()
