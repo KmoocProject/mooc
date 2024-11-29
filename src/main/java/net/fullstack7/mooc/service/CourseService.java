@@ -350,7 +350,7 @@ public class CourseService {
     }
 
     Subject subject = subjectRepository.findById(dto.getSubjectId())
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
 
     if (dto.getThumbnail() != null) {
       fileUploadUtil.deleteFile(course.getThumbnail());

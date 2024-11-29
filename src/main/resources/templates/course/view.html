@@ -235,7 +235,7 @@
         <!-- Course Header -->
         <div class="course-header">
             <div class="course-image" style="height: 500px;">
-                <img th:src="@{/images/thumbnail/{thumbnail}(thumbnail=${courseViewDTO.thumbnail})}" alt="Course Image">
+                <img th:src="${courseViewDTO.thumbnail}" alt="Course Image">
             </div>
             <div class="course-details">
                 <h1 th:text="${courseViewDTO.title}"></h1>
@@ -244,10 +244,34 @@
                     <li th:utext="'<strong>기관:</strong>' + ${courseViewDTO.teacher.institution.institutionName}"></li>
                     <li><strong>학습기간:</strong> [[${courseViewDTO.weeks}]]주</li>
                 </ul>
-                <button class="enroll-button">수강신청</button>
+                <button class="enroll-button" th:data-courseId="${courseViewDTO.courseId}" onclick="courseEnrollment(this)">수강신청</button>
             </div>
         </div>
+        <script>
+            async function courseEnrollment(button) {
+                const courseId = button.getAttribute("data-courseId");
+                try {
+                    const response = await fetch(`/courseEnrollment/regist/${courseId}`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                    });
 
+                    if (!response.ok) {
+                        console.log("response not ok");
+                        const error = await response.json();
+                        alert(error);
+                        return;
+                    }
+                    console.log("response ok");
+                    alert(await response.json() + '\r\n 나의학습방으로 이동하시겠습니까?');
+                } catch (error) {
+                    console.error('수강신청 에러:', error);
+                    alert(error.message || '수강신청에 실패했습니다.');
+                }
+            }
+        </script>
         <!-- Tabs -->
         <div class="tabs">
             <button class="tab" id="btnIntro">강좌소개</button>
@@ -271,11 +295,11 @@
         </section>
 
         <section class="course-list" id="reclist">
-            <div class="introduction-details">
-                <h2>추천 강좌</h2>
+            <h2>추천 강좌</h2>
+            <div class="courses">
                 <div class="courses" th:each="course,status : ${courseViewDTO.recommendations}" th:data-id="${course.courseId}">
                     <div class="course-card">
-                        <div class="course-image" th:style="'background-image: url(/images/thumbnail/'+${course.thumbnail}+');'"></div>
+                        <div class="course-image" th:style="'background-image: url('+${course.thumbnail}+');'"></div>
                         <h3 th:text="${course.title}"></h3>
                         <p th:text="${course.teacher.teacherName}"></p>
                         <p th:text="${course.teacher.institution.institutionName}"></p>
@@ -323,7 +347,6 @@
             location.href="/course/view?courseId="+courseId;
         });
     }
-
 </script>
 
 </body>
