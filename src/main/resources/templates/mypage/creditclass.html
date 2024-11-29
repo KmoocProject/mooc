@@ -101,5 +101,12 @@
     </div>
 </section>
 
+<script layout:fragment="script" th:inline="javascript">
+    const error = [[${errors ?: ''}]];
+    if (error && error.trim() !== '') {
+        alert(error);
+    }
+</script>
+
 </body>
 </html>

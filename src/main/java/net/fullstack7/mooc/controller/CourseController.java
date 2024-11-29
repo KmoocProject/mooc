@@ -3,8 +3,10 @@ package net.fullstack7.mooc.controller;
 import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.dto.CourseDTO;
 import net.fullstack7.mooc.dto.CourseSearchDTO;
+import net.fullstack7.mooc.dto.CourseViewDTO;
 import net.fullstack7.mooc.service.CourseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -18,6 +20,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/course")
 @RequiredArgsConstructor
+@Log4j2
 public class CourseController {
     private final CourseService courseService;
 
@@ -52,12 +55,13 @@ public class CourseController {
 
     @GetMapping("/view")
     public String courseView(@RequestParam int courseId, HttpSession session, Model model,RedirectAttributes redirectAttributes) {
-        CourseDTO courseDTO = courseService.getCourseById(courseId);
-        if(courseDTO == null) {
+        CourseViewDTO courseViewDTO = courseService.getCourseViewById(courseId);
+        if(courseViewDTO == null) {
             redirectAttributes.addFlashAttribute("errors","존재하지 않는 강의입니다.");
             return "redirect:/course/list/all";
         }
-        model.addAttribute("courseDTO", courseDTO);
+        log.info("courseViewDTO : {}", courseViewDTO);
+        model.addAttribute("courseViewDTO", courseViewDTO);
         return "course/view";
     }
 }

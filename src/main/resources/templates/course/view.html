@@ -235,14 +235,14 @@
         <!-- Course Header -->
         <div class="course-header">
             <div class="course-image" style="height: 500px;">
-                <img th:src="@{/images/thumbnail/{thumbnail}(thumbnail=${courseDTO.thumbnail})}" alt="Course Image">
+                <img th:src="@{/images/thumbnail/{thumbnail}(thumbnail=${courseViewDTO.thumbnail})}" alt="Course Image">
             </div>
             <div class="course-details">
-                <h1 th:text="${courseDTO.title}"></h1>
+                <h1 th:text="${courseViewDTO.title}"></h1>
                 <ul class="details-list">
-                    <li><strong>분야:</strong>[[${courseDTO.subject.subjectName}]]</li>
-                    <li><strong>기관:</strong> [[${courseDTO.teacher.institutionName]]</li>
-                    <li><strong>학습기간:</strong> [[${courseDTO.weeks}]]주</li>
+                    <li><strong>분야:</strong>[[${courseViewDTO.subject.subjectName}]]</li>
+                    <li th:utext="'<strong>기관:</strong>' + ${courseViewDTO.teacher.institution.institutionName}"></li>
+                    <li><strong>학습기간:</strong> [[${courseViewDTO.weeks}]]주</li>
                 </ul>
                 <button class="enroll-button">수강신청</button>
             </div>
@@ -259,34 +259,32 @@
         <section class="course-introduction" id="intro">
             <div class="introduction-details">
                 <h2>강좌 소개</h2>
-                <p th:text="${courseDTO.description}"></p>
+                <p th:text="${courseViewDTO.description}"></p>
             </div>
         </section>
 
         <section class="course-introduction" id="teacher">
             <div class="introduction-details">
                 <h2>강사</h2>
-                <p th:text="${courseDTO.teacher.teacherName}"></p>
+                <p class="course-details" th:text="${courseViewDTO.teacher.teacherName}"></p>
             </div>
         </section>
 
-        <section class="course-introduction" id="reclist">
+        <section class="course-list" id="reclist">
             <div class="introduction-details">
                 <h2>추천 강좌</h2>
-                <div class="courses">
+                <div class="courses" th:each="course,status : ${courseViewDTO.recommendations}" th:data-id="${course.courseId}">
                     <div class="course-card">
-                        <div class="course-image" style="background-image: url('course1.jpg');"></div>
-                        <h3>(심화)클라우드 DB 솔루션 아키텍트 양성과정</h3>
-                        <p>홍석우</p>
-                        <p>IGM세계경영연구원</p>
-                        <p>D-38</p>
+                        <div class="course-image" th:style="'background-image: url(/images/thumbnail/'+${course.thumbnail}+');'"></div>
+                        <h3 th:text="${course.title}"></h3>
+                        <p th:text="${course.teacher.teacherName}"></p>
+                        <p th:text="${course.teacher.institution.institutionName}"></p>
+                        <p th:text="${#temporals.format(course.createdAt,'yyyy-MM-dd')}"></p>
                     </div>
-
                 </div>
             </div>
         </section>
     </div>
-
 </section>
 
 
@@ -315,9 +313,16 @@
 
             // Add 'active' class to the clicked tab
             tab.classList.add("active");
-
         });
     });
+
+    const courses = document.querySelectorAll(".courses");
+    for(let course of courses){
+        let courseId = course.getAttribute("data-id");
+        course.addEventListener("click",()=>{
+            location.href="/course/view?courseId="+courseId;
+        });
+    }
 
 </script>
 

@@ -6,6 +6,7 @@ import net.fullstack7.mooc.util.FileUploadUtil;
 import org.apache.commons.io.FilenameUtils;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import net.fullstack7.mooc.repository.*;
@@ -290,6 +291,7 @@ public class CourseService {
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
     Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
     courseSearchDTO.setTotalCount((int) courses.getTotalElements());
+    courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
     return courses;
   }
 
@@ -307,8 +309,8 @@ public class CourseService {
 
   public CourseViewDTO getCourseViewById(int courseId){
     CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId),CourseViewDTO.class);
-    List<CourseDTO> recommendations = courseRepository.findRecommendationsBySubjectId(courseViewDTO.getSubject().getSubjectId()).stream()
-            .map(course->modelMapper.map(course,CourseDTO.class)).toList();
+    List<CourseDTO> recommendations = courseRepository.findBySubjectOrderByCreatedAtDesc(courseViewDTO.getSubject(),PageRequest.of(0,5))
+            .stream().filter(c->c.getCourseId() != courseViewDTO.getCourseId()).map(course -> modelMapper.map(course,CourseDTO.class)).toList();
     courseViewDTO.setRecommendations(recommendations);
     return courseViewDTO;
   }
@@ -362,6 +364,10 @@ public class CourseService {
     course.setIsCreditBank(dto.getIsCreditBank());
 
     courseRepository.save(course);
+
+  public List<CourseResponseDTO> mainCourseList(int n) {
+    return courseRepository.randomCourses(n);
+
   }
 
 }
