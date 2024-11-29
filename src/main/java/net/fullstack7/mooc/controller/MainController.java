@@ -65,7 +65,8 @@ public class MainController {
     }
 
     @GetMapping("/main")
-    public String main() {
+    public String main(Model model,@Valid PageDTO<Notice> pageDTO) {
+
         return "main/main";
     }
 
