@@ -16,6 +16,10 @@ public interface MemberServiceIf {
     public MemberDTO viewMember(String memberId);
     public boolean pwdCheck(String memberId, String password);
     public int registMember(MemberDTO memberDTO);
+
+    //새 비밀번호
+    void updatePassword(String memberId, String newPassword);
+
     public int modifyMember(MemberDTO memberDTO);
     public boolean memberIdCheck(String memberId);
     public boolean emailCheck(String email);

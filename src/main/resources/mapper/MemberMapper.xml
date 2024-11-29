@@ -20,6 +20,10 @@
         WHERE memberId = #{memberId}
     </select>
 
+    <update id="updatePassword">
+        UPDATE member SET password = #{newPassword} WHERE memberId = #{memberId}
+    </update>
+
     <select id="memberIdCheck" resultType="String">
         SELECT memberId
         FROM member

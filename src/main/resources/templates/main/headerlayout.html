@@ -85,12 +85,12 @@
     <nav class="navbar">
         <ul class="menu-list">
             <div class="menu-icon dropdown">
-                <button class="dropdown-btn" onclick="allBtn()">&#9776; 강좌</button>
-                <ul class="dropdown-menu">
+                <button class="dropdown-btn dropdown-subject-btn" onclick="allBtn()">&#9776; 강좌</button>
+                <ul class="dropdown-menu dropdown-subject">
                     <li><a href="/course/list/all">전체 강좌 보기</a></li>
-                    <li><a href="#">인문</a></li>
-                    <li><a href="#">사회</a></li>
-                    <li><a href="#">공학</a></li>
+<!--                    <li><a href="#">인문</a></li>-->
+<!--                    <li><a href="#">사회</a></li>-->
+<!--                    <li><a href="#">공학</a></li>-->
                 </ul>
             </div>
             <div class="menu-icon dropdown">
@@ -232,6 +232,36 @@
     function allBtn() {
         window.location.href = '/course/list/all';
     }
+
+
+    let flag = 0;
+    const dropdown_subject = document.querySelector(".dropdown-subject");
+    document.querySelector(".dropdown-subject-btn").addEventListener("mouseover", async evt => {
+        const url = "http://localhost:8080/api/main/subject";
+
+        if(flag === 1)
+            return;
+
+        try {
+            const response = await fetch(url, {
+                method: 'POST'
+            });
+            if (!response.ok) {
+                throw new Error(`Response status: ${response.status}`);
+            }
+
+            const json = (await response.json()).map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
+
+            flag = 1;
+
+            for(let item of json) {
+                dropdown_subject.innerHTML += '<li><a href="/course/list/all?subjectId='+ item.subjectId +'">'+item.subjectName+'</a></li>'
+            }
+
+        } catch (error) {
+            console.error(error.message);
+        }
+    });
 </script>
 </body>
 </html>

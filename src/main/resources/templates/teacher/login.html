@@ -34,6 +34,7 @@
         </div>
     </form>
     <script layout:fragment="script" th:inline="javascript">
+
         function goRegist(){
             window.location.href = '/teacher/join';
         }
@@ -42,9 +43,9 @@
             window.location.href = '/login/login';
         }
 
-        const error = [[${error}]];
-        if (error) {
-            alert(error);
+        const error = [[${error ?: ''}]];
+        if (error && error.trim() !== '') {
+                alert(error);
         }
     </script>
 </div>

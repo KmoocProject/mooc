@@ -23,7 +23,13 @@ public class CourseController {
             , @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if(bindingResult.hasErrors()) {
-            searchDTO = CourseSearchDTO.builder().subjectId(searchDTO.getSubjectId()).institutionId(searchDTO.getInstitutionId()).build();
+            searchDTO = CourseSearchDTO.builder()
+                    .institutionId(searchDTO.getInstitutionId())
+                    .subjectId(searchDTO.getSubjectId())
+                    .searchValue(searchDTO.getSearchValue())
+                    .isCreditBank(searchDTO.getIsCreditBank())
+                    .status(searchDTO.getStatus())
+                    .build();
         }
 
         if(type.equals("credit")) searchDTO.setIsCreditBank(1);
@@ -34,7 +40,7 @@ public class CourseController {
 
         model.addAttribute("list", courseService.getCourses(searchDTO));
         model.addAttribute("type", type);
-        model.addAttribute("pageInfo", searchDTO);
+        model.addAttribute("pageDTO", searchDTO);
         model.addAttribute("institutions", courseService.getInstitutions());
         model.addAttribute("subjects", courseService.getSubjects());
 

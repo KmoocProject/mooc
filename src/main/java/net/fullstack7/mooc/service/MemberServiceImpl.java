@@ -13,9 +13,7 @@ import net.fullstack7.mooc.repository.CourseEnrollmentRepository;
 import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
 import org.modelmapper.ModelMapper;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
@@ -107,10 +105,17 @@ public class MemberServiceImpl implements MemberServiceIf {
         return result != null && result.equals(password);
     }
 
+    //새 비밀번호
+    @Override
+    public void updatePassword(String memberId, String newPassword){
+        memberMapper.updatePassword(memberId, newPassword);
+    }
+
     //회원수정
     @Override
     public int modifyMember(MemberDTO memberDTO) {
-        return 0;
+        Member member = modelMapper.map(memberDTO, Member.class);
+        return memberMapper.modifyMember(member);
     }
 
     //이메일 유효성 검사

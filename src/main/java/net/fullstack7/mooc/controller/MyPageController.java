@@ -68,17 +68,6 @@ public class MyPageController {
         return "mypage/creditclass";
     }
 
-    //회원 조회
-    @GetMapping("/memberView")
-    public String memberView(Model model, HttpSession session) {
-        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
-        if(memberDTO != null) {
-            model.addAttribute("member", memberDTO);
-        } else {
-            return "redirect:/login/login";
-        }
-        return "mypage/memberView" ;
-    }
 
     @GetMapping("/creditTransform")
     public String creditTransform() {
@@ -93,36 +82,19 @@ public class MyPageController {
         return "mypage/creditTransform3" ;
     }
 
+    //회원 조회
+    @GetMapping("/memberView")
+    public String memberView(Model model, HttpSession session) {
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        if(memberDTO != null) {
+            model.addAttribute("member", memberDTO);
+        } else {
+            return "redirect:/login/login";
+        }
+        return "mypage/memberView" ;
+    }
 
-    //회원 수정
-//    @PostMapping("/memberModify")
-//    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes, HttpSession session, Model model) {
-//        System.out.println("POST 요청 받음");
-//        if(bindingResult.hasErrors()) {
-//            model.addAttribute("errors", bindingResult.getAllErrors());
-//            model.addAttribute("member", memberDTO);
-//            return "mypage/memberView" ;
-//        }
-//        try{ if(memberDTO != null) {
-//                memberServiceImpl.modifyMember(memberDTO);
-//        }
-////            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
-//            session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
-//        } catch (Exception e) {
-////            redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
-//            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
-//            return "redirect:/mypage/memberView";
-//        }
-//
-//        return "redirect:/mypage/myclass";
-//    }
-//
-//    //되나?
-//    @PostMapping("/memberModify")
-//    public String modifyMember(MemberModifyDTO memberDTO, Model model){
-//        return memberServiceImpl.validateMember(memberDTO, model);
-//    }
-
+    //회원수정
     @PostMapping("/memberModify")
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
@@ -138,10 +110,11 @@ public class MyPageController {
             if (memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
             }
-            session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
+            session.setAttribute("memberDTO", memberDTO);
+//            System.out.println("Session memberDTO: " + session.getAttribute("memberDTO"));
             redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
-            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+//            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             return "redirect:/mypage/memberView";
         }
@@ -158,9 +131,36 @@ public class MyPageController {
     }
 
     @PostMapping("/pwdCheck")
-    public String pwdCheck(){
-//        return "redirect:/mypage/myclass";
-        return null;
+    public String pwdCheck(@RequestParam("current-password")String currentPassword, @RequestParam("new-password")String newPassword, @RequestParam("confirm-password")String confirmPassword, HttpSession session, RedirectAttributes redirectAttributes) {
+        MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+        if(memberDTO == null) {
+            return "redirect:/login/login";
+        }
+        System.out.println("Session memberDTO: " + memberDTO);
+        System.out.println("Current Password: " + currentPassword);
+        System.out.println("New Password: " + newPassword);
+        System.out.println("Confirm Password: " + confirmPassword);
+
+        boolean isCurrentPasswordValid = memberServiceImpl.pwdCheck(memberDTO.getMemberId(), currentPassword);
+        System.out.println("Is Current Password Valid: " + isCurrentPasswordValid);
+        if(!isCurrentPasswordValid) {
+            redirectAttributes.addFlashAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            return "redirect:/mypage/pwdCheck";
+        }
+        if(!newPassword.equals(confirmPassword)) {
+            redirectAttributes.addFlashAttribute("errorMessage", "새 비밀번호와 확인이 일치하지 않습니다.");
+            return "redirect:/mypage/pwdCheck";
+        }
+        try{
+            memberServiceImpl.pwdCheck(memberDTO.getMemberId(), newPassword);
+            System.out.println("Password updated successfully.");
+            redirectAttributes.addFlashAttribute("successMessage", "비밀번호가 변경되었습니다.");
+            return "redirect:/mypage/myclass";
+        } catch (Exception e) {
+            System.out.println("Error occurred while updating password: " + e.getMessage());
+            redirectAttributes.addFlashAttribute("errorMessage", "비밀번호 변경에 실패했습니다.");
+            return "redirect:/mypage/pwdCheck";
+        }
     }
 
 

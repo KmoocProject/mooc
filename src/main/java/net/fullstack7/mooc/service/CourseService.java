@@ -184,51 +184,52 @@ public class CourseService {
 
   // 읽기 전용 트랜잭션 (CUD방지 및 내부최적화)
   @Transactional(readOnly = true)
-public CourseDetailDTO getCourseWithContents(int courseId) {
+  public CourseDetailDTO getCourseWithContents(int courseId) {
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
 
     List<LectureDTO> lectureDTOs = course.getLectures().stream()
         .map(lecture -> {
-            // 콘텐츠 매핑
-            List<LectureContentDTO> contentDTOs = Optional.ofNullable(lecture.getContents())
-            .orElse(Collections.emptyList())
-            .stream()
-            .map(content -> LectureContentDTO.builder()
-                .lectureContentId(content.getLectureContentId())
-                .title(content.getTitle())
-                .description(content.getDescription())
-                .isVideo(content.getIsVideo())
-                .type(content.getIsVideo() == 1 ? "video" : "file")
-                .file(content.getLectureFile() != null ? 
-                    LectureFileDTO.builder()
-                        .lectureFileId(content.getLectureFile().getLectureFileId())
-                        .fileName(content.getLectureFile().getFileName())
-                        .filePath(content.getLectureFile().getFilePath())
-                        .fileExtension(content.getLectureFile().getFileExtension())
-                        .build() 
-                    : null)
-                .build())
-            .collect(Collectors.toList());
 
-            // 퀴즈 매핑
-            List<QuizDTO> quizDTOs = Optional.ofNullable(lecture.getQuizzes())
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(quiz -> QuizDTO.builder()
-                    .quizId(quiz.getQuizId())
-                    .question(quiz.getQuestion())
-                    .answer(quiz.getAnswer())
-                    .build())
-                .collect(Collectors.toList());
+          List<Quiz> quizzes = quizRepository.findByLectureOrderByQuizIdAsc(lecture);
+          log.info("Lecture ID: {}, Quizzes: {}", lecture.getLectureId(), quizzes);
+          log.info("QuizzesSize:{}", quizzes.size());
+          // 콘텐츠 매핑
+          List<LectureContentDTO> contentDTOs = Optional.ofNullable(lecture.getContents())
+              .orElse(Collections.emptyList())
+              .stream()
+              .map(content -> LectureContentDTO.builder()
+                  .lectureContentId(content.getLectureContentId())
+                  .title(content.getTitle())
+                  .description(content.getDescription())
+                  .isVideo(content.getIsVideo())
+                  .type(content.getIsVideo() == 1 ? "video" : "file")
+                  .file(content.getLectureFile() != null ? LectureFileDTO.builder()
+                      .lectureFileId(content.getLectureFile().getLectureFileId())
+                      .fileName(content.getLectureFile().getFileName())
+                      .filePath(content.getLectureFile().getFilePath())
+                      .fileExtension(content.getLectureFile().getFileExtension())
+                      .build()
+                      : null)
+                  .build())
+              .collect(Collectors.toList());
 
-            return LectureDTO.builder()
-                .lectureId(lecture.getLectureId())
-                .title(lecture.getTitle())
-                .description(lecture.getDescription())
-                .contents(contentDTOs)
-                .quizzes(quizDTOs)
-                .build();
+          // 퀴즈 매핑
+          List<QuizDTO> quizDTOs = quizzes.stream()
+              .map(quiz -> QuizDTO.builder()
+                  .quizId(quiz.getQuizId())
+                  .question(quiz.getQuestion())
+                  .answer(quiz.getAnswer())
+                  .build())
+              .collect(Collectors.toList());
+
+          return LectureDTO.builder()
+              .lectureId(lecture.getLectureId())
+              .title(lecture.getTitle())
+              .description(lecture.getDescription())
+              .contents(contentDTOs)
+              .quizzes(quizDTOs)
+              .build();
         })
         .collect(Collectors.toList());
 
@@ -246,7 +247,7 @@ public CourseDetailDTO getCourseWithContents(int courseId) {
         .status(course.getStatus())
         .lectures(lectureDTOs)
         .build();
-}
+  }
 
   @Transactional
   public void createQuizzes(QuizCreateDTO dto) {
@@ -272,7 +273,9 @@ public CourseDetailDTO getCourseWithContents(int courseId) {
   }
 
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
-    return courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    courseSearchDTO.setTotalCount((int) courses.getTotalElements());
+    return courses;
   }
 
   public List<Institution> getInstitutions() {
