@@ -13,12 +13,15 @@
     <link th:href="@{/css/mypagesidebar.css}" rel="stylesheet" />
     <style>
         .content {
+            display: flex; /* Flexbox로 변경 */
             max-width: 1500px;
+            min-height: 800px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            align-items: stretch; /* 양쪽 높이를 동일하게 유지 */
         }
 
         /* Course Section */
@@ -36,9 +39,11 @@
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            width: 300px;
             display: flex;
             justify-content: space-between;
             align-items: center;
+            margin-left: 20px;
         }
 
         .course-details {
@@ -86,15 +91,15 @@
 
     <!-- Courses -->
     <div class="course-section">
-        <h3>수강중인 학점은행제 강좌</h3>
-        <div class="course-card">
+        <h3 style="margin-left: 40px;">수강중인 학점은행제 강좌</h3>
+
+        <div  class="course-card">
             <div class="course-details" th:each="item, status:${courselist.content}">
                 <h4 th:text="${item.title}"></h4>
                 <p th:text="${item.teacherName}"></p>
                 <p>주차: [[${item.weeks}]]주</p>
                 <div class="course-actions">
-                    <button class="learn-btn">학습하기</button>
-                    <button class="cancel-btn">수강취소</button>
+                    <button class="learn-btn" id="learnGo">학습하기</button>
                 </div>
             </div>
         </div>
@@ -106,6 +111,12 @@
     if (error && error.trim() !== '') {
         alert(error);
     }
+
+    const learnGo = document.getElementById("learnGo")
+    learnGo.addEventListener("click", ()=>{
+       location.href='#'
+    });
+
 </script>
 
 </body>

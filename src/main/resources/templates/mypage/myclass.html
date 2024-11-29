@@ -25,20 +25,7 @@
             color: #333;
         }
 
-        .content {
-            max-width: 1500px;
-            margin: 50px auto;
-            padding: 20px;
-            background-color: #fff;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
-        }
 
-        /* Main Content */
-        .main-content {
-            flex: 1;
-            padding: 20px;
-        }
 
         /* User Info */
         .user-info {
@@ -150,18 +137,30 @@
             color: white;
         }
 
-        .cancel-btn {
-            background-color: #e74c3c;
-            color: white;
+        .content {
+            display: flex; /* Flexbox로 변경 */
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            align-items: stretch; /* 양쪽 높이를 동일하게 유지 */
         }
+
+
+        .main-content {
+            flex: 1; /* 나머지 공간 차지 */
+            padding: 20px;
+        }
+
 
     </style>
 </head>
 
 <body>
-
 <section class="content" layout:fragment="maincontent">
-    <div th:replace="mypage/sidebar ::sidebar"></div>
+    <div th:replace="mypage/sidebar ::sidebar" class="sidebar"></div>
 
     <!-- Main Content -->
     <div class="main-content">
@@ -175,7 +174,7 @@
         </div>
 
         <!-- Stats -->
-        <div class="stats" style="width: 1000px;">
+        <div class="stats">
             <div class="stat-card" style="background-color: #1abc9c">
                 <h3>수강중인 강좌 수</h3>
                 <p th:text="${notcompleted}"></p>
@@ -191,24 +190,22 @@
         </div>
 
         <!-- Courses -->
-        <div class="course-section" >
+        <div class="course-section">
             <h3>수강중인 강좌</h3>
-            <div class="course-card"th:each="item, status:${courselist.content}">
+            <div class="course-card" th:each="item, status:${courselist.content}">
                 <div class="course-details">
                     <h4 th:text="${item.title}"></h4>
                     <p th:text="${item.teacherName}"></p>
-<!--                    <p th:text="${item.enrollmentDate}"></p>-->
                     <p>주차: [[${item.weeks}]]주</p>
                 </div>
                 <div class="course-actions">
-                    <button class="learn-btn" id="learnGoBtn" >학습하기</button>
+                    <button class="learn-btn" id="learnGoBtn">학습하기</button>
                 </div>
             </div>
         </div>
     </div>
-
-
 </section>
+
 
 <script layout:fragment="script" th:inline="javascript">
     const learnGoBtn = document.getElementById("learnGoBtn")

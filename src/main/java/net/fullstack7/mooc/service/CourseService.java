@@ -340,19 +340,19 @@ public class CourseService {
   @Transactional
   public void updateCourse(int courseId, CourseUpdateDTO dto, Teacher teacher) throws IOException {
     Course course = courseRepository.findById(courseId)
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
-        
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+
     if (!course.getTeacher().getTeacherId().equals(teacher.getTeacherId())) {
-        throw new IllegalArgumentException("수정 권한이 없습니다.");
+      throw new IllegalArgumentException("수정 권한이 없습니다.");
     }
 
     Subject subject = subjectRepository.findById(dto.getSubjectId())
-        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
 
     if (dto.getThumbnail() != null) {
-        fileUploadUtil.deleteFile(course.getThumbnail());
-        String thumbnailPath = fileUploadUtil.uploadImageFile(dto.getThumbnail(), "thumbnails");
-        course.setThumbnail(thumbnailPath);
+      fileUploadUtil.deleteFile(course.getThumbnail());
+      String thumbnailPath = fileUploadUtil.uploadImageFile(dto.getThumbnail(), "thumbnails");
+      course.setThumbnail(thumbnailPath);
     }
 
     course.setTitle(dto.getTitle());
@@ -364,10 +364,9 @@ public class CourseService {
     course.setIsCreditBank(dto.getIsCreditBank());
 
     courseRepository.save(course);
-
+  }
   public List<CourseResponseDTO> mainCourseList(int n) {
     return courseRepository.randomCourses(n);
-
   }
 
 }
