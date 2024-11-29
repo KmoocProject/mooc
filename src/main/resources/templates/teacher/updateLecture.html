@@ -389,9 +389,9 @@
                 <div class="flex-grow-1">
                     <input type="text" class="form-control mb-2" name="title" required placeholder="콘텐츠 제목">
                     <textarea class="form-control mb-2" name="description" rows="2" required placeholder="콘텐츠 설명"></textarea>
-                    <select class="form-control mb-2" name="isVideo" required>
-                        <option value="1">동영상</option>
-                        <option value="0">문서</option>
+                    <select class="form-control mb-2" name="type" required>
+                        <option value="video">동영상</option>
+                        <option value="file">문서</option>
                     </select>
                     <input type="file" class="form-control" name="file" required>
                 </div>
@@ -409,9 +409,8 @@
             formData.append('lectureId', lectureId);
             formData.append('title', formElement.querySelector('[name="title"]').value);
             formData.append('description', formElement.querySelector('[name="description"]').value);
-            formData.append('isVideo', formElement.querySelector('[name="isVideo"]').value);
+            formData.append('type', formElement.querySelector('[name="type"]').value);
             formData.append('file', formElement.querySelector('[name="file"]').files[0]);
-
             try {
                 const response = await fetch(`/api/teacher/lectures/${lectureId}/contents`, {
                     method: 'POST',
