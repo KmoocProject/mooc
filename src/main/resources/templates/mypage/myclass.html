@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -10,158 +11,156 @@
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
     <link th:href="@{/css/mypagesidebar.css}" rel="stylesheet" />
-</head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
 
-    body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f9f9f9;
-        color: #333;
-    }
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
 
-  .content {
+        .content {
             max-width: 1500px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
-    }
+        }
 
-    /* Main Content */
-    .main-content {
-        flex: 1;
-        padding: 20px;
-    }
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            padding: 20px;
+        }
 
-    /* User Info */
-    .user-info {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-    }
+        /* User Info */
+        .user-info {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
 
-    .user-info h2 {
-        margin: 0;
-        font-size: 24px;
-    }
+        .user-info h2 {
+            margin: 0;
+            font-size: 24px;
+        }
 
-    .user-info p {
-        margin: 5px 0;
-        color: #555;
-    }
+        .user-info p {
+            margin: 5px 0;
+            color: #555;
+        }
 
-    /* Stats */
-    .stats {
-        display: flex;
-        justify-content: space-between;
-        margin-top: 20px;
-    }
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
 
-    .stats  {
-        flex: 1;
-        background-color: #ecf0f1;
-        padding: 15px;
-        margin-right: 10px;
-        text-align: center;
-        border-radius: 8px;
-    }
-    .stat-card{
-        flex: 1;
-        background-color: #ecf0f1;
-        padding: 15px;
-        margin-right: 10px;
-        text-align: center;
-        border-radius: 8px;
-        width: 120px;
+        .stats  {
+            flex: 1;
+            background-color: #ecf0f1;
+            padding: 15px;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 8px;
+        }
+        .stat-card{
+            flex: 1;
+            background-color: #ecf0f1;
+            padding: 15px;
+            margin-right: 10px;
+            text-align: center;
+            border-radius: 8px;
+            width: 120px;
 
-    }
+        }
 
-    .stats .stat-card:last-child {
-        margin-right: 0;
-    }
+        .stats .stat-card:last-child {
+            margin-right: 0;
+        }
 
-    .stat-card h3 {
-        margin: 0;
-        font-size: 18px;
-    }
+        .stat-card h3 {
+            margin: 0;
+            font-size: 18px;
+        }
 
-    .stat-card p {
-        margin: 10px 0 0;
-        font-size: 24px;
-        font-weight: bold;
-        color: #34495e;
-    }
+        .stat-card p {
+            margin: 10px 0 0;
+            font-size: 24px;
+            font-weight: bold;
+            color: #34495e;
+        }
 
-    /* Course Section */
-    .course-section {
-        margin-top: 30px;
-    }
+        /* Course Section */
+        .course-section {
+            margin-top: 30px;
+        }
 
-    .course-section h3 {
-        margin-bottom: 15px;
-    }
+        .course-section h3 {
+            margin-bottom: 15px;
+        }
 
-    .course-card {
-        background-color: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        padding: 20px;
-        margin-bottom: 20px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-    }
+        .course-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
 
-    .course-details {
-        flex: 1;
-    }
+        .course-details {
+            flex: 1;
+        }
 
-    .course-details h4 {
-        margin: 0;
-        font-size: 20px;
-    }
+        .course-details h4 {
+            margin: 0;
+            font-size: 20px;
+        }
 
-    .course-details p {
-        margin: 5px 0;
-        color: #555;
-    }
+        .course-details p {
+            margin: 5px 0;
+            color: #555;
+        }
 
-    .course-actions {
-        text-align: right;
-    }
+        .course-actions {
+            text-align: right;
+        }
 
-    .course-actions button {
-        margin-top: 10px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+        .course-actions button {
+            margin-top: 10px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    .learn-btn {
-        background-color: #3498db;
-        color: white;
-    }
+        .learn-btn {
+            background-color: #3498db;
+            color: white;
+        }
 
-    .cancel-btn {
-        background-color: #e74c3c;
-        color: white;
-    }
+        .cancel-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
 
-</style>
+    </style>
+</head>
+
 <body>
 
-<div th:replace="main/header :: header"></div>
-<!-- Sidebar -->
-
-<section class="content">
+<section class="content" layout:fragment="maincontent">
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <!-- Main Content -->
@@ -211,8 +210,7 @@
 
 </section>
 
-<div th:replace="main/footer :: footer"></div>
-<script>
+<script layout:fragment="script" th:inline="javascript">
     const learnGoBtn = document.getElementById("learnGoBtn")
     learnGoBtn.addEventListener("click", ()=>{
         location.href='/learn/view'

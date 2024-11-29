@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -112,10 +113,9 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
-<!-- Sidebar -->
 
-<section class="content">
+
+<section class="content" layout:fragment="maincontent">
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <div class="container">
@@ -151,9 +151,8 @@
     </div>
 </section>
 
-<div th:replace="main/footer :: footer"></div>
 
-<script>
+<script layout:fragment="script" th:inline="javascript">
     const next = document.getElementById("next")
     next.addEventListener("click", ()=>{
         const agree = document.getElementById("agree").checked;

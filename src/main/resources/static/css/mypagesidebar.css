@@ -3,8 +3,8 @@
     width: 250px;
     background-color: rgba(133, 129, 129, 0.06);
     color: #000000;
-    height: 700px;
     padding: 20px 15px;
+    min-height: 500px;
     box-sizing: border-box;
     float: left;
     margin-right: 45px;

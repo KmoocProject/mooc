@@ -2,6 +2,7 @@
 <html lang="ko"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
       xmlns:th="http://www.thymeleaf.org"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
@@ -9,88 +10,88 @@
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+            background-color: #f9f9f9;
+            color: #333;
+        }
+
+        .content {
+            max-width: 1500px;
+            margin: 50px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+        /* styles.css */
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: #fff;
+            padding: 20px;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            border-radius: 5px;
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        p {
+            margin-bottom: 20px;
+            color: #666;
+        }
+
+        small {
+            color: #999;
+        }
+
+        .comparison-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        .comparison-table thead th {
+            background-color: #007acc;
+            color: #fff;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .comparison-table tbody td {
+            border: 1px solid #ccc;
+            padding: 10px;
+            text-align: center;
+        }
+
+        .comparison-table tbody tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+
+        .comparison-table tbody tr:hover {
+            background-color: #eaf6ff;
+        }
+
+
+
+    </style>
 </head>
-<style>
-    * {
-        margin: 0;
-        padding: 0;
-        box-sizing: border-box;
-    }
 
-    body {
-        font-family: Arial, sans-serif;
-        line-height: 1.6;
-        background-color: #f9f9f9;
-        color: #333;
-    }
-
-    .content {
-        max-width: 1500px;
-        margin: 50px auto;
-        padding: 20px;
-        background-color: #fff;
-        box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
-        border-radius: 8px;
-    }
-    /* styles.css */
-
-    .container {
-        max-width: 800px;
-        margin: 0 auto;
-        background: #fff;
-        padding: 20px;
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-        border-radius: 5px;
-    }
-
-    h1, h2 {
-        color: #333;
-    }
-
-    p {
-        margin-bottom: 20px;
-        color: #666;
-    }
-
-    small {
-        color: #999;
-    }
-
-    .comparison-table {
-        width: 100%;
-        border-collapse: collapse;
-        margin-top: 20px;
-    }
-
-    .comparison-table thead th {
-        background-color: #007acc;
-        color: #fff;
-        padding: 10px;
-        text-align: center;
-    }
-
-    .comparison-table tbody td {
-        border: 1px solid #ccc;
-        padding: 10px;
-        text-align: center;
-    }
-
-    .comparison-table tbody tr:nth-child(even) {
-        background-color: #f2f2f2;
-    }
-
-    .comparison-table tbody tr:hover {
-        background-color: #eaf6ff;
-    }
-
-
-
-</style>
 <body>
 
-<div th:replace="main/header :: header"></div>
 
-<section class="content">
+<section class="content" layout:fragment="maincontent">
     <div class="container">
         <h1>K-MOOC 학점은행제 학습과정이란?</h1>
         <p>
@@ -145,8 +146,6 @@
     </div>
 
 </section>
-
-<div th:replace="main/footer :: footer"></div>
 
 </body>
 </html>
