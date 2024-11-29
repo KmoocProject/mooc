@@ -2,7 +2,6 @@ package net.fullstack7.mooc.controller;
 
 import net.fullstack7.mooc.service.SubjectService;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.ui.Model;
 import org.springframework.stereotype.Controller;
 
@@ -56,7 +55,7 @@ public class DummyController {
 
   @GetMapping("/main2")
   public String main2() {
-    return "main/main2";
+    return "main";
   }
   @GetMapping("/headerlayout")
   public String headerlayout() {
