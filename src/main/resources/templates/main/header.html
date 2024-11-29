@@ -130,13 +130,12 @@
     </div>
     <div th:if="${session.memberDTO != null}" class="user-actions">
         <nav class="navbar">
-            <ul class="menu-list">
-                <a href="/mypage/myclass" style="color: black;margin-right: -15px;margin-top: 20px;">나의 강의실</a>
-                <a href="#"><img th:src="@{/images/bell.png}" style="width:35px; margin-bottom: -30px;"></a>
+            <ul class="menu-list" style="height: 0px;">
+                <a href="/mypage/myclass" style="color: black;margin-right: -15px;">나의 강의실</a>
                 <div class="menu-icon dropdown">
-                    <a class="dropdown-btn1"><img th:src="@{/images/man.png}" style="width:65px;margin-left: -13px;"></a>
+                    <a class="dropdown-btn1"><img th:src="@{/images/man.png}" style="width:65px;margin-left: -13px;margin-top: -18px;"></a>
                     <ul class="dropdown-menu" style="width: 259px; height: 400px;">
-                        <img th:src="@{/images/man.png}" style="width:70px; " >
+                        <img th:src="@{/images/man.png}" >
                         <h2 style="margin-left: 12px;color: black">ooo 님</h2>
                         <hr>
                         <li><a href="/mypage/myclass"><i class="fas fa-chalkboard"></i><img th:src="@{/images/a3.png}" style="width: 30px; margin-right: 4px; margin-bottom: -8px;" /> 내 강의실</a></li>
@@ -150,32 +149,28 @@
         </nav>
     </div>
 </header>
-
 </div>
 </section>
 
 <script>
     // JavaScript 코드 추가
-    document.getElementById('search-button').addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // header 요소 가져오기
-        const headerElement = document.getElementById('main');
-
-        // 새로운 div 요소 생성
-        const modalDiv = document.createElement('div');
-        modalDiv.setAttribute('th:replace', 'main/modal :: modal');
-
-        // header 아래에 div 추가
-        headerElement.insertAdjacentElement('afterend', modalDiv);
-
-        // 확인용 (콘솔 출력)
-        console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
-    });
+    // document.getElementById('search-button').addEventListener('click', function (e) {
+    //     e.preventDefault();
+    //     // header 요소 가져오기
+    //     const headerElement = document.getElementById('main');
+    //     // 새로운 div 요소 생성
+    //     const modalDiv = document.createElement('div');
+    //     modalDiv.setAttribute('th:replace', 'main/modal :: modal');
+    //     // header 아래에 div 추가
+    //     headerElement.insertAdjacentElement('afterend', modalDiv);
+    //     // 확인용 (콘솔 출력)
+    //     console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
+    // });
 
     function allBtn(){
         window.location.href = '/course/list/all';
     }
+
 </script>
 
 </body>
