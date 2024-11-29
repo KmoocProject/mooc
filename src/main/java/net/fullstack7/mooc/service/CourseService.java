@@ -272,7 +272,9 @@ public CourseDetailDTO getCourseWithContents(int courseId) {
   }
 
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
-    return courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    courseSearchDTO.setTotalCount((int) courses.getTotalElements());
+    return courses;
   }
 
   public List<Institution> getInstitutions() {

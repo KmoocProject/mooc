@@ -68,7 +68,12 @@ public class AdminController {
     @GetMapping("/memberList")
     public String memberListGet(Model model, @Valid AdminSearchDTO adminSearchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if (bindingResult.hasErrors()) {
-            adminSearchDTO = AdminSearchDTO.<Teacher>builder().build();
+            adminSearchDTO = AdminSearchDTO.<Teacher>builder()
+                    .status(adminSearchDTO.getStatus())
+                    .isApproved(adminSearchDTO.getIsApproved())
+                    .memberType(adminSearchDTO.getMemberType())
+                    .searchId(adminSearchDTO.getSearchId())
+                    .build();
         }
 
         adminSearchDTO.initialize();
@@ -78,7 +83,7 @@ public class AdminController {
         else
             model.addAttribute("pageinfo", adminService.getMembers(adminSearchDTO));
 
-        model.addAttribute("searchinfo", adminSearchDTO);
+        model.addAttribute("pageDTO", adminSearchDTO);
 
         return "admin/member/memberList";
     }
@@ -162,13 +167,19 @@ public class AdminController {
             , Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            searchDTO = CourseSearchDTO.builder().build();
+            searchDTO = CourseSearchDTO.builder()
+                    .institutionId(searchDTO.getInstitutionId())
+                    .subjectId(searchDTO.getSubjectId())
+                    .searchValue(searchDTO.getSearchValue())
+                    .isCreditBank(searchDTO.getIsCreditBank())
+                    .status(searchDTO.getStatus())
+                    .build();
         }
 
         searchDTO.initialize();
 
         model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
-        model.addAttribute("searchinfo", searchDTO);
+        model.addAttribute("pageDTO", searchDTO);
         model.addAttribute("subjects", subjectService.getAllSubjects());
 
         return "admin/course/courseList";
