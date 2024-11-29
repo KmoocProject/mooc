@@ -39,7 +39,10 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-4">
-                        <img th:src="${course.thumbnail}" class="img-fluid" alt="강좌 썸네일">
+                        <img th:if="${course.thumbnail != null}" 
+                             th:src="${course.thumbnail}" 
+                             class="img-fluid" 
+                             alt="강좌 썸네일">
                     </div>
                     <div class="col-md-8">
                         <p>강의 설명 : </p>
@@ -63,9 +66,7 @@
                                 </p>
                             </div>
                             <div class="col-md-4">
-                                <p>언어: 
-                                    <span th:text="${course.language}"></span>
-                                </p>
+                                <p>언어: <span th:text="${course.language}"></span></p>
                             </div>
                         </div>
                     </div>
@@ -75,9 +76,12 @@
 
         <!-- 섹션 및 콘텐츠 목록 -->
         <div class="accordion mb-4" id="lectureAccordion">
-            <div th:each="lecture : ${course.lectures}" class="accordion-item">
+            <div th:if="${course.lectures != null}" 
+                 th:each="lecture : ${course.lectures}" 
+                 class="accordion-item">
                 <h2 class="accordion-header">
-                    <button class="accordion-button collapsed" type="button" 
+                    <button class="accordion-button collapsed" 
+                            type="button" 
                             data-bs-toggle="collapse" 
                             th:data-bs-target="'#lecture' + ${lecture.lectureId}">
                         <span th:text="${lecture.title}">섹션 제목</span>
@@ -88,34 +92,45 @@
                     <div class="accordion-body">
                         <p class="text-muted mb-3" th:text="${lecture.description}">섹션 설명</p>
                         <!-- 콘텐츠 목록 -->
-                        <div class="list-group" th:if="${!lecture.contents.empty}">
+                        <div class="list-group" th:if="${lecture.contents != null && !lecture.contents.empty}">
                             <div th:each="content : ${lecture.contents}" 
                                  class="list-group-item">
                                 <div class="d-flex justify-content-between align-items-center">
                                     <h5 class="mb-1">
+                                        <i th:if="${content.isVideo == 1}" class="bi bi-camera-video-fill text-primary"></i>
+                                        <i th:if="${content.isVideo == 0}" class="bi bi-file-earmark-text-fill text-secondary"></i>
                                         <span th:text="${content.title}">콘텐츠 제목</span>
-                                        <span th:if="${content.type == 'video'}" 
+                                        <span th:if="${content.isVideo == 1}" 
                                               class="content-type-badge video-badge">동영상</span>
-                                        <span th:if="${content.type == 'file'}" 
+                                        <span th:if="${content.isVideo == 0}" 
                                               class="content-type-badge file-badge">문서</span>
                                     </h5>
                                 </div>
                                 <p class="mb-1 text-muted" th:text="${content.description}">설명</p>
                                 <div th:if="${content.file != null}" class="mt-2">
-                                    <a th:href="${content.file.filePath}" 
-                                       class="btn btn-sm btn-outline-primary" 
-                                       target="_blank">
-                                        <i class="bi bi-file-earmark"></i>
-                                        <span th:text="${content.type == 'video' ? '동영상 보기' : '문서 보기'}"></span>
+                                    <button th:if="${content.isVideo == 1}"
+                                            th:onclick="'openVideoModal(\'' + ${content.file.filePath} + '\')'"
+                                            class="btn btn-sm btn-outline-primary">
+                                        <i class="bi bi-play-circle"></i> 동영상 보기
+                                    </button>
+                                    <a th:if="${content.isVideo == 0}"
+                                       th:href="@{/api/teacher/files/download(filePath=${content.file.filePath})}"
+                                       class="btn btn-sm btn-outline-secondary">
+                                        <i class="bi bi-download"></i> 문서 다운로드
                                     </a>
                                 </div>
                             </div>
                         </div>
-                        <div th:if="${lecture.contents.empty}" class="text-center text-muted">
+                        <div th:if="${lecture.contents == null || lecture.contents.empty}" 
+                             class="text-center text-muted">
                             등록된 콘텐츠가 없습니다.
                         </div>
                     </div>
                 </div>
+            </div>
+            <div th:if="${course.lectures == null || course.lectures.empty}" 
+                 class="text-center text-muted mt-3">
+                등록된 섹션이 없습니다.
             </div>
         </div>
 
@@ -125,34 +140,64 @@
                 <h4>퀴즈 목록</h4>
             </div>
             <div class="card-body">
-                <div th:each="lecture : ${course.lectures}" 
-                     th:if="${!lecture.quizzes.empty}" 
-                     class="mb-4">
-                    <h5 class="mb-3" th:text="${lecture.title + ' 퀴즈'}">섹션 제목 퀴즈</h5>
-                    <div class="list-group">
-                        <div th:each="quiz : ${lecture.quizzes}" 
-                             class="list-group-item">
-                            <div class="quiz-item">
-                                <div class="mb-2">
-                                    <strong>Q: </strong>
-                                    <span th:text="${quiz.question}" 
-                                          class="text-primary">질문</span>
-                                </div>
-                                <div>
-                                    <strong>A: </strong>
-                                    <span th:text="${quiz.answer}" 
-                                          class="text-success">답변</span>
+                <div th:if="${course.lectures != null}">
+                    <div th:each="lecture : ${course.lectures}" 
+                         th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" 
+                         class="mb-4">
+                        <h5 class="mb-3" th:text="${lecture.title + ' 퀴즈'}">섹션 제목 퀴즈</h5>
+                        <div class="list-group">
+                            <div th:each="quiz : ${lecture.quizzes}" 
+                                 class="list-group-item">
+                                <div class="quiz-item">
+                                    <div class="mb-2">
+                                        <strong>Q: </strong>
+                                        <span th:text="${quiz.question}" 
+                                              class="text-primary">질문</span>
+                                    </div>
+                                    <div>
+                                        <strong>A: </strong>
+                                        <span th:text="${quiz.answer}" 
+                                              class="text-success">답변</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
-                <div th:if="${#lists.isEmpty(course.lectures) || !#lists.isEmpty(course.lectures) && #lists.isEmpty(#aggregates.sum(course.lectures.![quizzes.size()]))}" 
+                <div th:if="${course.lectures == null || course.lectures.empty}" 
                      class="text-center text-muted">
                     등록된 퀴즈가 없습니다.
                 </div>
             </div>
         </div>
     </div>
+    <footer th:replace="teacher/common/footer :: footer"></footer>
+
+    <!-- 비디오 모달 추가 -->
+    <div class="modal fade" id="videoModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">동영상 보기</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <video id="videoPlayer" class="w-100" controls>
+                        <source src="" type="video/mp4">
+                    </video>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 추가 -->
+    <script>
+    function openVideoModal(videoPath) {
+        const videoPlayer = document.querySelector('#videoPlayer source');
+        videoPlayer.src = videoPath;
+        videoPlayer.parentElement.load();
+        new bootstrap.Modal(document.getElementById('videoModal')).show();
+    }
+    </script>
 </body>
 </html>
