@@ -183,10 +183,10 @@ public class MyPageController {
             }
             session.setAttribute("memberDTO", memberDTO);
 //            System.out.println("Session memberDTO: " + session.getAttribute("memberDTO"));
-            redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
+            redirectAttributes.addFlashAttribute("errors", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
 //            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
-            redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("errors", "회원 정보 수정에 실패했습니다.");
             return "redirect:/mypage/memberView";
         }
         return "redirect:/mypage/myclass";
@@ -224,7 +224,7 @@ public class MyPageController {
         }
 
         if(!newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$")){
-            redirectAttributes.addFlashAttribute("errMessage", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.");
+            redirectAttributes.addFlashAttribute("errorMessage", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.");
             return "redirect:/mypage/pwdCheck";
         }
         try{
@@ -245,7 +245,7 @@ public class MyPageController {
     @PostMapping("/memberDelete")
     @ResponseBody
     public Map<String, Object> deleteMember(@RequestParam String memberId, HttpSession session) {
-        log.info("회원 탈퇴 요청, memberId: {}", memberId);
+//        log.info("회원 탈퇴 요청, memberId: {}", memberId);
         Map<String, Object> response = new HashMap<>();
         try {
             memberServiceImpl.deleteMember(memberId);
@@ -254,11 +254,12 @@ public class MyPageController {
             response.put("message", "탈퇴가 완료되었습니다.");
 //            return ResponseEntity.ok(response);  // 성공 응답
         } catch (Exception e) {
-            log.error("회원 탈퇴 처리 중 오류 발생, memberId: {}", memberId, e);
+//            log.error("회원 탈퇴 처리 중 오류 발생, memberId: {}", memberId, e);
             response.put("success", false);
             response.put("message", "회원 탈퇴 처리 중 오류가 발생했습니다.");
 //            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);  // 실패 응답
         }
         return response;
     }
+
 }

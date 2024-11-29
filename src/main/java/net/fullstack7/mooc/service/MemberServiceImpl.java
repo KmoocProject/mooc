@@ -34,7 +34,6 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final CourseRepository courseRepository;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
 
-    private SqlSession sqlSession;
 
     //로그인
     @Override
@@ -114,7 +113,7 @@ public class MemberServiceImpl implements MemberServiceIf {
     public void updatePassword(String memberId, String newPassword){
 //        memberMapper.updatePassword(memberId, newPassword);
         int updatedRows = memberMapper.updatePassword(memberId, newPassword);
-        System.out.println("Rows updated: " + updatedRows);
+//        System.out.println("Rows updated: " + updatedRows);
         if(updatedRows == 0){
             System.out.println("No rows were updated.");
             throw new RuntimeException("업데이트안됨");
@@ -158,7 +157,6 @@ public class MemberServiceImpl implements MemberServiceIf {
             return "mypage/memberView";
         }
         return "mypage/myclass";
-
     }
 
 
@@ -180,15 +178,15 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     public void deleteMember(String memberId) {
         try {
-            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
+//            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
             int updatedRows = memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
             if (updatedRows > 0) {
-                log.info("회원 탈퇴 처리 성공, memberId: {}", memberId);
+//                log.info("회원 탈퇴 처리 성공, memberId: {}", memberId);
             } else {
-                log.warn("회원 탈퇴 처리 실패, memberId: {}", memberId);
+//                log.warn("회원 탈퇴 처리 실패, memberId: {}", memberId);
             }
         } catch (Exception e) {
-            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
+//            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
             throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
         }
     }
@@ -213,4 +211,5 @@ public class MemberServiceImpl implements MemberServiceIf {
         if(result > 0) return null;
         return "다시 시도해주세요.";
     }
+
 }

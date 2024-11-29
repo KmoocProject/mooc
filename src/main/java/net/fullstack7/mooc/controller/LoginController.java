@@ -41,7 +41,7 @@ public class LoginController extends HttpServlet {
     @ModelAttribute
     public void checkLoginStatus(HttpSession session, RedirectAttributes redirectAttributes) {
         if(session.getAttribute("memberDTO") != null) {
-            redirectAttributes.addFlashAttribute("errors", "이미 로그인 된 상태입니다. 다른 페이지로 이동합니다.");
+            redirectAttributes.addFlashAttribute("error", "이미 로그인 된 상태입니다. 다른 페이지로 이동합니다.");
         }
     }
 
@@ -68,7 +68,7 @@ public class LoginController extends HttpServlet {
             }
             return "redirect:/main/main";
         } else {
-            model.addAttribute("errors", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            model.addAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다.");
             return "login/login";
         }
     }
@@ -85,7 +85,7 @@ public class LoginController extends HttpServlet {
     public String memberterms(HttpSession session, RedirectAttributes redirectAttributes) {
         String loginCheck = (String) session.getAttribute("memberId");
         if (loginCheck != null) {
-            redirectAttributes.addFlashAttribute("errors", "로그인 한 회원은 접근할 수 없습니다.");
+            redirectAttributes.addFlashAttribute("error", "로그인 한 회원은 접근할 수 없습니다.");
             return "redirect:/main/main";
         }
         session.removeAttribute("termsAgree");
@@ -98,7 +98,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("termsAgree", true);
             return "redirect:/login/regist";
         } else {
-            model.addAttribute("errors", "약관동의 후 회원가입이 가능합니다.");
+            model.addAttribute("error", "약관동의 후 회원가입이 가능합니다.");
             return "redirect:/login/memberterms";
         }
     }
@@ -134,29 +134,33 @@ public class LoginController extends HttpServlet {
 
     //회원 등록
     @PostMapping("/regist")
-    public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session, @RequestParam(required = false)String idChecked, @RequestParam(required = false)String emailChecked) {
+        if (idChecked == null || idChecked.equals("false") || emailChecked == null || emailChecked.equals("false")) {
+            redirectAttributes.addFlashAttribute("error", "아이디와 이메일의 중복 확인을 먼저 해주세요.");
+            return "redirect:/login/regist";  // 중복 체크 안되었을 때 회원가입 페이지로 리다이렉트
+        }
         String email = memberDTO.getEmail();
         boolean isEmailAvailable = memberService.emailCheck(email);
         String memberId = memberDTO.getMemberId();
         boolean isMemberIdAvailable = memberService.memberIdCheck(memberId);
 
         if (!isEmailAvailable || !isMemberIdAvailable) {
-            redirectAttributes.addFlashAttribute("errors", "중복된 내용은 등록이 불가합니다.");
+            redirectAttributes.addFlashAttribute("error", "중복된 내용은 등록이 불가합니다.");
             return "redirect:/login/regist";  // 중복된 이메일이 있으면 회원가입 페이지로 리다이렉트
         }
 
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("error", "회원가입에 실패했습니다.");
             redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
             return "redirect:/login/regist";
         }
         int result = memberService.registMember(memberDTO);
 
         if (result > 0) {
-            redirectAttributes.addFlashAttribute("errors", "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+            redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
             return "redirect:/login/login";
         } else {
-            redirectAttributes.addFlashAttribute("errors", "회원가입에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("error", "회원가입에 실패했습니다.");
             return "redirect:/login/regist";
         }
     }
