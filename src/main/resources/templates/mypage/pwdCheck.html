@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>비밀번호 변경</title>
+</head>
+<body>
+<div class="password-change-container">
+  <h2>비밀번호 변경</h2>
+  <form id="password-change-form">
+    <label for="current-password">현재 비밀번호</label>
+    <input type="password" id="current-password" name="current-password" required>
+
+    <label for="new-password">새 비밀번호</label>
+    <input type="password" id="new-password" name="new-password" required>
+
+    <label for="confirm-password">새 비밀번호 확인</label>
+    <input type="password" id="confirm-password" name="confirm-password" required>
+
+    <button type="submit">변경</button>
+<!--    <button type="button">취소</button>-->
+    <button type="button" onclick="window.location.href='/mypage/memberView';">취소</button>
+  </form>
+  <div id="error-message" class="error-message"></div>
+</div>
+
+</body>
+</html>

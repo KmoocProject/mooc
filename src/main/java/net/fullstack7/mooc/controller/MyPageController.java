@@ -124,7 +124,7 @@ public class MyPageController {
 //    }
 
     @PostMapping("/memberModify")
-    public String modifyMember(@Valid MemberModifyDTO memberDTO, BindingResult bindingResult,
+    public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         System.out.println("POST 요청 받음");
 
@@ -148,6 +148,20 @@ public class MyPageController {
         return "redirect:/mypage/myclass";
     }
 
+    //비밀번호 변경
+    @GetMapping("/pwdCheck")
+    public String pwdCheck(HttpSession session) {
+        if (session.getAttribute("memberDTO") == null) {
+            return "redirect:/login/login";
+        }
+        return "mypage/pwdCheck" ;
+    }
+
+    @PostMapping("/pwdCheck")
+    public String pwdCheck(){
+//        return "redirect:/mypage/myclass";
+        return null;
+    }
 
 
 
