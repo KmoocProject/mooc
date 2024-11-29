@@ -29,4 +29,12 @@
             border-radius: 4px;
         }
     </style>
+    <script th:inline="javascript">
+        const error = [[${error}]];
+        function checkError() {
+            if (error) {
+                alert(error);
+            }
+        }
+    </script>
 </head>

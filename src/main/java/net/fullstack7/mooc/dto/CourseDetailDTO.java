@@ -20,6 +20,8 @@ public class CourseDetailDTO {
     private int learningTime;
     private String language;
     private int isCreditBank;
+    private String teacherName;
     private String teacherId;
+    private String status;
     private List<LectureDTO> lectures;
 }

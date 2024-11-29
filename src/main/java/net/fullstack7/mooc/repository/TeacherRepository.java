@@ -28,4 +28,7 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, Teach
 
     int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
     int countByStatusIn(List<String> status);
+
+    @Query("select T.teacherName from Teacher T where T.teacherId = :teacherId")
+    String findTeacherNameByTeacherId(String teacherId);
 }

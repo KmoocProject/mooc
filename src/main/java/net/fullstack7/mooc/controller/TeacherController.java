@@ -109,7 +109,7 @@ public class TeacherController {
   }
 
   @GetMapping("/lectures/edit/{courseId}")
-  public String editLecture(@PathVariable int courseId, Model model, HttpSession session) {
+  public String editLecture(@PathVariable int courseId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
     Teacher teacher = (Teacher) session.getAttribute("teacher");
     if (teacher == null) {
       return "redirect:/teacher/login";
@@ -118,6 +118,7 @@ public class TeacherController {
     CourseDetailDTO courseDetail = courseService.getCourseWithContents(courseId);
 
     if (!courseDetail.getTeacherId().equals(teacher.getTeacherId())) {
+      redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
       return "redirect:/teacher/myLectures";
     }
 
@@ -126,9 +127,19 @@ public class TeacherController {
   }
 
   @GetMapping("/courses/{courseId}/detail")
-  public String getCourseDetail(@PathVariable int courseId, Model model) {
+  public String getCourseDetail(@PathVariable int courseId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
+    Teacher teacher = (Teacher) session.getAttribute("teacher");
+    if (teacher == null) {
+      return "redirect:/teacher/login";
+    }
     CourseDetailDTO courseDetail = courseService.getCourseWithContents(courseId);
+
+    if (!courseDetail.getTeacherId().equals(teacher.getTeacherId())) {
+      redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
+      return "redirect:/teacher/myLectures";
+    }
     model.addAttribute("course", courseDetail);
+    model.addAttribute("teacherName", teacher.getTeacherName());
     return "teacher/courseDetail";
   }
 

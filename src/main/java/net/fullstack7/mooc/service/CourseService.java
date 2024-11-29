@@ -31,6 +31,7 @@ public class CourseService {
   private final SubjectRepository subjectRepository;
   private final FileUploadUtil fileUploadUtil;
   private final InstitutionRepository institutionRepository;
+  private final TeacherRepository teacherRepository;
 
   public Course createCourse(CourseCreateDTO dto, Teacher teacher) throws IOException {
     // 과목 조회
@@ -173,61 +174,71 @@ public class CourseService {
     quizRepository.deleteByQuizId(quizId);
   }
 
-  public void deleteQuizzes(int lectureId){
-    Lecture lecture = lectureRepository.findByLectureId(lectureId).orElseThrow(()->new IllegalArgumentException("존제하지 않는 강좌입니다."));
+  public void deleteQuizzes(int lectureId) {
+    Lecture lecture = lectureRepository.findByLectureId(lectureId)
+        .orElseThrow(() -> new IllegalArgumentException("존제하지 않는 강좌입니다."));
     quizRepository.deleteAllByLecture(lecture);
   }
 
   // 읽기 전용 트랜잭션 (CUD방지 및 내부최적화)
   @Transactional(readOnly = true)
   public CourseDetailDTO getCourseWithContents(int courseId) {
+    // 1. 기본 강좌 정보 조회
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+    // 2. 강좌의 모든 섹션(lectures) 조회
+    List<LectureDTO> lectureDTOs = new ArrayList<>();
+    List<Lecture> lectures = lectureRepository.findByCourseOrderByLectureIdAsc(course);
 
-    List<LectureDTO> lectureDTOs = course.getLectures().stream()
-        .map(lecture -> {
-            List<LectureContentDTO> contentDTOs = lecture.getContents().stream()
-                .map(content -> {
-                    LectureContentDTO contentDTO = LectureContentDTO.builder()
-                        .lectureContentId(content.getLectureContentId())
-                        .title(content.getTitle())
-                        .description(content.getDescription())
-                        .type(content.getIsVideo() == 1 ? "video" : 
-                             content.getIsVideo() == 0 ? "quiz" : "file")
-                        .build();
+    for (Lecture lecture : lectures) {
+      // 3. 각 섹션의 콘텐츠 조회
+      List<LectureContent> contents = lectureContentRepository.findByLectureOrderByLectureContentIdAsc(lecture);
+      List<LectureContentDTO> contentDTOs = new ArrayList<>();
 
-                    // 비디오나 파일인 경우
-                    if (content.getIsVideo() != 0) {
-                        lectureFileRepository.findByLectureContent(content)
-                            .ifPresent(file -> contentDTO.setFile(
-                                LectureFileDTO.builder()
-                                    .fileName(file.getFileName())
-                                    .filePath(file.getFilePath())
-                                    .fileExtension(file.getFileExtension())
-                                    .build()));
-                    }
-                    return contentDTO;
-                })
-                .collect(Collectors.toList());
+      for (LectureContent content : contents) {
+        LectureContentDTO contentDTO = LectureContentDTO.builder()
+            .lectureContentId(content.getLectureContentId())
+            .title(content.getTitle())
+            .description(content.getDescription())
+            .type(content.getIsVideo() == 1 ? "video" : content.getIsVideo() == 0 ? "quiz" : "file")
+            .build();
 
-            List<QuizDTO> quizDTOs = lecture.getQuizzes().stream()
-                .map(quiz -> QuizDTO.builder()
-                    .quizId(quiz.getQuizId())
-                    .question(quiz.getQuestion())
-                    .answer(quiz.getAnswer())
-                    .build())
-                .collect(Collectors.toList());
+        // 4. 파일이 있는 경우 파일 정보 조회
+        if (content.getIsVideo() != 0) {
+          lectureFileRepository.findByLectureContent(content)
+              .ifPresent(file -> contentDTO.setFile(
+                  LectureFileDTO.builder()
+                      .fileName(file.getFileName())
+                      .filePath(file.getFilePath())
+                      .fileExtension(file.getFileExtension())
+                      .build()));
+        }
+        contentDTOs.add(contentDTO);
+      }
 
-            return LectureDTO.builder()
-                .lectureId(lecture.getLectureId())
-                .title(lecture.getTitle())
-                .description(lecture.getDescription())
-                .contents(contentDTOs)
-                .quizzes(quizDTOs)
-                .build();
-        })
-        .collect(Collectors.toList());
+      // 5. 퀴즈 조회
+      List<Quiz> quizzes = quizRepository.findByLectureOrderByQuizIdAsc(lecture);
+      List<QuizDTO> quizDTOs = quizzes.stream()
+          .map(quiz -> QuizDTO.builder()
+              .quizId(quiz.getQuizId())
+              .question(quiz.getQuestion())
+              .answer(quiz.getAnswer())
+              .build())
+          .collect(Collectors.toList());
 
+      // 6. 섹션 DTO 생성
+      LectureDTO lectureDTO = LectureDTO.builder()
+          .lectureId(lecture.getLectureId())
+          .title(lecture.getTitle())
+          .description(lecture.getDescription())
+          .contents(contentDTOs)
+          .quizzes(quizDTOs)
+          .build();
+
+      lectureDTOs.add(lectureDTO);
+    }
+
+    // 7. 최종 CourseDetailDTO 생성
     return CourseDetailDTO.builder()
         .courseId(course.getCourseId())
         .title(course.getTitle())
@@ -238,6 +249,8 @@ public class CourseService {
         .language(course.getLanguage())
         .isCreditBank(course.getIsCreditBank())
         .teacherId(course.getTeacher().getTeacherId())
+        .teacherName(course.getTeacher().getTeacherName())
+        .status(course.getStatus())
         .lectures(lectureDTOs)
         .build();
   }
