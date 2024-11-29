@@ -41,8 +41,8 @@
                                         <button class="btn btn-sm btn-outline-danger"
                                                 th:onclick="'deleteLecture(' + ${lecture.courseId} + ')'">삭제</button>
                                     </div>
-                                    <div th:if="${lecture.status != 'DRAFT'}" class="btn-group">
-                                        <a>공개된 강의는 수정이나 삭제가 불가능합니다. 관리자에게 문의하세요.</a>
+                                    <div th:if="${lecture.status != 'DRAFT'}" class="alert alert-warning text-center ms-2" role="alert">
+                                        공개된 강의는 수정이나 삭제가 불가능합니다. 관리자에게 문의하세요.
                                     </div>
                                 </div>
                             </div>
@@ -55,6 +55,25 @@
             </div>
         </div>
     </div>
+    <script th:inline="javascript">
+        async function deleteLecture(courseId) {
+            if (!confirm('정말 이 강의를 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`/api/teacher/courses/${courseId}`, {
+                    method: 'DELETE',
+                });
+                if (response.ok) {
+                    alert('강의가 삭제되었습니다.');
+                    location.href = '/teacher/myLectures';
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '강의 삭제 실패');
+                }
+            } catch (error) {
+                alert(`강의 삭제에 실패했습니다. : ${error.message}`);
+            }
+        }
+    </script>
 
     <footer th:replace="teacher/common/footer :: footer"></footer>
 </body>

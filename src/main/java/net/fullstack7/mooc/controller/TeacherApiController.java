@@ -54,6 +54,9 @@ public class TeacherApiController {
             HttpSession session) {
         try {
             Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(courseId, teacher, "course")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.updateCourse(courseId, dto, teacher);
             return ResponseEntity.ok(ApiResponse.success("강좌가 수정되었습니다."));
         } catch (Exception e) {
@@ -93,11 +96,15 @@ public class TeacherApiController {
         }
     }
 
-    @DeleteMapping("/lectures/{lectureId}/contents/{contentId}")
+    @DeleteMapping("/contents/{contentId}")
     public ResponseEntity<ApiResponse<Void>> deleteContent(
-            @PathVariable int lectureId,
-            @PathVariable int contentId) {
+            @PathVariable int contentId,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(contentId, teacher, "content")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.deleteContent(contentId);
             return ResponseEntity.ok(ApiResponse.success("콘텐츠가 성공적으로 삭제되었습니다."));
         } catch (Exception e) {
@@ -108,8 +115,13 @@ public class TeacherApiController {
     @PostMapping("/lectures/{lectureId}/quizzes")
     public ResponseEntity<ApiResponse<Void>> createQuizzes(
             @PathVariable int lectureId,
-            @RequestBody QuizCreateDTO dto) {
+            @RequestBody QuizCreateDTO dto,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(lectureId, teacher, "lecture")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             dto.setLectureId(lectureId);
             courseService.createQuizzes(dto);
             return ResponseEntity.ok(ApiResponse.success("퀴즈가 성공적으로 생성되었습니다."));
@@ -118,12 +130,17 @@ public class TeacherApiController {
         }
     }
 
-    @PutMapping("/lectures/{lectureId}/quizzes/{quizId}")
+    @PutMapping("/quizzes/{quizId}")
     public ResponseEntity<ApiResponse<Void>> updateQuiz(
             @PathVariable int lectureId,
             @PathVariable int quizId,
-            @RequestBody QuizDTO dto) {
+            @RequestBody QuizDTO dto,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(quizId, teacher, "quiz")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.updateQuiz(quizId, dto);
             return ResponseEntity.ok(ApiResponse.success("퀴즈가 수정되었습니다."));
         } catch (Exception e) {
@@ -131,11 +148,16 @@ public class TeacherApiController {
         }
     }
 
-    @DeleteMapping("/lectures/{lectureId}/quizzes/{quizId}")
+    @DeleteMapping("/quizzes/{quizId}")
     public ResponseEntity<ApiResponse<Void>> deleteQuiz(
             @PathVariable int lectureId,
-            @PathVariable int quizId) {
+            @PathVariable int quizId,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(quizId, teacher, "quiz")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.deleteQuiz(quizId);
             return ResponseEntity.ok(ApiResponse.success("퀴즈가 삭제되었습니다."));
         } catch (Exception e) {
@@ -163,8 +185,14 @@ public class TeacherApiController {
     }
 
     @DeleteMapping("/lectures/{lectureId}")
-    public ResponseEntity<ApiResponse<Void>> deleteLecture(@PathVariable int lectureId) {
+    public ResponseEntity<ApiResponse<Void>> deleteLecture(
+            @PathVariable int lectureId,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(lectureId, teacher, "lecture")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.deleteLecture(lectureId);
             return ResponseEntity.ok(ApiResponse.success("섹션이 삭제되었습니다."));
         } catch (Exception e) {
@@ -175,8 +203,13 @@ public class TeacherApiController {
     @PutMapping("/lectures/{lectureId}")
     public ResponseEntity<ApiResponse<Void>> updateLecture(
             @PathVariable int lectureId,
-            @RequestBody LectureUpdateDTO dto) {
+            @RequestBody LectureUpdateDTO dto,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(lectureId, teacher, "lecture")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.updateLecture(lectureId, dto);
             return ResponseEntity.ok(ApiResponse.success("섹션이 수정되었습니다."));
         } catch (Exception e) {
@@ -184,17 +217,35 @@ public class TeacherApiController {
         }
     }
 
-    @PutMapping("/lectures/{lectureId}/contents/{contentId}")
+    @PutMapping("/contents/{contentId}")
     public ResponseEntity<ApiResponse<Void>> updateContent(
-            @PathVariable int lectureId,
             @PathVariable int contentId,
-            @ModelAttribute LectureContentUpdateDTO dto) {
+            @ModelAttribute LectureContentUpdateDTO dto,
+            HttpSession session) {
         try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(contentId, teacher, "content")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
             courseService.updateContent(contentId, dto);
             return ResponseEntity.ok(ApiResponse.success("콘텐츠가 수정되었습니다."));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
     }
-
+    @DeleteMapping("/courses/{courseId}")
+    public ResponseEntity<ApiResponse<Void>> deleteCourse(
+            @PathVariable int courseId,
+            HttpSession session) {
+        try {
+            Teacher teacher = (Teacher) session.getAttribute("teacher");
+            if (!courseService.checkAuthority(courseId, teacher, "course")) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
+            courseService.deleteCourse(courseId);
+            return ResponseEntity.ok(ApiResponse.success("강좌가 삭제되었습니다."));
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
 }
