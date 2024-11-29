@@ -79,6 +79,7 @@ public class TeacherApiController {
             return ResponseEntity.badRequest().body(e.getMessage());
         }
     }
+    
     @PostMapping("/lectures/{lectureId}/contents")
     public ResponseEntity<ApiResponse<Void>> createContent(
             @PathVariable int lectureId,
