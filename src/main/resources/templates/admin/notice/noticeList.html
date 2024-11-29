@@ -137,16 +137,17 @@
 <section class="content">
     <div class="container">
         <h1>공지사항 리스트</h1>
-        <div class="search-bar">
-            <select class="category-dropdown">
-                <option value="all">전체</option>
-                <option value="category1">카테고리1</option>
-                <option value="category2">카테고리2</option>
-            </select>
-            <input type="text" class="search-input" placeholder="검색어를 입력하세요.">
-            <button class="search-button">찾기</button>
-        </div>
-
+        <form action="/admin/noticeList">
+            <div class="search-bar">
+                <select name="searchField" class="category-dropdown">
+                    <option value="">선택</option>
+                    <option th:selected="${pageDTO.searchField == 'title'}" value="title">제목</option>
+                    <option th:selected="${pageDTO.searchField == 'content'}" value="content">내용</option>
+                </select>
+                <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}">
+                <button class="search-button">찾기</button>
+            </div>
+        </form>
         <table id="result-table">
             <thead>
             <tr>
@@ -168,11 +169,12 @@
             <button class="search-button" id="nRegist" style="font-size: 18px;">공지사항 등록</button>
         </table>
     </div>
-
+    <div th:replace="main/paging :: paging"></div>
 </section>
 
 <div th:replace="admin/footer :: footer"></div>
 
+<script th:src="@{/js/paging.js}"></script>
 <script>
     const nRegist = document.getElementById("nRegist")
     nRegist.addEventListener("click", ()=>{

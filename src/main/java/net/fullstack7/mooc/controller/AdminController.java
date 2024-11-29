@@ -235,7 +235,7 @@ public class AdminController {
         Page<NoticeDTO> notices = noticeService.getNotices(pageDTO);
 
         model.addAttribute("pageinfo", notices);
-        model.addAttribute("searchinfo", pageDTO);
+        model.addAttribute("pageDTO", pageDTO);
 
         return "admin/notice/noticeList";
     }
