@@ -6,20 +6,34 @@
 <head>
     <meta charset="UTF-8">
     <title>페이징</title>
-    <link th:href="@{/css/paging.css}" rel="stylesheet" />
+
 </head>
 <body>
 
 <!-- Pagination -->
-<div class="pagination">
-    <button class="page-btn">&lt;</button>
-    <button class="page-btn active">1</button>
-    <button class="page-btn">2</button>
-    <button class="page-btn">3</button>
-    <button class="page-btn">4</button>
-    <button class="page-btn">5</button>
-    <button class="page-btn">&gt;</button>
+
+<div class="pagination" th:fragment="paging">
+    <button class="page-btn" th:if="${pageDTO.prev}" th:data-num="${pageDTO.blockStart - 1}">&lt;</button>
+    <th:block th:each="i:${#numbers.sequence(pageDTO.blockStart, pageDTO.blockEnd)}">
+        <button th:class="${pageDTO.pageNo == i} ? 'page-btn active' :'page-btn'" th:data-num="${i}">[[${i}]]</button>
+    </th:block>
+    <button class="page-btn" th:if="${pageDTO.next}" th:data-num="${pageDTO.blockEnd + 1}">&gt;</button>
 </div>
+
+<script th:inline="javascript">
+    let pageBtn = document.querySelectorAll(".page-btn");
+
+    for(let i of pageBtn){
+        i.addEventListener("click",(e)=>{
+            e.preventDefault();
+            e.stopPropagation();
+            const num = e.target.getAttribute("data-num");
+            const formObj = document.querySelector("form");
+            formObj.innerHTML += `<input type='hidden' name='pageNo' value='${num}'>`;
+            formObj.submit();
+        });
+    }
+</script>
 
 </body>
 </html>
