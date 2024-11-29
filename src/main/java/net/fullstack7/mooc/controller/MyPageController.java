@@ -98,8 +98,7 @@ public class MyPageController {
     @PostMapping("/memberModify")
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
-        System.out.println("POST 요청 받음");
-
+//        System.out.println("POST 요청 받음");
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
@@ -136,28 +135,33 @@ public class MyPageController {
         if(memberDTO == null) {
             return "redirect:/login/login";
         }
-        System.out.println("Session memberDTO: " + memberDTO);
-        System.out.println("Current Password: " + currentPassword);
-        System.out.println("New Password: " + newPassword);
-        System.out.println("Confirm Password: " + confirmPassword);
+//        System.out.println("Session memberDTO: " + memberDTO);
+//        System.out.println("Current Password: " + currentPassword);
+//        System.out.println("New Password: " + newPassword);
+//        System.out.println("Confirm Password: " + confirmPassword);
 
         boolean isCurrentPasswordValid = memberServiceImpl.pwdCheck(memberDTO.getMemberId(), currentPassword);
-        System.out.println("Is Current Password Valid: " + isCurrentPasswordValid);
+//        System.out.println("Is Current Password Valid: " + isCurrentPasswordValid);
         if(!isCurrentPasswordValid) {
-            redirectAttributes.addFlashAttribute("errorMessage", "비밀번호가 일치하지 않습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "현재 비밀번호가 일치하지 않습니다.");
             return "redirect:/mypage/pwdCheck";
         }
         if(!newPassword.equals(confirmPassword)) {
-            redirectAttributes.addFlashAttribute("errorMessage", "새 비밀번호와 확인이 일치하지 않습니다.");
+            redirectAttributes.addFlashAttribute("errorMessage", "새 비밀번호 확인이 일치하지 않습니다.");
+            return "redirect:/mypage/pwdCheck";
+        }
+
+        if(!newPassword.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[!@#$%^&*(),.?\":{}|<>])[A-Za-z\\d!@#$%^&*(),.?\":{}|<>]{10,20}$")){
+            redirectAttributes.addFlashAttribute("errMessage", "비밀번호는 대문자, 소문자, 숫자, 특수문자를 포함하여 10~20자로 입력해주세요.");
             return "redirect:/mypage/pwdCheck";
         }
         try{
-            memberServiceImpl.pwdCheck(memberDTO.getMemberId(), newPassword);
-            System.out.println("Password updated successfully.");
+            memberServiceImpl.updatePassword(memberDTO.getMemberId(), newPassword);
+//            System.out.println("Password updated successfully.");
             redirectAttributes.addFlashAttribute("successMessage", "비밀번호가 변경되었습니다.");
             return "redirect:/mypage/myclass";
         } catch (Exception e) {
-            System.out.println("Error occurred while updating password: " + e.getMessage());
+//            System.out.println("Error occurred while updating password: " + e.getMessage());
             redirectAttributes.addFlashAttribute("errorMessage", "비밀번호 변경에 실패했습니다.");
             return "redirect:/mypage/pwdCheck";
         }

@@ -12,11 +12,13 @@ import net.fullstack7.mooc.mapper.MemberMapper;
 import net.fullstack7.mooc.repository.CourseEnrollmentRepository;
 import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
+import org.apache.ibatis.session.SqlSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -31,6 +33,8 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final MemberRepository memberRepository;
     private final CourseRepository courseRepository;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
+
+    private SqlSession sqlSession;
 
     //로그인
     @Override
@@ -100,15 +104,21 @@ public class MemberServiceImpl implements MemberServiceIf {
 
     //비밀번호 확인
     @Override
-    public boolean pwdCheck(String memberId, String password) {
+    public boolean pwdCheck(String memberId, String currentPassword) {
         String result = memberMapper.pwdCheck(memberId);
-        return result != null && result.equals(password);
+        return result != null && result.equals(currentPassword);
     }
 
     //새 비밀번호
     @Override
     public void updatePassword(String memberId, String newPassword){
-        memberMapper.updatePassword(memberId, newPassword);
+//        memberMapper.updatePassword(memberId, newPassword);
+        int updatedRows = memberMapper.updatePassword(memberId, newPassword);
+        System.out.println("Rows updated: " + updatedRows);
+        if(updatedRows == 0){
+            System.out.println("No rows were updated.");
+            throw new RuntimeException("업데이트안됨");
+        }
     }
 
     //회원수정
