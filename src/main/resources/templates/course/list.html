@@ -203,15 +203,15 @@
         <form th:action="@{/course/list/{type}(type=${type})}" method="get" id="searchForm">
             <div class="filters">
                 <select name="subjectId" id="subjectId" class="search-select">
-                    <option selected value="">과목 전체</option>
+                    <option selected value="-1">과목 전체</option>
                     <th:block th:each="sub, status:${subjects}">
-                        <option th:value="${sub.subjectId}" th:text="${sub.subjectName}" th:selected="${pageInfo.subjectId==sub.subjectId}"></option>
+                        <option th:value="${sub.subjectId}" th:text="${sub.subjectName}" th:selected="${pageDTO.subjectId==sub.subjectId}"></option>
                     </th:block>
                 </select>
                 <select name="institutionId" id="institutionId" class="search-select">
-                    <option selected value="">기관 전체</option>
+                    <option selected value="-1">기관 전체</option>
                     <th:block th:each="inst, status:${institutions}">
-                        <option th:value="${inst.institutionId}" th:text="${inst.institutionName}" th:selected="${pageInfo.institutionId==inst.institutionId}"></option>
+                        <option th:value="${inst.institutionId}" th:text="${inst.institutionName}" th:selected="${pageDTO.institutionId==inst.institutionId}"></option>
                     </th:block>
                 </select>
                 <button class="reset-btn">↻</button>
@@ -230,12 +230,13 @@
                 </div>
             </div>
         </section>
+
     </div>
 
-
+    <div th:replace="main/paging :: paging"></div>
 </section>
 
-<!--<div th:replace="main/footer :: footer"></div>-->
+<script th:src="@{/js/paging.js}"></script>
 
 <script layout:fragment="script" th:inline="javascript">
     const searchForm = document.getElementById("searchForm");
@@ -255,6 +256,8 @@
     });
 
 </script>
+
+
 
 </body>
 </html>
