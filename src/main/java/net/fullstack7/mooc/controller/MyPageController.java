@@ -9,6 +9,7 @@ import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.CourseSearchDTO;
 import net.fullstack7.mooc.dto.MemberDTO;
 import net.fullstack7.mooc.dto.MemberModifyDTO;
+import net.fullstack7.mooc.dto.ModifyCreditDTO;
 import net.fullstack7.mooc.service.CourseService;
 import net.fullstack7.mooc.service.MemberServiceIf;
 import net.fullstack7.mooc.service.MemberServiceImpl;
@@ -34,13 +35,15 @@ public class MyPageController {
 
     //마이클래스 이동
     @GetMapping("/myclass")
-    public String mypage(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult) {
+    public String mypage(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
         if(bindingResult.hasErrors()) {
             searchDTO = CourseSearchDTO.builder().build();
         }
 
         MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
+
         if (memberDTO == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
             return "redirect:/login/login";
         }
         model.addAttribute("member", memberDTO);
@@ -55,7 +58,17 @@ public class MyPageController {
     }
 
     @GetMapping("/creditclass")
-    public String creditclass(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult) {
+    public String creditclass(Model model, HttpSession session, @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        if(session.getAttribute("memberDTO") == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
+
+        if(((MemberDTO) session.getAttribute("memberDTO")).getMemberType() == 0) {
+            return "redirect:/mypage/creditTransform";
+        }
+
         if(bindingResult.hasErrors()) {
             searchDTO = CourseSearchDTO.builder().build();
         }
@@ -70,15 +83,74 @@ public class MyPageController {
 
 
     @GetMapping("/creditTransform")
-    public String creditTransform() {
+    public String creditTransform(HttpSession session, RedirectAttributes redirectAttributes) {
+        if(session.getAttribute("memberDTO") == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
+
+        if(((MemberDTO)session.getAttribute("memberDTO")).getMemberType() == 1) {
+            return "redirect:/mypage/creditclass";
+        }
         return "mypage/creditTransform" ;
     }
     @GetMapping("/creditTransform2")
-    public String creditTransform2() {
+    public String creditTransform2(HttpSession session, RedirectAttributes redirectAttributes, Model model) {
+        if(session.getAttribute("memberDTO") == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
+        if(((MemberDTO)session.getAttribute("memberDTO")).getMemberType() == 1) {
+            return "redirect:/mypage/creditclass";
+        }
+
+        model.addAttribute("memberInfo", session.getAttribute("memberDTO"));
+
         return "mypage/creditTransform2" ;
     }
+
+    @PostMapping("/creditTransform2")
+    public String creditTransform2Post(HttpSession session
+           , @Valid ModifyCreditDTO modifyDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
+
+        MemberDTO member = (MemberDTO)session.getAttribute("memberDTO");
+
+        if(session.getAttribute("memberDTO") == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
+
+        if(member.getMemberType() == 1) {
+            return "redirect:/mypage/creditclass";
+        }
+
+        if(bindingResult.hasErrors()) {
+            redirectAttributes.addFlashAttribute("item", modifyDTO);
+            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            return "redirect:/mypage/creditTransform2";
+        }
+
+        String msg = memberServiceImpl.modifyToCredit(member.getMemberId());
+
+        if(msg == null) {
+            member.setMemberType(1);
+            session.setAttribute("memberDTO", member);
+            msg = "학점은행제 회원으로 전환 완료";
+        }
+
+        redirectAttributes.addFlashAttribute("errors", msg);
+
+        return "redirect:/mypage/creditclass";
+    }
     @GetMapping("/creditTransform3")
-    public String creditTransform3() {
+    public String creditTransform3(HttpSession session, RedirectAttributes redirectAttributes) {
+        if(session.getAttribute("memberDTO") == null) {
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
+        if(((MemberDTO)session.getAttribute("memberDTO")).getMemberType() == 1) {
+            return "redirect:/mypage/creditclass";
+        }
         return "mypage/creditTransform3" ;
     }
 

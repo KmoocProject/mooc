@@ -61,6 +61,7 @@ public class AdminServiceImpl implements AdminServiceIf {
         Page<Teacher> teachers = teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
 
         adminSearchDTO.setTotalCount((int)teachers.getTotalElements());
+        teachers = teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
 
         return teachers;
     }
@@ -86,6 +87,7 @@ public class AdminServiceImpl implements AdminServiceIf {
         Page<Member> members = memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
 
         adminSearchDTO.setTotalCount((int)members.getTotalElements());
+        members = memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
 
         return members;
     }
@@ -151,6 +153,7 @@ public class AdminServiceImpl implements AdminServiceIf {
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO) {
         Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null, -1);
         searchDTO.setTotalCount((int)courses.getTotalElements());
+        courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null, -1);
         return courses;
     }
 

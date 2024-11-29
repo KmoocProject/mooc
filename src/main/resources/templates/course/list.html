@@ -222,8 +222,8 @@
         <section class="course-list">
             <p><strong>총 <span th:text="${list.totalElements}"></span>강좌</strong></p>
             <div class="courses">
-                <div class="course-card" th:each="item, status:${list.content}">
-                    <div class="course-image" th:style="'background-image: url(' + ${item.thumbnail} + ')'"></div>
+                <div class="course-card" th:each="item, status:${list.content}" th:data-id="${item.courseId}">
+                    <div class="course-image" th:style="'background-image: url(/images/thumbnail/' + ${item.thumbnail} + ')'"></div>
                     <h3 th:text="${item.title}"></h3>
                     <p th:text="${item.teacherName}"></p>
                     <p th:text="${item.institutionName}"></p>
@@ -257,6 +257,13 @@
         searchForm.submit();
     });
 
+    const courses = document.querySelectorAll(".course-card");
+    for(let course of courses){
+        let courseId = course.getAttribute("data-id");
+        course.addEventListener("click",()=>{
+            location.href='/course/view?courseId='+courseId;
+        });
+    }
 </script>
 
 
