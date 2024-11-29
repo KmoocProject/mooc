@@ -7,6 +7,7 @@ import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.dto.NoticeDTO;
 import net.fullstack7.mooc.dto.PageDTO;
 import net.fullstack7.mooc.service.AdminServiceIf;
+import net.fullstack7.mooc.service.CourseService;
 import net.fullstack7.mooc.service.NoticeServiceIf;
 import net.fullstack7.mooc.service.SubjectServiceImpl;
 import org.springframework.data.domain.Page;
@@ -24,13 +25,14 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/main")
 public class MainController {
     private final NoticeServiceIf noticeService;
+    private final CourseService courseService;
 
     @GetMapping("/notice/list")
-    public String noticeListGet(@Valid PageDTO<Notice> pageDTO, BindingResult bindingResult
+    public String noticeListGet(@Valid PageDTO<NoticeDTO> pageDTO, BindingResult bindingResult
             , Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            pageDTO = PageDTO.<Notice>builder().build();
+            pageDTO = PageDTO.<NoticeDTO>builder().build();
         }
 
         pageDTO.initialize();
@@ -66,7 +68,7 @@ public class MainController {
 
     @GetMapping("/main")
     public String main(Model model,@Valid PageDTO<Notice> pageDTO) {
-
+        model.addAttribute("mainCourseList", courseService.mainCourseList(4));
         return "main/main";
     }
 

@@ -234,11 +234,11 @@ public class AdminController {
     }
 
     @GetMapping("/noticeList")
-    public String noticeListGet(@Valid PageDTO<Notice> pageDTO, BindingResult bindingResult
+    public String noticeListGet(@Valid PageDTO<NoticeDTO> pageDTO, BindingResult bindingResult
             , Model model, RedirectAttributes redirectAttributes) {
 
         if (bindingResult.hasErrors()) {
-            pageDTO = PageDTO.<Notice>builder().build();
+            pageDTO = PageDTO.<NoticeDTO>builder().build();
         }
 
         pageDTO.initialize();

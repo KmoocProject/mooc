@@ -22,22 +22,13 @@ public class NoticeServiceImpl implements NoticeServiceIf {
     private final NoticeRepository noticeRepository;
 
     @Override
-    public Page<NoticeDTO> getNotices(PageDTO<Notice> pageDTO) {
+    public Page<NoticeDTO> getNotices(PageDTO<NoticeDTO> pageDTO) {
 
         Page<NoticeDTO> notices = noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
 
         pageDTO.setTotalCount((int)notices.getTotalElements());
-        pageDTO.setDtoList(notices.getContent().stream().map(item -> Notice.builder()
-                .noticeId(item.getNoticeId())
-                .admin(Admin.builder().adminId(item.getAdminId()).build())
-                .title(item.getTitle())
-                .content(item.getContent())
-                .createdAt(item.getCreatedAt())
-                .importance(item.getImportance())
-                .build()
-        ).collect(Collectors.toList()));
 
-        pageDTO.setTotalCount((int)notices.getTotalElements());
+        notices = noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
 
         return notices;
 

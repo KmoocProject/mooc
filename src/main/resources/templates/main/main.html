@@ -57,40 +57,21 @@
     <div class="course-container">
         <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
         <div class="course-list">
-            <div class="course-card">
+            <div class="course-card" th:each="item, status:${mainCourseList}">
                 <div class="course-image">
-                    <img src="course1.jpg" alt="Course 1">
+                    <img th:src="${item.thumbnail}" th:alt="${item.title}">
                     <span class="badge ongoing">진행중</span>
-                    <span class="badge popular">이수중</span>
+                    <span class="badge popular" th:if="${item.isCreditBank==1}">이수중</span>
                 </div>
                 <div class="course-info">
-                    <h3>창의적 문제해결을 위한 생각 프로세스 II</h3>
-                    <p>최필렬<br>울산대학교</p>
-                    <p class="course-date">2024.10.22 ~ 2024.12.09</p>
+                    <h3 th:text="${item.title}"></h3>
+                    <p><span th:text="${item.teacherName}"></span><br><span th:text="${item.institutionName}"></span></p>
+                    <p class="course-date" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
                     <div class="tags">
-                        <span>창의적</span>
-                        <span>문제해결</span>
-                        <span>생각도구</span>
                     </div>
                 </div>
             </div>
-            <!-- Repeat for other courses -->
-            <div class="course-card">
-                <div class="course-image">
-                    <img src="course2.jpg" alt="Course 2">
-                    <span class="badge ongoing">진행중</span>
-                    <span class="badge popular">이수중</span>
-                </div>
-                <div class="course-info">
-                    <h3>셰익스피어</h3>
-                    <p>박용남<br>고려대학교</p>
-                    <p class="course-date">2024.09.10 ~ 2024.12.16</p>
-                    <div class="tags">
-                        <span>문학</span>
-                        <span>작품해설</span>
-                    </div>
-                </div>
-            </div>
+
         </div>
     </div>
     <div class="course-container">
