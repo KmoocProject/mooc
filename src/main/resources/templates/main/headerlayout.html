@@ -79,6 +79,7 @@
 <body>
 
 <header class="header" id="main">
+    <div th:replace="main/up :: up"></div>
     <div class="logo">
         <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
     </div>
@@ -95,10 +96,6 @@
             </div>
             <div class="menu-icon dropdown">
                 <a href="/course/list/open">상시강좌</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">대학강좌</a></li>
-                    <li><a href="#">대학 외 강좌</a></li>
-                </ul>
             </div>
             <div class="menu-icon dropdown">
                 <a href="/main/bankintro">학점은행</a>
