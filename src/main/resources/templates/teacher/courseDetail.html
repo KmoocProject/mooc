@@ -109,7 +109,7 @@
                                 <p class="mb-1 text-muted" th:text="${content.description}">설명</p>
                                 <div th:if="${content.file != null}" class="mt-2">
                                     <button th:if="${content.isVideo == 1}"
-                                            th:onclick="'openVideoModal(\'' + ${content.file.filePath} + '\')'"
+                                            th:onclick="'openVideoModal(\'' + @{/uploads/} + ${content.file.filePath} + '\')'"
                                             class="btn btn-sm btn-outline-primary">
                                         <i class="bi bi-play-circle"></i> 동영상 보기
                                     </button>
@@ -170,8 +170,7 @@
                 </div>
             </div>
         </div>
-    </div>
-    <footer th:replace="teacher/common/footer :: footer"></footer>
+    </div> 
 
     <!-- 비디오 모달 추가 -->
     <div class="modal fade" id="videoModal" tabindex="-1">
@@ -199,5 +198,6 @@
         new bootstrap.Modal(document.getElementById('videoModal')).show();
     }
     </script>
+    <footer th:replace="teacher/common/footer :: footer"></footer>
 </body>
 </html>
