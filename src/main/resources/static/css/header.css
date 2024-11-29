@@ -45,6 +45,7 @@
 /* Dropdown Menu Styles */
 .menu-icon {
     position: relative; /* For positioning the dropdown menu */
+    height: 40px;
 }
 
 .dropdown-btn {
@@ -156,6 +157,10 @@
 .dropdown-menu ul {
     padding: 0;
 }
+.dropdown-menu a {
+    padding: 0;
+}
+
 
 .dropdown-menu ul li {
     padding: 0;
