@@ -37,9 +37,9 @@ public class DummyController {
   public String memberList() {
     return "admin/memberList";
   }
-  @GetMapping("/qna/regist")
+  @GetMapping("/qna/list")
   public String list() {
-    return "qna/regist";
+    return "qna/list";
   }
   @GetMapping("/course/view")
   public String view() {
@@ -48,6 +48,10 @@ public class DummyController {
   @GetMapping("/learn/view")
   public String learn() {
     return "learn/view";
+  }
+  @GetMapping("/main/paging")
+  public String paging() {
+    return "main/paging";
   }
 
 }
