@@ -65,4 +65,8 @@ public class DummyController {
   public String courseEnrollment() {
     return "course/enrollment";
   }
+  @GetMapping("/error")
+  public String error() {
+    return "error";
+  }
 }
