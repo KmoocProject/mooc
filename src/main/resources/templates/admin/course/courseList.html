@@ -183,7 +183,7 @@
                 <td><a th:href="@{/admin/courseView/{courseId}(courseId=${item.courseId})}" th:text="${item.title}"></a></td>
                 <td th:text="${item.weeks}"></td>
                 <td th:text="${item.status}"></td>
-                <td><button class="reply-button" th:if="${item.status=='DRAFT'}" th:onclick="@{/course/approve/{courseId}(courseId=${item.courseId})}">승인</button></td>
+                <td><button class="reply-button" th:if="${item.status=='DRAFT'}" th:onclick="|location.href='@{/admin/courseApprove/{courseId}(courseId=${item.courseId})}'|">승인</button></td>
             </tr>
 
             <tr>

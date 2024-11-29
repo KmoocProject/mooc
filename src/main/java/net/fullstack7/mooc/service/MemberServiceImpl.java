@@ -195,7 +195,11 @@ public class MemberServiceImpl implements MemberServiceIf {
 
     @Override
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted) {
-        return courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+
+        Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+        searchDTO.setTotalCount((int)courses.getTotalElements());
+        courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+        return courses;
     }
 
     @Override
@@ -206,7 +210,7 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     public String modifyToCredit(String memberId) {
         int result = memberRepository.updateMemberTypeById(memberId);
-        if(result > 0) return "학점은행제 회원으로 전환 완료!";
+        if(result > 0) return null;
         return "다시 시도해주세요.";
     }
 }

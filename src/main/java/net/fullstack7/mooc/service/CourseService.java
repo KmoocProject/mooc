@@ -277,6 +277,7 @@ public class CourseService {
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
     Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
     courseSearchDTO.setTotalCount((int) courses.getTotalElements());
+    courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
     return courses;
   }
 
@@ -298,6 +299,10 @@ public class CourseService {
             .map(course->modelMapper.map(course,CourseDTO.class)).toList();
     courseViewDTO.setRecommendations(recommendations);
     return courseViewDTO;
+  }
+
+  public List<CourseResponseDTO> mainCourseList(int n) {
+    return courseRepository.randomCourses(n);
   }
 
 }
