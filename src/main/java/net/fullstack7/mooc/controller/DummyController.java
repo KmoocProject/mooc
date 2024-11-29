@@ -61,5 +61,8 @@ public class DummyController {
   public String headerlayout() {
     return "main/headerlayout";
   }
-
+  @GetMapping("/courseEnrollment")
+  public String courseEnrollment() {
+    return "course/enrollment";
+  }
 }
