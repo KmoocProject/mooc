@@ -37,6 +37,8 @@ public class NoticeServiceImpl implements NoticeServiceIf {
                 .build()
         ).collect(Collectors.toList()));
 
+        pageDTO.setTotalCount((int)notices.getTotalElements());
+
         return notices;
 
     }
