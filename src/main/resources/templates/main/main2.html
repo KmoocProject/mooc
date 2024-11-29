@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org" xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}">
+<head>
+    <meta charset="UTF-8">
+    <title>메인 페이지</title>
+</head>
+<body>
+<div layout:fragment="maincontent">
+    <section class="banner">
+        <div class="main-banner" id="mainBanner" style="height: 400px; width: 100%">
+            <img th:src="@{/images/mainbanner1.png}" class="active" style="height: auto;width: 100%;"/>
+            <img th:src="@{/images/mainbanner2.png}" style="height:auto;width: 100%;"/>
+            <div class="banner-dots" id="bannerDots"></div>
+        </div>
+    </section>
+    <div class="notice-board">
+        <div class="notice-content">
+            <p class="notice-text">
+                2024년 하반기 한국형 온라인 공개강좌(K-MOOC) 사업 안내 영상 및 FAQ 공개
+            </p>
+            <p class="notice-date">2024.10.21</p>
+        </div>
+        <div class="dropdown-icon">
+            <span>&#9660;</span>
+        </div>
+    </div>
+    <section class="search">
+        <div class="search-container">
+            <div class="search-box">
+                <h2>검색</h2>
+                <div class="search-input">
+                    <input type="text" placeholder="배우고 싶은 강좌를 찾아보세요.">
+                    <button type="submit">
+                        <img th:src="@{/images/searchicon.png}" alt="search"/>
+                    </button>
+                </div>
+            </div>
+            <div class="categories">
+                <a href="#">인공지능</a>
+                <a href="#">디자인</a>
+                <a href="#">프로그래밍</a>
+                <a href="#">영어</a>
+                <a href="#">통계</a>
+                <a href="#">취업대상</a>
+            </div>
+        </div>
+    </section>
+    <div class="course-container">
+        <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
+        <div class="course-list">
+            <div class="course-card">
+                <div class="course-image">
+                    <img src="course1.jpg" alt="Course 1">
+                    <span class="badge ongoing">진행중</span>
+                    <span class="badge popular">이수중</span>
+                </div>
+                <div class="course-info">
+                    <h3>창의적 문제해결을 위한 생각 프로세스 II</h3>
+                    <p>최필렬<br>울산대학교</p>
+                    <p class="course-date">2024.10.22 ~ 2024.12.09</p>
+                    <div class="tags">
+                        <span>창의적</span>
+                        <span>문제해결</span>
+                        <span>생각도구</span>
+                    </div>
+                </div>
+            </div>
+            <!-- Repeat for other courses -->
+            <div class="course-card">
+                <div class="course-image">
+                    <img src="course2.jpg" alt="Course 2">
+                    <span class="badge ongoing">진행중</span>
+                    <span class="badge popular">이수중</span>
+                </div>
+                <div class="course-info">
+                    <h3>셰익스피어</h3>
+                    <p>박용남<br>고려대학교</p>
+                    <p class="course-date">2024.09.10 ~ 2024.12.16</p>
+                    <div class="tags">
+                        <span>문학</span>
+                        <span>작품해설</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="course-container">
+        <div class="category-container">
+            <div class="category-item" style="background-color: #a13bbc;">
+                <div class="icon">📖</div>
+                <div class="text">인문</div>
+            </div>
+            <div class="category-item" style="background-color: #7a3bbf;">
+                <div class="icon">💬</div>
+                <div class="text">사회</div>
+            </div>
+            <div class="category-item" style="background-color: #289e2e;">
+                <div class="icon">💻</div>
+                <div class="text">교육</div>
+            </div>
+            <div class="category-item" style="background-color: #1d79ac;">
+                <div class="icon">🧬</div>
+                <div class="text">공학</div>
+            </div>
+            <div class="category-item" style="background-color: #009687;">
+                <div class="icon">🌱</div>
+                <div class="text">자연</div>
+            </div>
+            <div class="category-item" style="background-color: #3055a4;">
+                <div class="icon">🩺</div>
+                <div class="text">의약</div>
+            </div>
+            <div class="category-item" style="background-color: #e14a3a;">
+                <div class="icon">🎵</div>
+                <div class="text">예체능</div>
+            </div>
+            <div class="category-item" style="background-color: #e55c12;">
+                <div class="icon">🔬</div>
+                <div class="text">융·복합</div>
+            </div>
+            <div class="category-item" style="background-color: #d4145a;">
+                <div class="icon">🔲</div>
+                <div class="text">기타</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    const images = document.querySelectorAll('.main-banner img');
+    const dotsContainer = document.getElementById('bannerDots');
+    const prevBtn = document.getElementById('prevBtn');
+    const nextBtn = document.getElementById('nextBtn');
+    let currentIndex = 0;
+
+    // Generate indicator dots
+    images.forEach((_, index) => {
+        const dot = document.createElement('span');
+        dot.addEventListener('click', () => showSlide(index));
+        dotsContainer.appendChild(dot);
+    });
+
+    const dots = document.querySelectorAll('.banner-dots span');
+    updateDots();
+
+    // Slide navigation function
+    function showSlide(index) {
+        images[currentIndex].classList.remove('active');
+        dots[currentIndex].classList.remove('active');
+        currentIndex = (index + images.length) % images.length;
+        images[currentIndex].classList.add('active');
+        dots[currentIndex].classList.add('active');
+    }
+
+    function updateDots() {
+        dots.forEach((dot, index) => {
+            dot.classList.toggle('active', index === currentIndex);
+        });
+    }
+
+    // Auto slide
+    function autoSlide() {
+        showSlide(currentIndex + 1);
+    }
+
+    let slideInterval = setInterval(autoSlide, 3000);
+
+    // Prev/Next button event listeners
+    if (prevBtn != null) {
+        prevBtn.addEventListener('click', () => {
+            clearInterval(slideInterval);
+            showSlide(currentIndex - 1);
+            slideInterval = setInterval(autoSlide, 3000);
+        });
+    }
+    if (nextBtn != null) {
+        nextBtn.addEventListener('click', () => {
+            clearInterval(slideInterval);
+            showSlide(currentIndex + 1);
+            slideInterval = setInterval(autoSlide, 3000);
+        });
+    }
+</script>
+</body>
+</html>
