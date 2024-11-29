@@ -105,6 +105,12 @@
                                             class="btn btn-sm btn-outline-secondary">
                                             <span>📄</span> 문서 다운로드
                                         </a>
+                                        <a th:if="${content.isVideo == 0 && content.file != null}"
+                                            th:href="@{${content.file?.filePath}}"
+                                            class="btn btn-sm btn-outline-secondary"
+                                            target="_blank">
+                                            <span>👀</span> 문서 보기
+                                        </a>
                                         <!-- 파일이 없는 경우 메시지 표시 -->
                                         <span th:if="${content.file == null}" class="text-muted">
                                             파일이 없습니다
