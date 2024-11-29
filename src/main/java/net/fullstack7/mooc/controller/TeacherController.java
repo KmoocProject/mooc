@@ -128,6 +128,7 @@ public class TeacherController {
     }
 
     model.addAttribute("course", courseDetail);
+    model.addAttribute("subjects", subjectRepository.findAllByOrderBySubjectIdAsc());
     return "teacher/updateLecture";
   }
 
