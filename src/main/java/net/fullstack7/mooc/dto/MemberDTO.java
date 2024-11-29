@@ -1,5 +1,6 @@
 package net.fullstack7.mooc.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -31,7 +32,7 @@ public class MemberDTO {
     @Pattern(regexp = "^[가-힣]{2,5}$", message = "이름은 한글 2~5자 이내로 입력 가능합니다.")
     private String userName;
     @NotBlank
-    @Pattern(regexp = "^(?=.{1,254}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$", message = "유효한 이메일 형식으로 입력해주세요.")
+    @Pattern(regexp = "^(?=.{1,254}$)[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,7}$", message = "유효한 이메일 형식으로 입력해주세요.")
     private String email;
     @NotBlank
     private int gender;

@@ -9,6 +9,7 @@ public interface MemberMapper {
     Member viewMember(String memberId);
     int registMember(Member member);
     String pwdCheck(String memberId);
+    void updatePassword(String memberId, String newPassword);
     int modifyMember(Member member);
     int modifyWithoutPassword(Member member);
     String memberIdCheck(String memberId);
