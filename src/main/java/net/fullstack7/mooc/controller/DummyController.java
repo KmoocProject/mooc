@@ -54,4 +54,13 @@ public class DummyController {
     return "main/paging";
   }
 
+  @GetMapping("/main2")
+  public String main2() {
+    return "main/main2";
+  }
+  @GetMapping("/headerlayout")
+  public String headerlayout() {
+    return "main/headerlayout";
+  }
+
 }

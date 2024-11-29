@@ -6,8 +6,8 @@
 <head th:fragment="head">
     <meta charset="UTF-8">
     <title>Title</title>
-    <link th:href="@{/css/header.css}" rel="stylesheet" />
-    <link th:href="@{/css/modal.css}" rel="stylesheet" />
+    <link th:href="@{/css/header.css}" rel="stylesheet"/>
+    <link th:href="@{/css/modal.css}" rel="stylesheet"/>
     <style>
         * {
             margin: 0;
@@ -21,6 +21,7 @@
             background-color: #f9f9f9;
             color: #333;
         }
+
         .dropdown-btn1 {
             position: relative;
             z-index: 1;
@@ -65,6 +66,7 @@
         .dropdown:hover .dropdown-menu {
             display: block; /* Show dropdown menu on hover */
         }
+
         .content {
             max-width: 1500px;
             margin: 50px auto;
@@ -78,36 +80,55 @@
 </head>
 <body>
 <section class="content">
-<div th:fragment="header">
-    <div th:replace="main/up :: up"></div>
-<header class="header" id="main">
-    <div class="logo">
-        <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
-    </div>
-    <nav class="navbar">
-        <ul class="menu-list">
-            <div class="menu-icon dropdown">
-                <button class="dropdown-btn" onclick="allBtn()">&#9776; 강좌</button>
-                <ul class="dropdown-menu">
-                    <li><a href="/course/list/all">전체 강좌 보기</a></li>
-                    <li><a href="#">인문</a></li>
-                    <li><a href="#">사회</a></li>
-                    <li><a href="#">공학</a></li>
-                </ul>
+    <div th:fragment="header">
+        <div th:replace="main/up :: up"></div>
+        <header class="header" id="main">
+            <div class="logo">
+                <a href="/main/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>
             </div>
-            <div class="menu-icon dropdown">
-                <a href="/course/list/open">상시강좌</a>
-                <ul class="dropdown-menu">
-                    <li><a href="#">대학강좌</a></li>
-                    <li><a href="#">대학 외 강좌</a></li>
+            <nav class="navbar">
+                <ul class="menu-list">
+                    <div class="menu-icon dropdown">
+                        <button class="dropdown-btn" onclick="allBtn()">&#9776; 강좌</button>
+                        <ul class="dropdown-menu">
+                            <li><a href="/course/list/all">전체 강좌 보기</a></li>
+                            <li><a href="#">인문</a></li>
+                            <li><a href="#">사회</a></li>
+                            <li><a href="#">공학</a></li>
+                        </ul>
+                    </div>
+                    <div class="menu-icon dropdown">
+                        <a href="/course/list/open">상시강좌</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="#">대학강좌</a></li>
+                            <li><a href="#">대학 외 강좌</a></li>
+                        </ul>
+                    </div>
+                    <div class="menu-icon dropdown">
+                        <a href="/main/bankintro">학점은행</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/main/bankintro">학점은행제 소개</a></li>
+                            <li><a href="/course/list/credit">학점은행제 강좌</a></li>
+                        </ul>
+                    </div>
+                    <div class="menu-icon dropdown">
+                        <a href="/main/footer/business">커뮤니티</a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/main/footer/business">사업 공고</a></li>
+                            <li><a href="#">공지 사항</a></li>
+                            <li><a href="/main/footer/intro">K-MOOC 소개</a></li>
+                        </ul>
+                    </div>
+                    <li style=" padding: 0;">
+                        <a href="#" id="search-button" style=" padding: 0;">
+                            <img th:src="@{/images/search.png}" alt="검색">
+                        </a>
+                    </li>
                 </ul>
-            </div>
-            <div class="menu-icon dropdown">
-                <a href="/main/bankintro">학점은행</a>
-                <ul class="dropdown-menu">
-                    <li><a href="/main/bankintro">학점은행제 소개</a></li>
-                    <li><a href="/course/list/credit">학점은행제 강좌</a></li>
-                </ul>
+            </nav>
+            <div th:if="${session.memberDTO == null}" class="user-actions">
+                <a href="/login/login" id="loginBtn">로그인</a>
+                <a href="/login/memberchose" id="registBtn">회원가입</a>
             </div>
             <div class="menu-icon dropdown">
                 <a href="/main/footer/business">커뮤니티</a>
@@ -167,7 +188,7 @@
     //     console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
     // });
 
-    function allBtn(){
+    function allBtn() {
         window.location.href = '/course/list/all';
     }
 
