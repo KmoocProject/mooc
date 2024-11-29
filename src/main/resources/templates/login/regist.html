@@ -495,9 +495,9 @@
             return;
         }
 
-        const email = `${emailId}@${emailDomain}`; // 이메일 결합
+        const email = `${emailId}@${emailDomain}`;
 
-        fetch("/login/emailCheck", {  // 서버 경로는 '/login/emailCheck'로 가정
+        fetch("/login/emailCheck", {
             method: "POST",
             headers: {
                 "Content-Type": "application/x-www-form-urlencoded",
@@ -506,7 +506,7 @@
         })
             .then(response => response.json())
             .then(data => {
-                const errorDiv = document.getElementById("div_err_email"); // 이메일 오류 표시
+                const errorDiv = document.getElementById("div_err_email");
                 if (errorDiv) {
                     if (data.available) {
                         errorDiv.style.display = "block";

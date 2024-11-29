@@ -92,6 +92,46 @@
         </div>
     </div>
 </div>
+<div class="course-container">
+<div class="category-container">
+    <div class="category-item" style="background-color: #a13bbc;">
+        <div class="icon">📖</div>
+        <div class="text">인문</div>
+    </div>
+    <div class="category-item" style="background-color: #7a3bbf;">
+        <div class="icon">💬</div>
+        <div class="text">사회</div>
+    </div>
+    <div class="category-item" style="background-color: #289e2e;">
+        <div class="icon">💻</div>
+        <div class="text">교육</div>
+    </div>
+    <div class="category-item" style="background-color: #1d79ac;">
+        <div class="icon">🧬</div>
+        <div class="text">공학</div>
+    </div>
+    <div class="category-item" style="background-color: #009687;">
+        <div class="icon">🌱</div>
+        <div class="text">자연</div>
+    </div>
+    <div class="category-item" style="background-color: #3055a4;">
+        <div class="icon">🩺</div>
+        <div class="text">의약</div>
+    </div>
+    <div class="category-item" style="background-color: #e14a3a;">
+        <div class="icon">🎵</div>
+        <div class="text">예체능</div>
+    </div>
+    <div class="category-item" style="background-color: #e55c12;">
+        <div class="icon">🔬</div>
+        <div class="text">융·복합</div>
+    </div>
+    <div class="category-item" style="background-color: #d4145a;">
+        <div class="icon">🔲</div>
+        <div class="text">기타</div>
+    </div>
+</div>
+</div>
 <div th:replace="main/footer :: footer"></div>
 
 <script>
@@ -134,17 +174,20 @@
     let slideInterval = setInterval(autoSlide, 3000);
 
     // Prev/Next button event listeners
-    prevBtn.addEventListener('click', () => {
-        clearInterval(slideInterval);
-        showSlide(currentIndex - 1);
-        slideInterval = setInterval(autoSlide, 3000);
-    });
-
-    nextBtn.addEventListener('click', () => {
-        clearInterval(slideInterval);
-        showSlide(currentIndex + 1);
-        slideInterval = setInterval(autoSlide, 3000);
-    });
+    if(prevBtn != null) {
+        prevBtn.addEventListener('click', () => {
+            clearInterval(slideInterval);
+            showSlide(currentIndex - 1);
+            slideInterval = setInterval(autoSlide, 3000);
+        });
+    }
+    if(nextBtn != null) {
+        nextBtn.addEventListener('click', () => {
+            clearInterval(slideInterval);
+            showSlide(currentIndex + 1);
+            slideInterval = setInterval(autoSlide, 3000);
+        });
+    }
 </script>
 </body>
 </html>

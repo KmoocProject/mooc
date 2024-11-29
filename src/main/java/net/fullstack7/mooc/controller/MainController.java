@@ -41,6 +41,10 @@ public class MainController {
     public String business() {
         return "main/footer/business";
     }
+    @GetMapping("/bankintro")
+    public String bankintro() {
+        return "main/bankintro";
+    }
 
 
 }
