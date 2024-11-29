@@ -142,7 +142,7 @@
 
                 <div class="form-group">
                     <label for="password">비밀번호 변경</label>
-                    <input type="password" id="password" th:field="${member.password}" >
+                    <input type="password" id="password" th:value="${member.password}" th:field="${member.password}" >
                     <button type="button" id="togglePassword" class="btn" style="margin-top: 10px">비밀번호 표시</button>
                 </div>
 
