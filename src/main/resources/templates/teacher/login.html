@@ -34,7 +34,7 @@
             <button class="signup-button" type="button" onclick="goLogin()" style="margin-top: 10px;">일반회원 로그인 돌아가기</button>
         </div>
     </form>
-    <script>
+    <script th:inline="javascript">
         function goRegist(){
             window.location.href = '/teacher/join';
         }
@@ -43,9 +43,9 @@
             window.location.href = '/login/login';
         }
 
-        const error = [[${error}]];
-        if (error) {
-            alert(error);
+        const error = [[${error ?: ''}]];
+        if (error && error.trim() !== '') {
+                alert(error);
         }
     </script>
 </div>

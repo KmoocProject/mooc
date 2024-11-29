@@ -24,7 +24,9 @@ import java.util.List;
 import net.fullstack7.mooc.domain.Subject;
 import net.fullstack7.mooc.repository.SubjectRepository;
 import net.fullstack7.mooc.service.CourseService;
+import lombok.extern.log4j.Log4j2;
 
+@Log4j2
 @Controller
 @RequiredArgsConstructor
 @RequestMapping("/teacher")
@@ -85,9 +87,10 @@ public class TeacherController {
   }
 
   @GetMapping("/myLectures")
-  public String myLectures(Model model, HttpSession session) {
+  public String myLectures(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
     Teacher teacher = (Teacher) session.getAttribute("teacher");
     if (teacher == null) {
+      redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
       return "redirect:/teacher/login";
     }
 
@@ -97,9 +100,10 @@ public class TeacherController {
   }
 
   @GetMapping("/registLecture")
-  public String registLecture(Model model, HttpSession session) {
+  public String registLecture(Model model, HttpSession session, RedirectAttributes redirectAttributes) {
     Teacher teacher = (Teacher) session.getAttribute("teacher");
     if (teacher == null) {
+      redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
       return "redirect:/teacher/login";
     }
 
@@ -112,6 +116,7 @@ public class TeacherController {
   public String editLecture(@PathVariable int courseId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
     Teacher teacher = (Teacher) session.getAttribute("teacher");
     if (teacher == null) {
+      redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
       return "redirect:/teacher/login";
     }
 
@@ -130,6 +135,7 @@ public class TeacherController {
   public String getCourseDetail(@PathVariable int courseId, Model model, HttpSession session, RedirectAttributes redirectAttributes) {
     Teacher teacher = (Teacher) session.getAttribute("teacher");
     if (teacher == null) {
+      redirectAttributes.addFlashAttribute("error", "로그인이 필요합니다.");
       return "redirect:/teacher/login";
     }
     CourseDetailDTO courseDetail = courseService.getCourseWithContents(courseId);
@@ -138,6 +144,8 @@ public class TeacherController {
       redirectAttributes.addFlashAttribute("error", "권한이 없습니다.");
       return "redirect:/teacher/myLectures";
     }
+    log.info("courseDetail: {}", courseDetail);
+    log.info("quizzes: {}", courseDetail.getLectures().get(0).getQuizzes());
     model.addAttribute("course", courseDetail);
     model.addAttribute("teacherName", teacher.getTeacherName());
     return "teacher/courseDetail";
