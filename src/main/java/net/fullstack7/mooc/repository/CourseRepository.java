@@ -37,4 +37,7 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
 
     int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
     int countByStatusIn(List<String> status);
+
+    @Query("SELECT c FROM Course c WHERE c.subject.subjectId = :subjectId ORDER BY c.createdAt DESC LIMIT 4")
+    List<Course> findRecommendationsBySubjectId(@Param("subjectId") int subjectId);
 }

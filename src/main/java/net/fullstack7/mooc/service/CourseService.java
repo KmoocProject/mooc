@@ -4,6 +4,7 @@ import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.util.FileUploadUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -34,6 +35,7 @@ public class CourseService {
   private final FileUploadUtil fileUploadUtil;
   private final InstitutionRepository institutionRepository;
   private final TeacherRepository teacherRepository;
+  private final ModelMapper modelMapper;
 
   public Course createCourse(CourseCreateDTO dto, Teacher teacher) throws IOException {
     // 과목 조회
@@ -285,4 +287,17 @@ public class CourseService {
   public List<Subject> getSubjects() {
     return subjectRepository.findAll();
   }
+
+  public CourseDTO getCourseById(int courseId){
+    return modelMapper.map(courseRepository.getReferenceById(courseId),CourseDTO.class);
+  }
+
+  public CourseViewDTO getCourseViewById(int courseId){
+    CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId),CourseViewDTO.class);
+    List<CourseDTO> recommendations = courseRepository.findRecommendationsBySubjectId(courseViewDTO.getSubject().getSubjectId()).stream()
+            .map(course->modelMapper.map(course,CourseDTO.class)).toList();
+    courseViewDTO.setRecommendations(recommendations);
+    return courseViewDTO;
+  }
+
 }
