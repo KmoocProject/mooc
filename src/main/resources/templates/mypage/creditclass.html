@@ -87,26 +87,19 @@
     <!-- Courses -->
     <div class="course-section">
         <h3>수강중인 학점은행제 강좌</h3>
-        <div class="course-card">
-            <div class="course-details" th:each="item, status:${courselist.content}">
+        <div class="course-card" th:each="item, status:${courselist.content}">
+            <div class="course-details">
                 <h4 th:text="${item.title}"></h4>
                 <p th:text="${item.teacherName}"></p>
-                <p>주차: [[${item.weeks}]]주</p>
+                <p th:text="'등록일 ' + ${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                <p>[[${item.weeks}]]주</p>
                 <div class="course-actions">
-                    <button class="learn-btn">학습하기</button>
-                    <button class="cancel-btn">수강취소</button>
+                    <button class="learn-btn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
                 </div>
             </div>
         </div>
     </div>
 </section>
-
-<script layout:fragment="script" th:inline="javascript">
-    const error = [[${errors ?: ''}]];
-    if (error && error.trim() !== '') {
-        alert(error);
-    }
-</script>
 
 </body>
 </html>
