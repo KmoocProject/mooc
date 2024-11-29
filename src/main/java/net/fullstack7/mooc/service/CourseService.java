@@ -175,10 +175,6 @@ public class CourseService {
     }
   }
 
-  public void deleteQuiz(int quizId) {
-    quizRepository.deleteByQuizId(quizId);
-  }
-
   public void deleteQuizzes(int lectureId) {
     Lecture lecture = lectureRepository.findByLectureId(lectureId)
         .orElseThrow(() -> new IllegalArgumentException("존제하지 않는 강좌입니다."));
@@ -247,6 +243,7 @@ public class CourseService {
         .isCreditBank(course.getIsCreditBank())
         .teacherId(course.getTeacher().getTeacherId())
         .teacherName(course.getTeacher().getTeacherName())
+        .subjectId(course.getSubject().getSubjectId())
         .status(course.getStatus())
         .lectures(lectureDTOs)
         .build();
@@ -273,6 +270,22 @@ public class CourseService {
           .build();
       quizRepository.save(quiz);
     });
+  }
+
+  @Transactional
+  public void updateQuiz(int quizId, QuizDTO dto) {
+      Quiz quiz = quizRepository.findById(quizId)
+          .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈입니다."));
+          
+      quiz.setQuestion(dto.getQuestion());
+      quiz.setAnswer(dto.getAnswer());
+
+      quizRepository.save(quiz);
+  }
+
+  @Transactional
+  public void deleteQuiz(int quizId) {
+      quizRepository.deleteById(quizId);
   }
 
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
@@ -302,8 +315,59 @@ public class CourseService {
     return courseViewDTO;
   }
 
+  @Transactional
+  public void deleteLecture(int lectureId) {
+    Lecture lecture = lectureRepository.findById(lectureId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션입니다."));
+
+    List<LectureContent> contents = lectureContentRepository.findByLecture(lecture);
+    // 콘텐츠 삭제
+    for (LectureContent content : contents) {
+      LectureFile file = lectureFileRepository.findByLectureContent(content).orElse(null);
+      if (file != null) {
+        fileUploadUtil.deleteFile(file.getFilePath());
+        lectureFileRepository.delete(file);
+      }
+      lectureContentRepository.delete(content);
+    }
+
+    // 퀴즈 삭제
+    quizRepository.deleteAllByLecture(lecture);
+    // 섹션 삭제
+    lectureRepository.delete(lecture);
+  }
+
+  @Transactional
+  public void updateCourse(int courseId, CourseUpdateDTO dto, Teacher teacher) throws IOException {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+        
+    if (!course.getTeacher().getTeacherId().equals(teacher.getTeacherId())) {
+        throw new IllegalArgumentException("수정 권한이 없습니다.");
+    }
+
+    Subject subject = subjectRepository.findById(dto.getSubjectId())
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
+
+    if (dto.getThumbnail() != null) {
+        fileUploadUtil.deleteFile(course.getThumbnail());
+        String thumbnailPath = fileUploadUtil.uploadImageFile(dto.getThumbnail(), "thumbnails");
+        course.setThumbnail(thumbnailPath);
+    }
+
+    course.setTitle(dto.getTitle());
+    course.setDescription(dto.getDescription());
+    course.setSubject(subject);
+    course.setWeeks(dto.getWeeks());
+    course.setLearningTime(dto.getLearningTime());
+    course.setLanguage(dto.getLanguage());
+    course.setIsCreditBank(dto.getIsCreditBank());
+
+    courseRepository.save(course);
+
   public List<CourseResponseDTO> mainCourseList(int n) {
     return courseRepository.randomCourses(n);
+
   }
 
 }
