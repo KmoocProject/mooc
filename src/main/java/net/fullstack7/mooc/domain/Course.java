@@ -31,6 +31,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="subjectId", nullable = false)
+    @ToString.Exclude
     private Subject subject;
 
     @Column(name="weeks", nullable = false)
@@ -44,6 +45,7 @@ public class Course {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="teacherId", nullable = false)
+    @ToString.Exclude
     private Teacher teacher;
 
     @Column(name = "status", nullable = false, length = 20)
@@ -55,5 +57,6 @@ public class Course {
     @OneToMany(mappedBy = "course", fetch = FetchType.LAZY)
     @OrderBy("lectureId ASC")
     @Builder.Default
+    @ToString.Exclude
     private List<Lecture> lectures = new ArrayList<>();
 }

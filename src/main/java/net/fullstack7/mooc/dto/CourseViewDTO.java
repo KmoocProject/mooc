@@ -26,6 +26,5 @@ public class CourseViewDTO {
     private Teacher teacher;
     private String status; // VARCHAR(20) NOT NULL, -- 강좌 상태 (DRAFT, PUBLISHED, DELETED)
     private LocalDateTime createdAt; // TIMESTAMP DEFAULT CURRENT_TIMESTAMP, -- 생성일
-    private List<Lecture> lectures;
     private List<CourseDTO> recommendations;
 }
