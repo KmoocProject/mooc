@@ -128,7 +128,6 @@ public class MyPageController {
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
         System.out.println("POST 요청 받음");
 
-        // 유효성 검사 실패 시
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
@@ -136,22 +135,16 @@ public class MyPageController {
         }
 
         try {
-            // 유효성 검사 통과하면 회원 정보 수정
             if (memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
             }
-
-            // 수정 성공 메시지
             session.setAttribute("successMessage", "회원 정보가 수정되었습니다.");
             redirectAttributes.addFlashAttribute("successMessage", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
-            // 예외 발생 시 실패 메시지
             session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             redirectAttributes.addFlashAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             return "redirect:/mypage/memberView";
         }
-
-        // 수정 후 myclass 페이지로 리다이렉트
         return "redirect:/mypage/myclass";
     }
 

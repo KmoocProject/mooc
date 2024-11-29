@@ -37,11 +37,19 @@ public class LoginController extends HttpServlet {
     @Autowired
     private MemberMapper memberMapper;
 
+    //로그인 한 회원은 로그인, 회원가입 창 접근 불가하게 만드는 공통로직
+    @ModelAttribute
+    public void checkLoginStatus(HttpSession session, RedirectAttributes redirectAttributes) {
+        if(session.getAttribute("memberDTO") != null) {
+            redirectAttributes.addFlashAttribute("errors", "이미 로그인 된 상태입니다. 다른 페이지로 이동합니다.");
+        }
+    }
+
     //로그인
     @GetMapping("/login")
     public String login(HttpSession session, RedirectAttributes redirectAttributes) throws IOException {
-        if (session.getAttribute("memberId") != null) {
-            redirectAttributes.addFlashAttribute("errors", "이미 로그인된 상태입니다. 회원가입 페이지에 접근할 수 없습니다.");
+        if (session.getAttribute("memberDTO") != null) {
+//            redirectAttributes.addFlashAttribute("errors", "이미 로그인된 상태입니다. 회원가입 페이지에 접근할 수 없습니다.");
             return "redirect:/main/main";
         }
         return "login/login";
@@ -97,12 +105,9 @@ public class LoginController extends HttpServlet {
 
     //회원등록
     @GetMapping("/regist")
-    public String regist(HttpSession session, HttpServletResponse res, Model model, RedirectAttributes redirectAttributes) throws IOException {
-        Boolean termsAgree = (Boolean) session.getAttribute("termsAgree");
-        String loginCheck = (String) session.getAttribute("memberId");
-        if (loginCheck != null) {
-            redirectAttributes.addFlashAttribute("errors", "이미 로그인 한 회원은 접근할 수 없습니다.");
-            return "redirect:/main/main";
+    public String regist(HttpSession session, RedirectAttributes redirectAttributes){
+        if(session.getAttribute("memberDTO") != null) {
+           return "redirect:/main/main";
         }
         return "login/regist";
     }
@@ -169,7 +174,10 @@ public class LoginController extends HttpServlet {
 
     //아이디 찾기
     @GetMapping("/findId")
-    public String findId() {
+    public String findId(HttpSession session) {
+        if (session.getAttribute("memberDTO") != null) {
+            return "redirect:/main/main";
+        }
         return "login/findId";
     }
 
@@ -207,7 +215,10 @@ public class LoginController extends HttpServlet {
 
     //비밀번호 찾기
     @GetMapping("/findPwd")
-    public String findPwd() {
+    public String findPwd(HttpSession session) {
+        if (session.getAttribute("memberDTO") != null) {
+            return "redirect:/main/main";
+        }
         return "login/findPwd";
     }
 
