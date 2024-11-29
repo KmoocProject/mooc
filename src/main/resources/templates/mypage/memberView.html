@@ -112,9 +112,6 @@
         .btn:hover {
             opacity: 0.9;
         }
-        input:invalid {
-            border: 2px solid red;
-        }
 
     </style>
 </head>
@@ -129,10 +126,10 @@
         <div th:if="${successMessage}" class="alert alert-success">
             <p th:text="${successMessage}"></p>
         </div>
-
         <div th:if="${errorMessage}" class="alert alert-danger">
             <p th:text="${errorMessage}"></p>
         </div>
+
         <!-- Basic Information Section -->
         <div class="section">
             <h2>기본정보</h2>
@@ -177,12 +174,8 @@
                 </div>
             </form>
         </div>
-
     </div>
-
-
 </section>
-
 
 <!--<script layout:fragment="script" th:inline="javascript">-->
 <!--    document.getElementById("togglePassword").addEventListener("click", function() {-->
@@ -200,10 +193,9 @@
 <!--        }-->
 <!--    });-->
 <!--</script>-->
-
-
-<script>
+<script th:inline="javascript" layout:fragment="script">
     document.getElementById("deleteBtn").addEventListener("click", function () {
+        console.log(document.getElementById("deleteBtn"));
         if (confirm("정말로 회원 탈퇴하시겠습니까?")) {
             const memberId = this.getAttribute("data-member-id");
             console.log("삭제할 회원 ID: " + memberId);
@@ -214,13 +206,14 @@
                 },
                 body: `memberId=${memberId}`
             })
-                .then(response => response.json())  // 응답을 JSON으로 파싱
+                .then(response => response.json())
                 .then(data => {
+                    console.log("서버 응답:", data);
                     if (data.success) {
-                        alert(data.message);  // 성공 메시지
-                        window.location.href = '/main/main'; // 탈퇴 후 메인 페이지로 리다이렉트
+                        alert(data.message);  //성공 메시지
+                        window.location.href = '/main/main';
                     } else {
-                        alert(data.message);  // 실패 메시지
+                        alert(data.message);  //실패 메시지
                     }
                 })
                 .catch(error => {
@@ -229,7 +222,6 @@
                 });
         }
     });
-
 </script>
 
 </body>

@@ -36,4 +36,5 @@ public interface MemberServiceIf {
     int getMyCourseCount(String memberId, int isCompleted);
 
     String modifyToCredit(String memberId);
+
 }
