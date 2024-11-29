@@ -93,22 +93,24 @@ public class FileUploadUtil {
   /**
    * 파일 삭제
    */
-  public boolean deleteFile(String filePath) {
-    log.info("파일 삭제: {}", filePath);
+  public void deleteFile(String filePath) {
+    if (filePath == null) {
+        return;
+    }
     try {
-      Path fullPath = Paths.get(uploadPath, filePath);
-      boolean deleted = Files.deleteIfExists(fullPath);
-
-      if (deleted) {
-        log.info("파일 삭제 성공: {}", filePath);
-      } else {
-        log.warn("파일 없음: {}", filePath);
-      }
-
-      return deleted;
+        String relativePath = filePath.replace(UPLOAD_PATH, "");
+        Path path = Paths.get(uploadPath, relativePath);
+        log.debug("Deleting file: {}", path.toAbsolutePath());
+        
+        if (Files.exists(path)) {
+            Files.delete(path);
+            log.info("파일 삭제 완료: {}", filePath);
+        } else {
+            log.warn("삭제할 파일이 존재하지 않습니다: {}", filePath);
+        }
     } catch (IOException e) {
-      log.error("파일 삭제 실패: {}", filePath, e);
-      return false;
+        log.error("파일 삭제 중 오류 발생: {}", filePath, e);
+        throw new RuntimeException("파일 삭제 실패", e);
     }
   }
 
@@ -116,7 +118,14 @@ public class FileUploadUtil {
    * 파일 존재 여부 확인
    */
   public boolean exists(String filePath) {
-    Path fullPath = Paths.get(uploadPath, filePath);
+    if (filePath == null) {
+      return false;
+    }
+
+    // /uploads/documents/file.pdf -> documents/file.pdf
+    String relativePath = filePath.replace(UPLOAD_PATH, "");
+    Path fullPath = Paths.get(uploadPath, relativePath);
+    log.debug("Checking file at: {}", fullPath.toAbsolutePath());
     return Files.exists(fullPath);
   }
 
@@ -124,7 +133,10 @@ public class FileUploadUtil {
    * 파일 경로 가져오기
    */
   public Path getFilePath(String filePath) {
-    return Paths.get(uploadPath, filePath);
+    String relativePath = filePath.replace(UPLOAD_PATH, "");
+    Path fullPath = Paths.get(uploadPath, relativePath);
+    log.debug("Full file path: {}", fullPath.toAbsolutePath());
+    return fullPath;
   }
 
   public void validateFileExtension(MultipartFile file, String[] allowedExtensions) {
@@ -173,9 +185,9 @@ public class FileUploadUtil {
           .replaceAll("\\+", "%20");
 
       // Content-Type 설정
-      String contentType = determineContentType(path); // 여기를 path로 수정
+      String contentType = determineContentType(path);
 
-      log.info("파일 다운로드 처리: {}", filename);
+      log.info("파일 다운로드 처리: {} ({})", filename, contentType);
 
       return ResponseEntity.ok()
           .contentType(MediaType.parseMediaType(contentType))
@@ -185,6 +197,7 @@ public class FileUploadUtil {
 
     } catch (Exception e) {
       log.error("파일 다운로드 중 오류 발생", e);
+      e.printStackTrace(); // 상세 에러 확인을 위해 추가
       return ResponseEntity.internalServerError().build();
     }
   }
