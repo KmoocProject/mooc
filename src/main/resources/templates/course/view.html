@@ -235,21 +235,15 @@
         <!-- Course Header -->
         <div class="course-header">
             <div class="course-image" style="height: 500px;">
-                <img th:src="@{/images/course1.png}" alt="Course Image" >
-                <span class="status-label">개강예정</span>
+                <img th:src="@{/images/thumbnail/{thumbnail}(thumbnail=${courseDTO.thumbnail})}" alt="Course Image">
             </div>
             <div class="course-details">
-                <h1>(심화)클라우드 DB 솔루션 아키텍트 양성과정</h1>
+                <h1 th:text="${courseDTO.title}"></h1>
                 <ul class="details-list">
-                    <li><strong>분야:</strong> 공학 (컴퓨터·통신)</li>
-                    <li><strong>기관:</strong> IGM세계경영연구원</li>
-                    <li><strong>학습기간:</strong> 7주</li>
-                    <li><strong>수강기간:</strong> 2025.01.04 ~ 2025.01.25</li>
-                    <li><strong>수업형태:</strong> 실시간</li>
+                    <li><strong>분야:</strong>[[${courseDTO.subject.subjectName}]]</li>
+                    <li><strong>기관:</strong> [[${courseDTO.teacher.institutionName]]</li>
+                    <li><strong>학습기간:</strong> [[${courseDTO.weeks}]]주</li>
                 </ul>
-                <div class="rating">
-                    <strong>평점:</strong> ★★★★★ 4.6
-                </div>
                 <button class="enroll-button">수강신청</button>
             </div>
         </div>
@@ -265,14 +259,14 @@
         <section class="course-introduction" id="intro">
             <div class="introduction-details">
                 <h2>강좌 소개</h2>
-                <p>이 강좌는...</p>
+                <p th:text="${courseDTO.description}"></p>
             </div>
         </section>
 
         <section class="course-introduction" id="teacher">
             <div class="introduction-details">
-                <h2>강좌운영진</h2>
-                <p>운영하는 사람 이름</p>
+                <h2>강사</h2>
+                <p th:text="${courseDTO.teacher.teacherName}"></p>
             </div>
         </section>
 
