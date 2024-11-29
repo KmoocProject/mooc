@@ -31,23 +31,27 @@
     </div>
     <section class="search">
         <div class="search-container">
+            <form action="/course/list/all" method="get">
             <div class="search-box">
                 <h2>검색</h2>
                 <div class="search-input">
-                    <input type="text" placeholder="배우고 싶은 강좌를 찾아보세요.">
+                    <input type="text" name="searchValue" placeholder="배우고 싶은 강좌를 찾아보세요.">
+<!--                    <input type="hidden" name="searchField" value="title">-->
                     <button type="submit">
                         <img th:src="@{/images/searchicon.png}" alt="search"/>
                     </button>
                 </div>
             </div>
+            </form>
             <div class="categories">
-                <a href="#">인문</a>
-                <a href="#">사회</a>
-                <a href="#">공학</a>
-                <a href="#">교육</a>
-                <a href="#">자연</a>
-                <a href="#">전체</a>
+                <a href="/course/list/all?subjectId=1">인문</a>
+                <a href="/course/list/all?subjectId=2">사회</a>
+                <a href="/course/list/all?subjectId=4">공학</a>
+                <a href="/course/list/all?subjectId=3">교육</a>
+                <a href="/course/list/all?subjectId=5">자연</a>
+                <a href="/course/list/all">전체</a>
             </div>
+
         </div>
     </section>
     <div class="course-container">
@@ -91,39 +95,39 @@
     </div>
     <div class="course-container">
         <div class="category-container">
-            <div class="category-item" style="background-color: #a13bbc;">
+            <div class="category-item" style="background-color: #a13bbc;" data-subject="1">
                 <div class="icon">📖</div>
                 <div class="text">인문</div>
             </div>
-            <div class="category-item" style="background-color: #7a3bbf;">
+            <div class="category-item" style="background-color: #7a3bbf;" data-subject="2">
                 <div class="icon">💬</div>
                 <div class="text">사회</div>
             </div>
-            <div class="category-item" style="background-color: #289e2e;">
+            <div class="category-item" style="background-color: #289e2e;" data-subject="3">
                 <div class="icon">💻</div>
                 <div class="text">교육</div>
             </div>
-            <div class="category-item" style="background-color: #1d79ac;">
+            <div class="category-item" style="background-color: #1d79ac;" data-subject="4">
                 <div class="icon">🧬</div>
                 <div class="text">공학</div>
             </div>
-            <div class="category-item" style="background-color: #009687;">
+            <div class="category-item" style="background-color: #009687;" data-subject="5">
                 <div class="icon">🌱</div>
                 <div class="text">자연</div>
             </div>
-            <div class="category-item" style="background-color: #3055a4;">
+            <div class="category-item" style="background-color: #3055a4;" data-subject="6">
                 <div class="icon">🩺</div>
                 <div class="text">의약</div>
             </div>
-            <div class="category-item" style="background-color: #e14a3a;">
+            <div class="category-item" style="background-color: #e14a3a;" data-subject="7">
                 <div class="icon">🎵</div>
                 <div class="text">예체능</div>
             </div>
-            <div class="category-item" style="background-color: #e55c12;">
+            <div class="category-item" style="background-color: #e55c12;" data-subject="8">
                 <div class="icon">🔬</div>
                 <div class="text">융·복합</div>
             </div>
-            <div class="category-item" style="background-color: #d4145a;">
+            <div class="category-item" style="background-color: #d4145a;" data-subject="9">
                 <div class="icon">🔲</div>
                 <div class="text">기타</div>
             </div>
@@ -185,6 +189,11 @@
             slideInterval = setInterval(autoSlide, 3000);
         });
     }
+
+    document.querySelectorAll(".category-item").forEach(item => item.addEventListener("click", evt => {
+        location.href = '/course/list/all?subjectId='+item.dataset.subject;
+    })
+    );
 </script>
 </body>
 </html>

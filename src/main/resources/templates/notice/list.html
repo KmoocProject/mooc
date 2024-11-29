@@ -172,6 +172,7 @@
         <!-- Header Section -->
         <header class="header2">
             <h1>공지사항</h1>
+            <form action="/main/notice/list" method="get">
             <div class="search-bar">
                 <select name="searchField" class="category-dropdown">
                     <option value="">선택</option>
@@ -181,6 +182,7 @@
                 <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}">
                 <button class="search-button">찾기</button>
             </div>
+            </form>
         </header>
 
         <!-- Notice Count -->
@@ -211,7 +213,6 @@
     </div>
 
 </section>
-<script th:src="@{/js/paging.js}"></script>
-
+<script th:src="@{/js/paging.js}" layout:fragment="pagingscript" th:inline="javascript"></script>
 </body>
 </html>

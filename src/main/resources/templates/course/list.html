@@ -188,20 +188,20 @@
             <span>Home</span> > <span>강좌</span> > <span>전체강좌</span>
         </div>
         -->
-
+        <form th:action="@{/course/list/{type}(type=${type})}" method="get" id="searchForm">
         <!-- Header Section -->
         <header class="search-header">
             <h1>강좌 검색</h1>
             <p>배우고 싶은 강좌를 찾아보세요.</p>
             <div class="search-bar">
-                <input type="text" placeholder="검색어를 입력하세요">
-                <button class="search-btn">검색</button>
-                <button class="view-all-btn">전체보기</button>
+                <input type="text" name="searchValue" th:value="${pageDTO.searchValue}" placeholder="검색어를 입력하세요">
+                <button class="search-btn" type="submit">검색</button>
+<!--                <button class="view-all-btn">전체보기</button>-->
             </div>
         </header>
 
         <!-- Filter Section -->
-        <form th:action="@{/course/list/{type}(type=${type})}" method="get" id="searchForm">
+
             <div class="filters">
                 <select name="subjectId" id="subjectId" class="search-select">
                     <option selected value="-1">과목 전체</option>
@@ -237,9 +237,10 @@
     <div th:replace="main/paging :: paging"></div>
 </section>
 
-<script th:src="@{/js/paging.js}"></script>
+<script th:src="@{/js/paging.js}" layout:fragment="pagingscript" th:inline="javascript"></script>
 
 <script layout:fragment="script" th:inline="javascript">
+
     const searchForm = document.getElementById("searchForm");
     const selectElements =  document.querySelectorAll(".search-select");
     selectElements.forEach( value => {
