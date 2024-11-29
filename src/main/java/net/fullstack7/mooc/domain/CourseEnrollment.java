@@ -20,9 +20,11 @@ public class CourseEnrollment {
     private int courseEnrollmentId; // INT PRIMARY KEY AUTO_INCREMENT, -- 강좌 등록 ID
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "memberId", nullable = false)
+    @ToString.Exclude
     private Member member;
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "courseId", nullable = false)
+    @ToString.Exclude
     private Course course;
     @CreatedDate
     @Column(name="enrollmentDate", columnDefinition = "datetime not null default now()")
