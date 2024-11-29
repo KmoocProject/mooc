@@ -13,7 +13,7 @@ import java.nio.charset.StandardCharsets;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class CourseSearchDTO extends PageDTO<Course> {
+public class CourseSearchDTO extends PageDTO<CourseResponseDTO> {
     @Builder.Default
     private int isCreditBank = -1;
     @Builder.Default

@@ -218,33 +218,33 @@
         <table class="info-table">
             <tr>
                 <th>사용자 아이디</th>
-                <td>sarang619</td>
+                <td th:text="${memberInfo.memberId}"></td>
             </tr>
             <tr>
                 <th>이름</th>
-                <td>최사랑</td>
+                <td th:text="${memberInfo.userName}"></td>
             </tr>
             <tr>
                 <th>이메일 주소</th>
-                <td>sarang1126611@naver.com</td>
+                <td th:text="${memberInfo.email}"></td>
             </tr>
         </table>
 
         <h2>학점은행제 K-MOOC 학습과정 회원정보</h2>
-        <form>
+        <form action="/mypage/creditTransform2" method="post">
             <div class="form-group">
                 <label for="name">이름(실명)</label>
-                <input type="text" id="name" placeholder="홍길동">
+                <input type="text" id="name" name="name" placeholder="홍길동" required th:value="${item != null ? item.name : ''}">
             </div>
 
             <div class="form-group">
                 <label for="phone">휴대전화</label>
-                <input type="text" id="phone" placeholder="연락 가능한 휴대전화 번호를 입력하세요. (숫자만 기재가능)">
+                <input type="phone" pattern="^\d{11}$" id="phone" name="phone" placeholder="연락 가능한 휴대전화 번호를 입력하세요. (숫자만 기재가능)" required th:value="${item != null ? item.phone : ''}">
             </div>
 
             <div class="actions">
-                <button type="button" class="btn btn-prev" id="preBtn">이전</button>
-                <button type="button" class="btn btn-next" id="okBtn">다음</button>
+                <button type="button" class="btn btn-prev" id="preBtn" onclick="location.href='/mypage/creditTransform'">이전</button>
+                <button type="submit" class="btn btn-next" id="okBtn">다음</button>
             </div>
         </form>
     </div>
@@ -253,16 +253,10 @@
 
 
 <script layout:fragment="script" th:inline="javascript">
-    const preBtn = document.getElementById("preBtn")
-    preBtn.addEventListener("click", ()=>{
-       location.href='/mypage/creditTransform'
-    });
-
-    const okBtn = document.getElementById("okBtn")
-    okBtn.addEventListener("click", ()=>{
-        location.href='/mypage/creditTransform3'
-    });
-
+    const error = [[${errors ?: ''}]];
+    if (error && error.trim() !== '') {
+        alert(error);
+    }
 </script>
 
 </body>
