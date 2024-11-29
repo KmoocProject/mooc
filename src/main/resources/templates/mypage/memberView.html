@@ -111,6 +111,9 @@
         .btn:hover {
             opacity: 0.9;
         }
+        input:invalid {
+            border: 2px solid red;
+        }
 
     </style>
 </head>
@@ -141,11 +144,11 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">비밀번호 변경</label>
-                    <input type="password" id="password" th:value="${member.password}" th:field="${member.password}" >
-                    <button type="button" id="togglePassword" class="btn" style="margin-top: 10px">비밀번호 표시</button>
+                    <label>비밀번호 변경</label>
+                    <a th:href="@{/mypage/pwdCheck}" class="btn btn-secondary" style="margin-top: 10px; border-radius: 5px; display: inline-block; padding: 10px 20px; text-align: center; text-decoration: none; font-size: 16px; color: #333; background-color: #d6d6d6;">
+                        비밀번호 변경
+                    </a>
                 </div>
-
 
                 <div class="form-group">
                     <label for="name">한글 이름</label>
@@ -154,7 +157,10 @@
 
                 <div class="form-group">
                     <label for="email">이메일 주소</label>
-                    <input type="email" id="email" th:field="${member.email}">
+                    <input type="email" id="email" th:field="${member.email}" class="form-control">
+<!--                    <div th:if="${#fields.hasErrors('email')}" class="text-danger">-->
+<!--                        <p th:errors="*{member.email}"></p>-->
+<!--                    </div>-->
                 </div>
 
                 <div class="form-group">
@@ -162,11 +168,11 @@
                     <input type="text" id="gender" th:value="${member.gender == 0 ? '남성' : '여성'}" readonly>
                 </div>
 
-<!--                <div th:if="${errors != null}">-->
-<!--                    <ul>-->
-<!--                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
+                <div th:if="${errors != null}">
+                    <ul>
+                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>
+                    </ul>
+                </div>
 
                 <!-- Actions Section -->
                 <div class="actions">
