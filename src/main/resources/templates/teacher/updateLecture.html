@@ -110,24 +110,28 @@
             <div class="accordion mb-4" id="lectureAccordion">
                 <div th:if="${course.lectures != null}" th:each="lecture : ${course.lectures}" class="accordion-item">
                     <h2 class="accordion-header">
-                        <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse"
-                            th:data-bs-target="'#lecture' + ${lecture.lectureId}">
+                        <button class="accordion-button" type="button" data-bs-toggle="collapse"
+                            th:data-bs-target="'#lecture' + ${lecture.lectureId}" aria-expanded="true">
                             <span class="lecture-title" th:text="${lecture.title}">섹션 제목</span>
                             <input type="text" class="form-control d-none lecture-title-input"
                                 th:value="${lecture.title}">
                         </button>
                     </h2>
-                    <div th:id="'lecture' + ${lecture.lectureId}" class="accordion-collapse collapse">
+                    <div th:id="'lecture' + ${lecture.lectureId}" class="accordion-collapse collapse show">
                         <div class="accordion-body">
                             <div class="d-flex justify-content-between align-items-center mb-3">
-                                <p class="text-muted mb-0 lecture-description" th:text="${lecture.description}">섹션 설명
-                                </p>
-                                <textarea class="form-control d-none lecture-description-input" rows="2"
-                                    th:text="${lecture.description}"></textarea>
-                                <button class="btn btn-primary btn-sm edit-lecture-btn"
-                                    th:onclick="'toggleLectureEdit(this, ' + ${lecture.lectureId} + ')'">섹션 수정</button>
-                                <button class="btn btn-success btn-sm d-none save-lecture-btn"
-                                    th:onclick="'saveLectureEdit(this, ' + ${lecture.lectureId} + ')'">저장</button>
+                                <div class="flex-grow-1">
+                                    <p class="text-muted mb-0 lecture-description" th:text="${lecture.description}"
+                                        th:data-lecture-id="${lecture.lectureId}"
+                                        th:data-lecture-title="${lecture.title}"
+                                        th:data-lecture-description="${lecture.description}">섹션 설명</p>
+                                </div>
+                                <div class="ms-3">
+                                    <button class="btn btn-primary btn-sm me-2" th:onclick="'editSection(this)'">섹션
+                                        수정</button>
+                                    <button class="btn btn-danger btn-sm"
+                                        th:onclick="'deleteSection(' + ${lecture.lectureId} + ')'">삭제</button>
+                                </div>
                             </div>
                             <!-- 콘텐츠 목록 -->
                             <div class="list-group">
@@ -242,7 +246,33 @@
             </div>
         </div>
     </div>
-
+    <div class="modal fade" id="editSectionModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">섹션 수정</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="editSectionForm">
+                        <input type="hidden" id="editSectionId">
+                        <div class="mb-3">
+                            <label class="form-label">섹션 제목</label>
+                            <input type="text" class="form-control" name="title" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">섹션 설명</label>
+                            <textarea class="form-control" name="description" rows="3" required></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">취소</button>
+                    <button type="button" class="btn btn-primary" onclick="submitEditSection()">저장</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <script th:inline="javascript">
         // 강좌 정보 수정
         async function updateCourseInfo() {
@@ -286,7 +316,52 @@
                 location.reload();
             } catch (error) {
                 console.error('Error:', error);
-                alert('섹��� 추가에 실패했습니다.');
+                alert('섹션 추가에 실패했습니다.');
+            }
+        }
+        // 섹션 수정 모달 열기
+        function editSection(button) {
+            const container = button.closest('.accordion-body');
+            const description = container.querySelector('.lecture-description');
+            const lectureId = description.dataset.lectureId;
+            const title = description.dataset.lectureTitle;
+            const descriptionText = description.dataset.lectureDescription;
+
+            const modal = new bootstrap.Modal(document.getElementById('editSectionModal'));
+            document.getElementById('editSectionId').value = lectureId;
+            document.querySelector('#editSectionForm [name="title"]').value = title;
+            document.querySelector('#editSectionForm [name="description"]').value = descriptionText;
+            modal.show();
+        }
+
+        // 섹션 수정 제출
+        async function submitEditSection() {
+            const form = document.getElementById('editSectionForm');
+            const lectureId = document.getElementById('editSectionId').value;
+            const formData = new FormData(form);
+
+            try {
+                const response = await fetch(`/api/teacher/lectures/${lectureId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        title: formData.get('title'),
+                        description: formData.get('description')
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '섹션 수정 실패');
+                }
+
+                alert('섹션이 수정되었습니다.');
+                location.reload();
+            } catch (error) {
+                console.error('Error:', error);
+                alert(error.message || '섹션 수정에 실패했습니다.');
             }
         }
 
@@ -331,6 +406,7 @@
         }
         async function createContent(lectureId, formElement) {
             const formData = new FormData();
+            formData.append('lectureId', lectureId);
             formData.append('title', formElement.querySelector('[name="title"]').value);
             formData.append('description', formElement.querySelector('[name="description"]').value);
             formData.append('isVideo', formElement.querySelector('[name="isVideo"]').value);
@@ -375,9 +451,17 @@
                 alert('콘텐츠 수정에 실패했습니다.');
             }
         }
-
         async function showAddQuizForm(lectureId) {
             const quizList = document.querySelector(`#lecture${lectureId} .quiz-list`);
+            if (!quizList) {
+                // 퀴즈 리스트가 없으면 생성
+                const accordionBody = document.querySelector(`#lecture${lectureId} .accordion-body`);
+                const quizSection = document.createElement('div');
+                quizSection.className = 'quiz-section mt-3';
+                quizSection.innerHTML = '<h5>퀴즈</h5><div class="quiz-list"></div>';
+                accordionBody.appendChild(quizSection);
+            }
+
             const formHtml = `
         <div class="quiz-item card mb-2">
             <div class="card-body">
@@ -394,16 +478,18 @@
             </div>
         </div>
     `;
-            quizList.insertAdjacentHTML('beforeend', formHtml);
+
+            document.querySelector(`#lecture${lectureId} .quiz-list`).insertAdjacentHTML('beforeend', formHtml);
         }
-        async function createQuiz(lectureId, formElement) {
-            const quizData = {
-                lectureId: lectureId,
-                quizzes: [{
-                    question: formElement.querySelector('[name="question"]').value,
-                    answer: formElement.querySelector('[name="answer"]').value
-                }]
-            };
+
+        async function createQuiz(lectureId, quizItem) {
+            const question = quizItem.querySelector('[name="question"]').value;
+            const answer = quizItem.querySelector('[name="answer"]').value;
+
+            if (!question || !answer) {
+                alert('문제와 정답을 모두 입력해주세요.');
+                return;
+            }
 
             try {
                 const response = await fetch(`/api/teacher/lectures/${lectureId}/quizzes`, {
@@ -411,7 +497,13 @@
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify(quizData)
+                    body: JSON.stringify({
+                        lectureId: lectureId,
+                        quizzes: [{
+                            question: question,
+                            answer: answer
+                        }]
+                    })
                 });
 
                 if (!response.ok) throw new Error('퀴즈 추가 실패');
@@ -445,7 +537,7 @@
                 alert('퀴즈 수정에 실패했습니다.');
             }
         }
-
+        //퀴즈 삭제
         async function deleteQuiz(quizId, lectureId) {
             if (!confirm('정말 이 퀴즈를 삭제하시겠습니까?')) return;
 
@@ -461,42 +553,7 @@
                 alert('퀴즈 삭제에 실패했습니다.');
             }
         }
-        async function updateSectionTitle(lectureId, title) {
-            try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        title: title
-                    })
-                });
 
-                if (!response.ok) throw new Error('섹션 제목 수정 실패');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('섹션 제목 수정에 실패했습니다.');
-            }
-        }
-        async function updateSectionDescription(lectureId, description) {
-            try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        description: description
-                    })
-                });
-
-                if (!response.ok) throw new Error('섹션 설명 수정 실패');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('섹션 설명 수정에 실패했습니다.');
-            }
-        }
         // 콘텐츠 수정 토글
         function toggleContentEdit(btn, contentId) {
             const contentItem = btn.closest('[data-content-id]');
@@ -586,10 +643,10 @@
 
         // 섹션 추가 제출
         async function submitAddSection() {
-            const courseId = [[${course.courseId}]];
+            const courseId = [[${ course.courseId }]];
             const form = document.getElementById('addSectionForm');
             const formData = new FormData(form);
-            
+
             try {
                 const response = await fetch(`/api/teacher/courses/${courseId}/lectures`, {
                     method: 'POST',
