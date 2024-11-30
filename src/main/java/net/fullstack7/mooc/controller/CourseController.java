@@ -36,14 +36,15 @@ public class CourseController {
                     .subjectId(searchDTO.getSubjectId())
                     .searchValue(searchDTO.getSearchValue())
                     .isCreditBank(searchDTO.getIsCreditBank())
-                    .status(searchDTO.getStatus())
+                    .status("PUBLISHED")
                     .build();
         }
 
         if(type.equals("credit")) searchDTO.setIsCreditBank(1);
         if(type.equals("open")) searchDTO.setIsCreditBank(0);
         if(type.equals("all")) searchDTO.setIsCreditBank(-1);
-
+        searchDTO.setStatus("PUBLISHED");
+        
         searchDTO.initialize();
 
         model.addAttribute("list", courseService.getCourses(searchDTO));
