@@ -22,10 +22,10 @@ public class NoticeDTO {
     private String adminId;
     private final String adminName = "관리자";
     @NotBlank(message = "제목을 입력해주세요.")
-    @Size(max=100)
+    @Size(max=100, message = "100자 이내")
     private String title;
     @NotBlank(message = "내용을 입력해주세요.")
-    @Size(max=2000)
+    @Size(max=2000, message = "2000자 이내")
     private String content;
     private LocalDateTime createdAt;
     @Builder.Default

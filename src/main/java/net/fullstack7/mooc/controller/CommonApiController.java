@@ -16,7 +16,7 @@ import java.util.List;
 public class CommonApiController {
     private final SubjectService subjectService;
 
-    @PostMapping("/subject")
+    @GetMapping("/subjects")
     public ResponseEntity<?> headerSubject() {
         try {
             List<Subject> subject = subjectService.getAllSubjects();

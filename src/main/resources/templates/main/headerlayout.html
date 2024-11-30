@@ -78,11 +78,11 @@
 </head>
 <body>
 <script>
-    const error = [[${errors ?: ''}]];
-    if (error && error.trim() !== '') {
-        alert(error);
+    const errors = `[[${errors ?: ''}]]`;
+    if (errors && errors.trim() !== '') {
+        alert(errors);
     }
-    const error = [[${errorr ?: ''}]];
+    const error = `[[${errorr ?: ''}]]`;
     if (error && error.trim() !== '') {
         alert(error);
     }
@@ -215,23 +215,27 @@
         });
     }
 
-    // JavaScript 코드 추가
-    document.getElementById('search-button').addEventListener('click', function (e) {
-        e.preventDefault();
+    const searchBtn = document.getElementById('search-button');
+    if(searchBtn != null) {
+        // JavaScript 코드 추가
+        searchBtn.addEventListener('click', function (e) {
+            e.preventDefault();
 
-        // header 요소 가져오기
-        const headerElement = document.getElementById('main');
+            // header 요소 가져오기
+            const headerElement = document.getElementById('main');
 
-        // 새로운 div 요소 생성
-        const modalDiv = document.createElement('div');
-        modalDiv.setAttribute('th:replace', 'main/modal :: modal');
+            // 새로운 div 요소 생성
+            const modalDiv = document.createElement('div');
+            modalDiv.setAttribute('th:replace', 'main/modal :: modal');
 
-        // header 아래에 div 추가
-        headerElement.insertAdjacentElement('afterend', modalDiv);
+            // header 아래에 div 추가
+            headerElement.insertAdjacentElement('afterend', modalDiv);
 
-        // 확인용 (콘솔 출력)
-        console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
-    });
+            // 확인용 (콘솔 출력)
+            console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
+        });
+    }
+
 
     function allBtn() {
         window.location.href = '/course/list/all';
@@ -241,24 +245,26 @@
     let flag = 0;
     const dropdown_subject = document.querySelector(".dropdown-subject");
     document.querySelector(".dropdown-subject-btn").addEventListener("mouseover", async evt => {
-        const url = "http://localhost:8080/api/main/subject";
+        const url = "http://localhost:8080/api/main/subjects";
 
         if(flag === 1)
             return;
 
         try {
-            const response = await fetch(url, {
-                method: 'POST'
-            });
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
 
-            const json = (await response.json()).map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
+            const subjects = await response.json();
+
+            console.log(subjects);
+            //
+            // const subjects = response_json.map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
 
             flag = 1;
 
-            for(let item of json) {
+            for(let item of subjects) {
                 dropdown_subject.innerHTML += '<li><a href="/course/list/all?subjectId='+ item.subjectId +'">'+item.subjectName+'</a></li>'
             }
 

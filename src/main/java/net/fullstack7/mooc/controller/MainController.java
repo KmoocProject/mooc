@@ -69,6 +69,7 @@ public class MainController {
     @GetMapping("/main")
     public String main(Model model,@Valid PageDTO<Notice> pageDTO) {
         model.addAttribute("mainCourseList", courseService.mainCourseList(4));
+        model.addAttribute("newestNotice", noticeService.getNewestNotice());
         return "main/main";
     }
 
