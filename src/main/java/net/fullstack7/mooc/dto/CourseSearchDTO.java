@@ -22,6 +22,56 @@ public class CourseSearchDTO extends PageDTO<CourseResponseDTO> {
     @Builder.Default
     private int institutionId = -1;
 
+    public void setStatus(String status) {
+        if (status != null && status.length() > 20) {
+            this.status = status.substring(0, 20);
+        }
+        else this.status = status;
+    }
+
+    public void setIsCreditBank(int isCreditBank) {
+        if(isCreditBank < -1 || isCreditBank > 1)
+            this.isCreditBank = -1;
+        else this.isCreditBank = isCreditBank;
+    }
+    public void setIsCreditBank(long isCreditBank) {
+        if(isCreditBank >= -1 && isCreditBank <= 1)
+            this.isCreditBank = (int)isCreditBank;
+        else this.isCreditBank = -1;
+    }
+
+    public void setIsCreditBank(String isCreditBank) {
+        if(isCreditBank.matches("^\\d+$") && isCreditBank.length() <= 1) {
+            if(Integer.parseInt(isCreditBank) >= -1 && Integer.parseInt(isCreditBank) <= 1)
+                this.isCreditBank = Integer.parseInt(isCreditBank);
+            else this.isCreditBank = -1;
+        } else this.isCreditBank = -1;
+    }
+
+    public void setSubjectId(long subjectId) {
+        if(subjectId >= -1 && subjectId <= 20000)
+            this.subjectId = (int)subjectId;
+        else this.subjectId = -1;
+    }
+
+    public void setSubjectId(String subjectId) {
+        if(subjectId.matches("^\\d+$") && subjectId.length() <= 5) {
+            this.subjectId = Integer.parseInt(subjectId);
+        } else this.subjectId = -1;
+    }
+
+    public void setInstitutionId(long institutionId) {
+        if(institutionId >= -1 && institutionId <= 1)
+            this.institutionId = (int)institutionId;
+        else this.institutionId = -1;
+    }
+
+    public void setInstitutionId(String institutionId) {
+        if(institutionId.matches("^\\d+$") && institutionId.length() <= 5) {
+            this.institutionId = Integer.parseInt(institutionId);
+        } else this.institutionId = -1;
+    }
+
     @Override
     public void initialize() {
         super.initialize();

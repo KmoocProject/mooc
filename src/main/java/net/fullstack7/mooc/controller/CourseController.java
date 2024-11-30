@@ -31,13 +31,8 @@ public class CourseController {
             , @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
 
         if(bindingResult.hasErrors()) {
-            searchDTO = CourseSearchDTO.builder()
-                    .institutionId(searchDTO.getInstitutionId())
-                    .subjectId(searchDTO.getSubjectId())
-                    .searchValue(searchDTO.getSearchValue())
-                    .isCreditBank(searchDTO.getIsCreditBank())
-                    .status(searchDTO.getStatus())
-                    .build();
+            searchDTO = CourseSearchDTO.builder().build();
+            redirectAttributes.addFlashAttribute("errors", "검색어 오류");
         }
 
         if(type.equals("credit")) {

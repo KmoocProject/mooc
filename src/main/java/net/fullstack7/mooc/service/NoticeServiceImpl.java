@@ -3,7 +3,6 @@ package net.fullstack7.mooc.service;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.fullstack7.mooc.domain.Admin;
 import net.fullstack7.mooc.domain.Notice;
 import net.fullstack7.mooc.dto.NoticeDTO;
 import net.fullstack7.mooc.dto.PageDTO;
@@ -12,7 +11,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -38,10 +36,8 @@ public class NoticeServiceImpl implements NoticeServiceIf {
     public Notice view(int noticeId) {
         Optional<Notice> byNoticeId = noticeRepository.findById(noticeId);
 
-        if(byNoticeId != null)
-            return byNoticeId.get();
+        return byNoticeId.orElse(null);
 
-        return null;
     }
 
     @Override
