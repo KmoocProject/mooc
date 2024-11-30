@@ -8,7 +8,10 @@ import net.fullstack7.mooc.dto.LearningHistoryDTO;
 import net.fullstack7.mooc.repository.LearningHistoryRepository;
 import net.fullstack7.mooc.repository.LectureContentRepository;
 import net.fullstack7.mooc.repository.LectureRepository;
+import net.fullstack7.mooc.repository.MemberRepository;
 import org.springframework.stereotype.Service;
+import net.fullstack7.mooc.mapper.LearningHistoryMapper;
+import net.fullstack7.mooc.dto.LectureContentStatsDTO;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +24,8 @@ public class LearningHistoryServiceImpl implements LearningHistoryServiceIf{
     private final LearningHistoryRepository learningHistoryRepository;
     private final LectureRepository lectureRepository;
     private final LectureContentRepository lectureContentRepository;
+    private final MemberRepository memberRepository;
+    private final LearningHistoryMapper learningHistoryMapper;
     @Override
     public int saveAll(int courseId, String memberId) {
         log.info("LearningHistoryService saveAll");
@@ -71,4 +76,15 @@ public class LearningHistoryServiceImpl implements LearningHistoryServiceIf{
         }
         learningHistoryRepository.deleteAll(learningHistoryList);
     }
+    @Override
+    public void updateLearnHistory(int lectureContentId, String memberId) {
+        Member member = memberRepository.findById(memberId).orElseThrow(()->new IllegalAccessError("회원이 존재하지 않습니다."));
+        learningHistoryRepository.updateLearnHistory(lectureContentId, member);
+    }
+
+    @Override
+    public LectureContentStatsDTO getLectureContentStats(int courseId, String memberId) {
+        return learningHistoryMapper.getLectureContentStats(courseId, memberId);
+    }
+
 }

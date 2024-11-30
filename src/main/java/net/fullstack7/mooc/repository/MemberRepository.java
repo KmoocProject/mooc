@@ -37,4 +37,8 @@ public interface MemberRepository extends JpaRepository<Member, String>, MemberS
     int countByStatusIn(List<String> status);
 
     Optional<Member> findByMemberId(String memberId);
+
+    @Modifying
+    @Query("update Member m set m.credit = m.credit + :credit where m.memberId = :memberId")
+    int addCredit(@Param("memberId") String memberId, @Param("credit") int credit);
 }

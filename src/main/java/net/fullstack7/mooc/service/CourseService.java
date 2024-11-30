@@ -432,4 +432,7 @@ public class CourseService {
         return false;
     }
   }
+  public Course getCourseByLectureContentId(int lectureContentId) {
+    return lectureContentRepository.findById(lectureContentId).get().getLecture().getCourse();
+  }
 }

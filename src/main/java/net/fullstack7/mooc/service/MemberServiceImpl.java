@@ -212,6 +212,8 @@ public class MemberServiceImpl implements MemberServiceIf {
         return "다시 시도해주세요.";
     }
 
-
-
+    @Override
+    public int addCredit(String memberId) {
+        return memberRepository.addCredit(memberId, 1);
+    }
 }
