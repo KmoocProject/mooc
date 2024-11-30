@@ -195,7 +195,7 @@
             <h1>강좌 검색</h1>
             <p>배우고 싶은 강좌를 찾아보세요.</p>
             <div class="search-bar">
-                <input type="text" name="searchValue" th:value="${pageDTO.searchValue}" placeholder="검색어를 입력하세요">
+                <input type="text" name="searchValue" th:value="${pageDTO.searchValue}" placeholder="검색어를 입력하세요" maxlength="100">
                 <button class="search-btn" type="submit">검색</button>
 <!--                <button class="view-all-btn">전체보기</button>-->
             </div>
@@ -224,7 +224,7 @@
             <p><strong>총 <span th:text="${list.totalElements}"></span>강좌</strong></p>
             <div class="courses">
                 <div class="course-card pointer" th:each="item, status:${list.content}" th:data-id="${item.courseId}">
-                    <div class="course-image" th:style="'background-image: url('+${item.thumbnail}+')'"></div>
+                    <div class="course-image" th:style="'background-image: url('+${item.thumbnail.replace('\\','/')}+')'"></div>
                     <h3 th:text="${item.title}"></h3>
                     <p th:text="${item.teacherName}"></p>
                     <p th:text="${item.institutionName}"></p>

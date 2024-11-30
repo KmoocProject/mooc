@@ -25,6 +25,7 @@ public class LectureContent {
 
     @ManyToOne
     @JoinColumn(name="lectureId", nullable = false)
+    @ToString.Exclude
     private Lecture lecture;
 
     @Column(name="isVideo", columnDefinition = "tinyint(1) default 0")
@@ -32,5 +33,6 @@ public class LectureContent {
 //    FOREIGN KEY (lectureId) REFERENCES lecture(lectureId)
 
     @OneToOne(mappedBy = "lectureContent", fetch = FetchType.LAZY)
+    @ToString.Exclude
     private LectureFile lectureFile;
 }

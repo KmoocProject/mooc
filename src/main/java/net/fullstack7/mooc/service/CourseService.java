@@ -1,5 +1,6 @@
 package net.fullstack7.mooc.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.util.FileUploadUtil;
@@ -55,7 +56,7 @@ public class CourseService {
         .language(dto.getLanguage())
         .description(dto.getDescription())
         .isCreditBank(dto.getIsCreditBank())
-        .thumbnail(thumbnailPath)
+        .thumbnail(thumbnailPath.replace("\\","/"))
         .teacher(teacher)
         .status("DRAFT")
         .viewCount(0)
@@ -121,7 +122,7 @@ public class CourseService {
         ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
         : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
 
-    saveLectureFile(savedContent, dto.getFile(), filePath);
+    saveLectureFile(savedContent, dto.getFile(), filePath.replace("\\","/"));
 
     return savedContent;
   }
@@ -129,7 +130,7 @@ public class CourseService {
   private void saveLectureFile(LectureContent content, MultipartFile file, String filePath) {
     LectureFile lectureFile = LectureFile.builder()
         .fileName(file.getOriginalFilename())
-        .filePath(filePath)
+        .filePath(filePath.replace("\\","/"))
         .fileExtension(FilenameUtils.getExtension(file.getOriginalFilename()))
         .lectureContent(content)
         .build();
@@ -169,7 +170,7 @@ public class CourseService {
       String filePath = dto.getType().equals("video")
           ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
           : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-      saveLectureFile(content, dto.getFile(), filePath);
+      saveLectureFile(content, dto.getFile(), filePath.replace("\\","/"));
     }
 
     lectureContentRepository.save(content);
@@ -306,6 +307,7 @@ public class CourseService {
     quizRepository.deleteById(quizId);
   }
 
+  @Transactional
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
     Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null,
         -1);
@@ -327,13 +329,23 @@ public class CourseService {
   }
 
   public CourseViewDTO getCourseViewById(int courseId) {
-    CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId), CourseViewDTO.class);
-    List<CourseDTO> recommendations = courseRepository
-        .findBySubjectAndStatusOrderByCourseIdDesc(courseViewDTO.getSubject(),"PUBLISHED",PageRequest.of(0, 5))
-        .stream().filter(c -> c.getCourseId() != courseViewDTO.getCourseId())
-        .map(course -> modelMapper.map(course, CourseDTO.class)).toList();
-    courseViewDTO.setRecommendations(recommendations);
-    return courseViewDTO;
+    try {
+      Course course = courseRepository.getReferenceById(courseId);
+      CourseViewDTO courseViewDTO = modelMapper.map(course, CourseViewDTO.class);
+      List<CourseDTO> recommendations = courseRepository
+              .findBySubjectAndStatusOrderByCourseIdDesc(courseViewDTO.getSubject(), "PUBLISHED", PageRequest.of(0, 5))
+              .stream().filter(c -> c.getCourseId() != courseViewDTO.getCourseId())
+              .map(c -> modelMapper.map(c, CourseDTO.class)).toList();
+      courseViewDTO.setRecommendations(recommendations);
+      return courseViewDTO;
+    }catch(EntityNotFoundException e) {
+      log.info("데이터없음");
+      log.error(e.getMessage());
+      return null;
+    }catch(Exception e){
+      log.error(e.getMessage());
+      return null;
+    }
   }
 
   @Transactional

@@ -209,19 +209,18 @@
         <form method="post" th:action="@{/admin/noticeModify/{noticeId}(noticeId=${item.noticeId})}">
         <h1>공지사항</h1>
         <div class="report-header">
-            <h2><input type="text" th:value="${item.title}" name="title" placeholder="제목"></h2>
+            <h2><input type="text" th:value="${item.title}" name="title" placeholder="제목" required maxlength="100"></h2>
             <div class="checkbox-container">
                 <input type="checkbox" name="importance" id="importance" value="0" th:checked="${item.importance == 0}">
                 <label for="importance">중요</label>
             </div>
         </div>
         <div class="report-content">
-            <textarea type="text" name="content" placeholder="내용">[[${item.content}]]</textarea>
+            <textarea type="text" name="content" placeholder="내용" required maxlength="2000">[[${item.content}]]</textarea>
         </div>
         <hr>
         <button class="back-modify" type="submit">수정</button>
         <button class="back-delete">취소</button>
-        <button class="back-button" id="backBtn">목록</button>
         </form>
     </div>
 

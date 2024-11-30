@@ -18,6 +18,7 @@ public class LearningHistory {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="memberId", nullable = false)
+    @ToString.Exclude
     private Member member;
 
     @Column(name="lectureContentId", nullable = false)

@@ -179,7 +179,7 @@
                     <option th:selected="${pageDTO.searchField == 'title'}" value="title">제목</option>
                     <option th:selected="${pageDTO.searchField == 'content'}" value="content">내용</option>
                 </select>
-                <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}">
+                <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}" maxlength="100">
                 <button class="search-button">찾기</button>
             </div>
             </form>

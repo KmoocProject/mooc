@@ -16,7 +16,9 @@ async function unenroll(element){
             return;
         }
         console.log("response ok");
-        alert(await response.json());
+        const result = await response.json();
+        console.log(result);
+        alert(result.message);
         location.reload();
     } catch (error) {
         console.error('수강취소 에러:', error);

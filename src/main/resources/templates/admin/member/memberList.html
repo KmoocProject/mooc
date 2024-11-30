@@ -149,7 +149,7 @@
                 </select>
 
                 <label for="searchId">아이디:</label>
-                <input type="text" id="searchId" name="searchId" placeholder="아이디 검색">
+                <input type="text" id="searchId" name="searchId" placeholder="아이디 검색" maxlength="50">
 
                 <button type="submit">검색</button>
             </div>
@@ -172,7 +172,7 @@
                     <td><a th:href="@{/admin/memberView/{type}(type='t',memberId=${item.teacherId})}" th:text="${item.teacherId}"></a></td>
                     <td th:text="${item.isApproved}"></td>
                     <td th:text="${item.status}"></td>
-                    <td th:text="${item.createdAt}"></td>
+                    <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
             </th:block>
             <th:block th:unless="${pageDTO.typeSelect == 't'}">
@@ -180,7 +180,7 @@
                     <td><a th:href="@{/admin/memberView/{type}(type='s',memberId=${item.memberId})}" th:text="${item.memberId}"></a></td>
                     <td th:text="${item.memberType}"></td>
                     <td th:text="${item.status}"></td>
-                    <td th:text="${item.createdAt}"></td>
+                    <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
             </th:block>
             <tr>
