@@ -31,22 +31,18 @@
             <button class="login-button" type="submit">로그인</button>
             <button class="signup-button" type="button" onclick="goRegist()">회원가입</button>
             <button class="signup-button" type="button" onclick="goLogin()" style="margin-top: 10px;">일반회원 로그인 돌아가기</button>
+            <script th:inline="javascript">
+                function goRegist(){
+                    window.location.href = '/teacher/join';
+                }
+
+                function goLogin(){
+                    window.location.href = '/login/login';
+                }
+            </script>
         </div>
     </form>
     <script layout:fragment="script" th:inline="javascript">
-
-        function goRegist(){
-            window.location.href = '/teacher/join';
-        }
-
-        function goLogin(){
-            window.location.href = '/login/login';
-        }
-
-        const error = [[${error ?: ''}]];
-        if (error && error.trim() !== '') {
-                alert(error);
-        }
     </script>
 </div>
 
