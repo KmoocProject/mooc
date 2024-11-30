@@ -17,9 +17,12 @@
     </section>
     <div class="notice-board">
 
-        <div class="notice-content">
+        <div class="notice-content" th:if="${newestNotice}">
             <p class="notice-text" th:text="${newestNotice.title}"></p>
             <p class="notice-date" th:text="${#temporals.format(newestNotice.createdAt, 'yyyy-MM-dd')}"></p>
+        </div>
+        <div class="notice-content" th:unless="${newestNotice}">
+            <p class="notice-text">등록된 공지사항이 없습니다.</p>
         </div>
 
         <div class="dropdown-icon">
@@ -30,16 +33,16 @@
     <section class="search">
         <div class="search-container">
             <form action="/course/list/all" method="get">
-            <div class="search-box">
-                <h2>검색</h2>
-                <div class="search-input">
-                    <input type="text" name="searchValue" placeholder="배우고 싶은 강좌를 찾아보세요.">
-<!--                    <input type="hidden" name="searchField" value="title">-->
-                    <button type="submit">
-                        <img th:src="@{/images/searchicon.png}" alt="search"/>
-                    </button>
+                <div class="search-box">
+                    <h2>검색</h2>
+                    <div class="search-input">
+                        <input type="text" name="searchValue" placeholder="배우고 싶은 강좌를 찾아보세요.">
+                        <!--                    <input type="hidden" name="searchField" value="title">-->
+                        <button type="submit">
+                            <img th:src="@{/images/searchicon.png}" alt="search"/>
+                        </button>
+                    </div>
                 </div>
-            </div>
             </form>
             <div class="categories">
                 <a href="/course/list/all?subjectId=1">인문</a>
@@ -55,21 +58,22 @@
     <div class="course-container">
         <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
         <div class="course-list">
-            <div class="course-card pointer" th:each="item, status:${mainCourseList}">
-                <div class="course-image">
-                    <img th:src="${item.thumbnail}" th:alt="${item.title}">
-                    <span class="badge ongoing">진행중</span>
-                    <span class="badge popular" th:if="${item.isCreditBank==1}">학점은행제</span>
-                </div>
-                <div class="course-info">
-                    <h3 th:text="${item.title}"></h3>
-                    <p><span th:text="${item.teacherName}"></span><br><span th:text="${item.institutionName}"></span></p>
-                    <p class="course-date" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
-                    <div class="tags">
+            <th:block th:each="item, status:${mainCourseList}">
+                <div class="course-card pointer" th:attr="data-course_id=${item.courseId}">
+                    <div class="course-image">
+                        <img th:src="${item.thumbnail}" th:alt="${item.title}">
+                        <span class="badge ongoing">진행중</span>
+                        <span class="badge popular" th:if="${item.isCreditBank==1}">이수중</span>
+                    </div>
+                    <div class="course-info">
+                        <h3 th:text="${item.title}"></h3>
+                        <p><span th:text="${item.teacherName}"></span><br><span th:text="${item.institutionName}"></span></p>
+                        <p class="course-date" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                        <div class="tags">
+                        </div>
                     </div>
                 </div>
-            </div>
-
+            </th:block>
         </div>
     </div>
     <div class="course-container">
@@ -170,9 +174,15 @@
     }
 
     document.querySelectorAll(".category-item").forEach(item => item.addEventListener("click", evt => {
-        location.href = '/course/list/all?subjectId='+item.dataset.subject;
-    })
+            location.href = '/course/list/all?subjectId=' + item.dataset.subject;
+        })
     );
+
+    document.querySelectorAll(".course-card").forEach(value => {
+        value.addEventListener("click", evt => {
+            location.href='/course/view?courseId='+value.dataset.course_id;
+        })
+    });
 </script>
 </body>
 </html>
