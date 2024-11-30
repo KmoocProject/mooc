@@ -103,14 +103,16 @@ public class PageDTO<E> {
     public void setSearchField(String searchField) {
         if(searchField != null && searchField.length() > 100) {
             this.searchField = searchField.substring(0, 100);
+        } else {
+            this.searchField = searchField;
         }
-        this.searchField = searchField;
     }
     public void setSearchValue(String searchValue) {
         if(searchValue != null && searchValue.length() > 100) {
             this.searchValue = searchValue.substring(0, 100);
+        } else {
+            this.searchValue = searchValue;
         }
-        this.searchValue = searchValue;
     }
 
     /**
