@@ -26,6 +26,9 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentServiceIf {
     @Override
     public int regist(CourseEnrollmentDTO courseEnrollmentDTO) {
         Course course = courseRepository.findById(courseEnrollmentDTO.getCourse().getCourseId()).orElseThrow(() -> new IllegalArgumentException("강의가 없음"));
+        if(!course.getStatus().equals("PUBLISHED")){
+            throw new IllegalArgumentException("삭제 또는 준비중인 강의");
+        }
         CourseEnrollment courseEnrollment = courseEnrollmentRepository.findByCourseAndMember(courseEnrollmentDTO.getCourse(),courseEnrollmentDTO.getMember()).orElse(null);
         if(courseEnrollment != null) {
             throw new IllegalArgumentException("이미 수강중인 강의");

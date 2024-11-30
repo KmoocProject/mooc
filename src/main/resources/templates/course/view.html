@@ -339,9 +339,12 @@
                 return;
             }
             console.log("response ok");
-            let flag = confirm(await response.json() + '\r\n 나의학습방으로 이동하시겠습니까?');
+            let result = await response.json()
+            let flag = confirm(result.message + '\r\n 나의학습방으로 이동하시겠습니까?');
             if(flag){
                 location.href="/mypage/myclass";
+            }else{
+                location.reload();
             }
         } catch (error) {
             console.error('수강신청 에러:', error);
