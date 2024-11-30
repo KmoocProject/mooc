@@ -105,7 +105,8 @@
                     </div>
                 </form>
             </div>
-
+            <br/>
+            
             <!-- 섹션 및 콘텐츠 목록 -->
             <div class="accordion mb-4" id="lectureAccordion">
                 <div th:if="${course.lectures != null}" th:each="lecture : ${course.lectures}" class="accordion-item">
@@ -159,6 +160,9 @@
                                                     등록된 파일 없음
                                                 </span>
                                             </div>
+                                            <input type="file" class="form-control d-none content-file-input"
+                                                   th:name="'file_' + ${content.lectureContentId}"
+                                                   accept="${content.type === 'video' ? 'video/*' : '*'}">
                                         </div>
                                         <div class="ms-3">
                                             <button class="btn btn-primary btn-sm me-2 edit-content-btn"
@@ -166,7 +170,7 @@
                                             <button class="btn btn-success btn-sm me-2 d-none save-content-btn"
                                                 th:onclick="'saveContentEdit(this, ' + ${content.lectureContentId} + ')'">저장</button>
                                             <button class="btn btn-danger btn-sm"
-                                                th:onclick="'deleteContent(' + ${content.lectureContentId} + ', ' + ${content.lectureContentId} + ')'">삭제</button>
+                                                th:onclick="'deleteContent(' + ${content.lectureContentId} + ')'">삭제</button>
                                         </div>
                                     </div>
                                 </div>
@@ -193,7 +197,7 @@
                                                 <button class="btn btn-success btn-sm me-2 d-none save-quiz-btn"
                                                     th:onclick="'saveQuizEdit(this, ' + ${quiz.quizId} + ', ' + ${lecture.lectureId} + ')'">저장</button>
                                                 <button class="btn btn-danger btn-sm"
-                                                    th:onclick="'deleteQuiz(' + ${quiz.quizId} + ', ' + ${lecture.lectureId} + ')'">삭제</button>
+                                                    th:onclick="'deleteQuiz(' + ${quiz.quizId} + ')'">삭제</button>
                                             </div>
                                         </div>
                                     </div>
@@ -218,6 +222,7 @@
                 </div>
             </div>
             <button class="btn btn-primary" onclick="addSection()">섹션 추가</button>
+            <button class="btn btn-danger" onclick="deleteLecture()">강좌 삭제</button>
         </div>
     </div>
     <div class="modal fade" id="addSectionModal" tabindex="-1">
@@ -277,8 +282,13 @@
         // 강좌 정보 수정
         async function updateCourseInfo() {
             const courseId = [[${ course.courseId }]];
-            const formData = new FormData(document.getElementById('courseUpdateForm'));
-
+            const form = document.getElementById('courseUpdateForm');
+            const formData = new FormData(form);
+            
+            if (!formData.get('thumbnail').size) {
+                formData.delete('thumbnail');
+            }
+            
             try {
                 const response = await fetch(`/api/teacher/courses/${courseId}`, {
                     method: 'PUT',
@@ -286,14 +296,15 @@
                 });
 
                 if (!response.ok) {
-                    const error = await response.json();
-                    throw new Error(error.message || '강좌 정보 수정에 실패했습니다.');
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '강좌 정보 수정 실패');
                 }
 
                 alert('강좌 정보가 수정되었습니다.');
+                location.reload();
             } catch (error) {
                 console.error('Error:', error);
-                alert(error.message);
+                alert(error.message || '강좌 정보 수정에 실패했습니다.');
             }
         }
 
@@ -381,6 +392,22 @@
             }
         }
 
+        async function deleteContent(contentId) {
+            if (!confirm('정말 이 콘텐츠를 삭제하시겠습니까?')) return;
+
+            try {
+                const response = await fetch(`/api/teacher/contents/${contentId}`, {
+                    method: 'DELETE'
+                });
+
+                if (!response.ok) throw new Error('콘텐츠 삭제 실패');
+                location.reload();
+            } catch (error) {
+                console.error('Error:', error);
+                alert(`콘텐츠 삭제에 실패했습니다. : ${error.message}`);
+            }
+        }
+
         async function showAddContentForm(lectureId) {
             const contentList = document.querySelector(`#lecture${lectureId} .list-group`);
             const formHtml = `
@@ -422,32 +449,6 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert('콘텐츠 추가에 실패했습니다.');
-            }
-        }
-
-        async function updateContent(contentId, lectureId) {
-            const contentElement = document.querySelector(`[data-content-id="${contentId}"]`);
-            const formData = new FormData();
-
-            formData.append('title', contentElement.querySelector('[name="title"]').value);
-            formData.append('description', contentElement.querySelector('[name="description"]').value);
-
-            const fileInput = contentElement.querySelector('[name="file"]');
-            if (fileInput.files.length > 0) {
-                formData.append('file', fileInput.files[0]);
-            }
-
-            try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}/contents/${contentId}`, {
-                    method: 'PUT',
-                    body: formData
-                });
-
-                if (!response.ok) throw new Error('콘텐츠 수정 실패');
-                location.reload();
-            } catch (error) {
-                console.error('Error:', error);
-                alert('콘텐츠 수정에 실패했습니다.');
             }
         }
         async function showAddQuizForm(lectureId) {
@@ -513,35 +514,12 @@
             }
         }
 
-        async function updateQuiz(quizId, lectureId) {
-            const quizElement = document.querySelector(`[data-quiz-id="${quizId}"]`);
-            const quizData = {
-                question: quizElement.querySelector('[name="question"]').value,
-                answer: quizElement.querySelector('[name="answer"]').value
-            };
-
-            try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}/quizzes/${quizId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify(quizData)
-                });
-
-                if (!response.ok) throw new Error('퀴즈 수정 실패');
-                alert('퀴즈가 수정되었습니다.');
-            } catch (error) {
-                console.error('Error:', error);
-                alert('퀴즈 수정에 실패했습니다.');
-            }
-        }
         //퀴즈 삭제
-        async function deleteQuiz(quizId, lectureId) {
+        async function deleteQuiz(quizId) {
             if (!confirm('정말 이 퀴즈를 삭제하시겠습니까?')) return;
 
             try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}/quizzes/${quizId}`, {
+                const response = await fetch(`/api/teacher/quizzes/${quizId}`, {
                     method: 'DELETE'
                 });
 
@@ -562,6 +540,7 @@
             const descInput = contentItem.querySelector('.content-description-input');
             const editBtn = contentItem.querySelector('.edit-content-btn');
             const saveBtn = contentItem.querySelector('.save-content-btn');
+            const fileInput = contentItem.querySelector('.content-file-input');
 
             titleSpan.classList.toggle('d-none');
             titleInput.classList.toggle('d-none');
@@ -569,6 +548,7 @@
             descInput.classList.toggle('d-none');
             editBtn.classList.toggle('d-none');
             saveBtn.classList.toggle('d-none');
+            fileInput.classList.toggle('d-none');
         }
 
         // 콘텐츠 수정 저장
@@ -577,9 +557,12 @@
             const formData = new FormData();
             formData.append('title', contentItem.querySelector('.content-title-input').value);
             formData.append('description', contentItem.querySelector('.content-description-input').value);
-
+            const fileInput = contentItem.querySelector('.content-file-input');
+            if (fileInput.files.length > 0) {
+                formData.append('file', fileInput.files[0]);
+            }
             try {
-                const response = await fetch(`/api/teacher/lectures/${contentId}/contents/${contentId}`, {
+                const response = await fetch(`/api/teacher/contents/${contentId}`, {
                     method: 'PUT',
                     body: formData
                 });
@@ -619,7 +602,7 @@
             };
 
             try {
-                const response = await fetch(`/api/teacher/lectures/${lectureId}/quizzes/${quizId}`, {
+                const response = await fetch(`/api/teacher/quizzes/${quizId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -631,7 +614,7 @@
                 location.reload();
             } catch (error) {
                 console.error('Error:', error);
-                alert('퀴즈 수정에 실패했습니다.');
+                alert(`퀴즈 수정에 실패했습니다. : ${error.message}`);
             }
         }
 
@@ -668,6 +651,24 @@
             } catch (error) {
                 console.error('Error:', error);
                 alert(error.message || '섹션 추가에 실패했습니다.');
+            }
+        }
+        async function deleteLecture() {
+            const courseId = [[${ course.courseId }]];
+            if (!confirm('정말 이 강의를 삭제하시겠습니까?')) return;
+            try {
+                const response = await fetch(`/api/teacher/courses/${courseId}`, {
+                    method: 'DELETE'
+                });
+                if (response.ok) {
+                    alert('강의가 삭제되었습니다.');
+                    location.href = '/teacher/myLectures';
+                } else {
+                    const errorData = await response.json();
+                    throw new Error(errorData.message || '강의 삭제 실패');
+                }
+            } catch (error) {
+                alert(`강의 삭제에 실패했습니다. : ${error.message}`);
             }
         }
     </script>

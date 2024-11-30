@@ -97,21 +97,50 @@
     <!-- Courses -->
 
     <div class="course-section">
-            <div class="course-card" th:each="item, status:${courselist.content}">
-                <div class="course-details">
+        <h3 style="margin-left: 40px;">수강중인 학점은행제 강좌</h3>
+        <div class="course-card" th:each="item, status:${courselist.content}">
+            <div class="course-details">
 
-                    <h4 th:text="${item.title}"></h4>
-                    <p th:text="${item.teacherName}"></p>
-                    <p th:text="'등록일 ' + ${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
-                    <p>[[${item.weeks}]]주</p>
-                    <div class="course-actions">
-                        <button class="learn-btn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
-                        <button class="cancel-btn">수강취소</button>
-                    </div>
+                <h4 th:text="${item.title}"></h4>
+                <p th:text="${item.teacherName}"></p>
+                <p th:text="'등록일 ' + ${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                <p>[[${item.weeks}]]주</p>
+                <div class="course-actions">
+                    <button class="learn-btn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
+                    <button class="cancel-btn" th:data-courseId="${item.courseId}" onclick="unenroll(this)">수강취소</button>
                 </div>
             </div>
+            <script>
+                async function unenroll(element){
+                    const courseId = element.getAttribute("data-courseId")
+                    try {
+                        const response = await fetch(`/courseEnrollment/delete/${courseId}`, {
+                            method: 'DELETE',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                        });
+
+                        if (!response.ok) {
+                            console.log("response not ok");
+                            const error = await response.json();
+                            console.log(error.message);
+                            alert(error.message);
+                            return;
+                        }
+                        console.log("response ok");
+                        const result = await response.json();
+                        console.log(result);
+                        alert(result.message);
+                        location.reload();
+                    } catch (error) {
+                        console.error('수강취소 에러:', error);
+                        alert(error.message || '수강취소에 실패했습니다.');
+                    }
+                }
+            </script>
+        </div>
     </div>
 </section>
-
 </body>
 </html>

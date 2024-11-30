@@ -7,6 +7,7 @@
 <!--    <link th:href="@{/css/modal.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/footer.css}" rel="stylesheet"/>
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
+    <link rel="icon" th:href="@{'/images/favicon.ico'}" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -78,9 +79,9 @@
 </head>
 <body>
 <script>
-    const error = [[${errors ?: ''}]];
-    if (error && error.trim() !== '') {
-        alert(error);
+    const errors = [[${errors ?: ''}]];
+    if (errors && errors.trim() !== '') {
+        alert(errors);
     }
     const error = [[${errorr ?: ''}]];
     if (error && error.trim() !== '') {
