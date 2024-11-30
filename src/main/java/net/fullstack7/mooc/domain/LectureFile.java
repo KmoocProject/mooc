@@ -22,7 +22,7 @@ public class LectureFile {
     @Column(name="fileExtension", nullable = false, length = 50)
     private String fileExtension; // VARCHAR(50) NOT NULL, -- 파일 확장자
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name="lectureContentId", nullable = false)
     private LectureContent lectureContent;
 }
