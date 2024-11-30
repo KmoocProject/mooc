@@ -47,7 +47,7 @@ public class MainController {
 
     @GetMapping("/notice/view/{noticeId}")
     public String noticeViewGet(Model model, @PathVariable String noticeId, RedirectAttributes redirectAttributes) {
-        if (noticeId == null || noticeId.equals("0") || !noticeId.matches("^\\d+$")) {
+        if (noticeId == null || noticeId.equals("0") || noticeId.length() > 9 || !noticeId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "조회할 수 없는 게시글입니다.");
             return "redirect:/main/notice/list";
         }
@@ -70,7 +70,7 @@ public class MainController {
     public String main(Model model) {
         log.info(courseService.mainCourseList(4));
         model.addAttribute("mainCourseList", courseService.mainCourseList(4));
-        model.addAttribute("newestNotice", noticeService.getNewestNotice());
+        model.addAttribute("notices", noticeService.getNewestNotices());
         return "main/main";
     }
 

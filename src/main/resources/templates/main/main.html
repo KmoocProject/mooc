@@ -5,6 +5,23 @@
 <head>
     <meta charset="UTF-8">
     <title>K-MOOC</title>
+    <style>
+        .notice-content {
+            display: block;
+            overflow: hidden;
+            height: 50px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .notice-content.active {
+            opacity: 1;
+        }
+
+        .notice-content.hide {
+            opacity: 0;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="maincontent">
@@ -17,12 +34,9 @@
     </section>
     <div class="notice-board">
 
-        <div class="notice-content" th:if="${newestNotice}">
-            <p class="notice-text" th:text="${newestNotice.title}"></p>
-            <p class="notice-date" th:text="${#temporals.format(newestNotice.createdAt, 'yyyy-MM-dd')}"></p>
-        </div>
-        <div class="notice-content" th:unless="${newestNotice}">
-            <p class="notice-text">등록된 공지사항이 없습니다.</p>
+        <div id="notice-display" class="notice-content">
+            <p class="notice-text">공지사항을 불러오는 중입니다...</p>
+            <p class="notice-date"></p>
         </div>
 
         <div class="dropdown-icon">
@@ -118,6 +132,52 @@
 </div>
 
 <script layout:fragment="script" th:inline="javascript">
+    const notices = [[${notices}]];
+    document.addEventListener("DOMContentLoaded", function () {
+        const noticeDisplay = document.getElementById("notice-display");
+        let currentIndex = 0;
+
+
+
+        // 공지사항 표시
+        function displayNotice(notice) {
+
+            // 기존 내용 숨기기
+            noticeDisplay.classList.remove("active");
+            noticeDisplay.classList.add("hide");
+
+            // 슬라이드 전환 대기
+            setTimeout(() => {
+                // 새 내용 삽입
+                noticeDisplay.innerHTML = '<p class="notice-text"><a href="/main/notice/view/'+notice.noticeId+'">'+notice.title+'</a></p><p class="notice-date">'+ (notice.createdAt.split("T"))[0] + '</p>';
+
+                // 새 내용 표시
+                noticeDisplay.classList.remove("hide");
+                noticeDisplay.classList.add("active");
+            }, 500); // 이전 애니메이션 종료 후 새로운 내용 표시
+        }
+
+        // 공지사항 순환
+        function rotateNotices() {
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % notices.length; // 다음 인덱스
+                displayNotice(notices[currentIndex]); // 공지사항 업데이트
+            }, 5000); // 5초 간격
+        }
+
+        // 초기화
+        if (notices.length > 0) {
+            noticeDisplay.classList.add("active"); // 첫 공지사항 표시
+            displayNotice(notices[currentIndex]);
+            rotateNotices();
+        } else {
+            noticeDisplay.innerHTML = `
+            <p class="notice-text">등록된 공지사항이 없습니다.</p>
+            <p class="notice-date"></p>
+        `;
+        }
+    });
+
     const images = document.querySelectorAll('.main-banner img');
     const dotsContainer = document.getElementById('bannerDots');
     const prevBtn = document.getElementById('prevBtn');

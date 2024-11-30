@@ -206,6 +206,9 @@
                 <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
             </tr>
             <!-- Add more rows as necessary -->
+            <tr th:if="${pageinfo.content.isEmpty()}">
+                <td colspan="3">검색 결과가 없습니다.</td>
+            </tr>
             </tbody>
         </table>
         <div th:replace="main/paging :: paging"></div>

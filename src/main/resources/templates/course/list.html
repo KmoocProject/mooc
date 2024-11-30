@@ -231,6 +231,9 @@
                     <p> 등록일: <span th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd')}"></span></p>
                 </div>
             </div>
+            <div th:if="${list.content.isEmpty()}">
+                검색 결과가 없습니다.
+            </div>
         </section>
     </div>
 

@@ -210,6 +210,9 @@
                     <button class="cancel-btn" th:data-courseId="${item.courseId}" onclick="unenroll(this)">수강취소</button>
                 </div>
             </div>
+            <div th:if="${courselist.content.isEmpty()}">
+                수강 중인 강의가 없습니다.
+            </div>
         </div>
         <div th:replace="main/paging :: paging"></div>
     </div>

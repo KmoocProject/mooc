@@ -10,6 +10,7 @@ import net.fullstack7.mooc.repository.NoticeRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 
 @Log4j2
@@ -24,7 +25,7 @@ public class NoticeServiceImpl implements NoticeServiceIf {
 
         Page<NoticeDTO> notices = noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
 
-        pageDTO.setTotalCount((int)notices.getTotalElements());
+        pageDTO.setTotalCount((int) notices.getTotalElements());
 
         notices = noticeRepository.noticePage(pageDTO.getPageable(), pageDTO.getSearchField(), pageDTO.getSearchValue());
 
@@ -41,7 +42,17 @@ public class NoticeServiceImpl implements NoticeServiceIf {
     }
 
     @Override
-    public Notice getNewestNotice() {
-        return noticeRepository.findTopByOrderByCreatedAtDesc().orElse(null);
+    public List<NoticeDTO> getNewestNotices() {
+
+        return noticeRepository.findTop5ByOrderByCreatedAtDesc().stream().map(entity ->
+                NoticeDTO.builder()
+                        .importance(entity.getImportance())
+                        .title(entity.getTitle())
+                        .adminId(entity.getAdmin().getAdminId())
+                        .createdAt(entity.getCreatedAt())
+                        .noticeId(entity.getNoticeId())
+                        .build()
+        ).toList();
     }
+
 }
