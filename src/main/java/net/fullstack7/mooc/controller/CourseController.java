@@ -10,6 +10,7 @@ import net.fullstack7.mooc.domain.Member;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.CourseEnrollmentServiceIf;
 import net.fullstack7.mooc.service.CourseService;
+import net.fullstack7.mooc.util.JSFunc;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,10 +63,19 @@ public class CourseController {
     }
 
     @GetMapping("/view")
-    public String courseView(@RequestParam int courseId, HttpSession session, Model model,RedirectAttributes redirectAttributes) {
+    public String courseView(@RequestParam(required = false, defaultValue = "-1") int courseId, HttpSession session, Model model,RedirectAttributes redirectAttributes) {
+        if(courseId<=0){
+            redirectAttributes.addFlashAttribute("errors","유효하지 않은 값이 입력되었습니다.");
+            return "redirect:/course/list/all";
+        }
         CourseViewDTO courseViewDTO = courseService.getCourseViewById(courseId);
         if(courseViewDTO == null) {
             redirectAttributes.addFlashAttribute("errors","존재하지 않는 강의입니다.");
+            return "redirect:/course/list/all";
+        }
+
+        if(!courseViewDTO.getStatus().equals("PUBLISHED")) {
+            redirectAttributes.addFlashAttribute("errors","삭제 또는 준비중인 강의입니다.");
             return "redirect:/course/list/all";
         }
 
