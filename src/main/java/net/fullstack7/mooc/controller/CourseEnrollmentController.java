@@ -11,6 +11,7 @@ import net.fullstack7.mooc.domain.Teacher;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.CourseEnrollmentServiceIf;
 import net.fullstack7.mooc.service.CourseService;
+import net.fullstack7.mooc.service.LearningHistoryServiceIf;
 import org.modelmapper.ModelMapper;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,7 +28,7 @@ public class CourseEnrollmentController {
     private final CourseEnrollmentServiceIf courseEnrollmentService;
     private final CourseService courseService;
     private final ModelMapper modelMapper;
-
+    private final LearningHistoryServiceIf learningHistoryService;
     @PostMapping("/regist/{courseId}")
     public ResponseEntity<?> regist(@PathVariable int courseId, HttpSession session) {
         try{
@@ -43,6 +44,8 @@ public class CourseEnrollmentController {
                             .enrollmentDate(LocalDateTime.now())
                             .build()
             );
+            int learningHistoryResult = learningHistoryService.saveAll(courseId, memberDTO.getMemberId());
+            log.info("learning history result: {}",learningHistoryResult);
             return ResponseEntity.ok(ApiResponse.success("수강신청이 완료되었습니다."));
         }catch(Exception e){
             log.error(e);
@@ -64,12 +67,13 @@ public class CourseEnrollmentController {
                       .build()
             );
             if(courseEnrollmentDTO == null) {
-                return ResponseEntity.badRequest().body("수강중인 강의가 아닙니다.");
+                return ResponseEntity.badRequest().body(ApiResponse.error("수강중인 강의가 아닙니다."));
             }
             String result = courseEnrollmentService.delete(courseEnrollmentDTO);
             if(result != null){
-                return ResponseEntity.badRequest().body(result);
+                return ResponseEntity.badRequest().body(ApiResponse.error(result));
             }
+            learningHistoryService.deleteAll(courseId, memberDTO.getMemberId());
             return ResponseEntity.ok(ApiResponse.success("수강 취소 완료"));
         }catch(Exception e){
             log.error(e);

@@ -14,4 +14,5 @@ public interface LectureContentRepository extends JpaRepository<LectureContent, 
     List<LectureContent> findByLectureOrderByLectureContentIdAsc(Lecture lecture);
     Optional<LectureContent> findByLectureContentId(int lectureContentId);
     List<LectureContent> findByLecture(Lecture lecture);
+    List<LectureContent> findByLectureAndIsVideo(Lecture lecture, int isVideo);
 }
