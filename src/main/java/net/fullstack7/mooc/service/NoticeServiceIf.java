@@ -8,4 +8,5 @@ import org.springframework.data.domain.Page;
 public interface NoticeServiceIf {
     Page<NoticeDTO> getNotices(PageDTO<NoticeDTO> pageDTO);
     Notice view(int noticeId);
+    Notice getNewestNotice();
 }

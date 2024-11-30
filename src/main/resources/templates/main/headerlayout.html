@@ -79,11 +79,11 @@
 </head>
 <body>
 <script>
-    const errors = [[${errors ?: ''}]];
+    const errors = `[[${errors ?: ''}]]`;
     if (errors && errors.trim() !== '') {
         alert(errors);
     }
-    const error = [[${errorr ?: ''}]];
+    const error = `[[${errorr ?: ''}]]`;
     if (error && error.trim() !== '') {
         alert(error);
     }
@@ -99,9 +99,6 @@
                 <button class="dropdown-btn dropdown-subject-btn" onclick="allBtn()">&#9776; 강좌</button>
                 <ul class="dropdown-menu dropdown-subject">
                     <li><a href="/course/list/all">전체 강좌 보기</a></li>
-<!--                    <li><a href="#">인문</a></li>-->
-<!--                    <li><a href="#">사회</a></li>-->
-<!--                    <li><a href="#">공학</a></li>-->
                 </ul>
             </div>
             <div class="menu-icon dropdown">
@@ -224,24 +221,26 @@
     let flag = 0;
     const dropdown_subject = document.querySelector(".dropdown-subject");
     document.querySelector(".dropdown-subject-btn").addEventListener("mouseover", async evt => {
-        const url = "http://localhost:8080/api/main/subject";
+        const url = "http://localhost:8080/api/main/subjects";
 
         if(flag === 1)
             return;
 
         try {
-            const response = await fetch(url, {
-                method: 'POST'
-            });
+            const response = await fetch(url);
             if (!response.ok) {
                 throw new Error(`Response status: ${response.status}`);
             }
 
-            const json = (await response.json()).map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
+            const subjects = await response.json();
+
+            console.log(subjects);
+            //
+            // const subjects = response_json.map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
 
             flag = 1;
 
-            for(let item of json) {
+            for(let item of subjects) {
                 dropdown_subject.innerHTML += '<li><a href="/course/list/all?subjectId='+ item.subjectId +'">'+item.subjectName+'</a></li>'
             }
 

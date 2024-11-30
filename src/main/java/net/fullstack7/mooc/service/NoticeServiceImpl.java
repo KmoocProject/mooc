@@ -43,4 +43,9 @@ public class NoticeServiceImpl implements NoticeServiceIf {
 
         return null;
     }
+
+    @Override
+    public Notice getNewestNotice() {
+        return noticeRepository.findTopByOrderByCreatedAtDesc().orElse(null);
+    }
 }

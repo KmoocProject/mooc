@@ -70,6 +70,7 @@ public class MainController {
     public String main(Model model) {
         log.info(courseService.mainCourseList(4));
         model.addAttribute("mainCourseList", courseService.mainCourseList(4));
+        model.addAttribute("newestNotice", noticeService.getNewestNotice());
         return "main/main";
     }
 
