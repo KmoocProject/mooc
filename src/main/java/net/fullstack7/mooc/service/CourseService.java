@@ -38,6 +38,7 @@ public class CourseService {
   private final TeacherRepository teacherRepository;
   private final ModelMapper modelMapper;
 
+  
   public Course createCourse(CourseCreateDTO dto, Teacher teacher) throws IOException {
     // 과목 조회
     Subject subject = subjectRepository.findBySubjectId(dto.getSubjectId())
@@ -63,6 +64,24 @@ public class CourseService {
 
     return courseRepository.save(course);
   }
+
+  //권한 체크
+  public boolean checkAuthority(int id, Teacher teacher,String type) {
+    switch (type) {
+      case "course":
+        return courseRepository.findById(id).get().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "lecture":
+        return lectureRepository.findById(id).get().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "content":
+        return lectureContentRepository.findById(id).get().getLecture().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "quiz":
+        return quizRepository.findById(id).get().getLecture().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      default:
+        log.info("알맞은 권한 체크 타입이 아닙니다.");
+        return false;
+    }
+  }
+
 
   public Lecture createLecture(LectureCreateDTO dto) {
     Course course = courseRepository.findById(dto.getCourseId())
@@ -258,8 +277,7 @@ public class CourseService {
       throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
     }
 
-    // 기존 퀴즈가 있다면 모두 삭제
-    quizRepository.deleteAllByLecture(lecture);
+    // quizRepository.deleteAllByLecture(lecture);
 
     // 새 퀴즈 생성
     dto.getQuizzes().forEach(quizDTO -> {
@@ -327,6 +345,7 @@ public class CourseService {
     // 콘텐츠 삭제
     for (LectureContent content : contents) {
       LectureFile file = lectureFileRepository.findByLectureContent(content).orElse(null);
+      //파일 삭제
       if (file != null) {
         fileUploadUtil.deleteFile(file.getFilePath());
         lectureFileRepository.delete(file);
@@ -371,5 +390,17 @@ public class CourseService {
 
   public List<CourseResponseDTO> mainCourseList(int n) {
     return courseRepository.randomCourses(n);
+  }
+
+  @Transactional
+  public void deleteCourse(int courseId) {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+
+    List<Lecture> lectures = lectureRepository.findAllByCourse(course);
+    for (Lecture lecture : lectures) {
+      deleteLecture(lecture.getLectureId());
+    }
+    courseRepository.delete(course);
   }
 }
