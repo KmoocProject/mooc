@@ -27,6 +27,10 @@
         /* Course Section */
         .course-section {
             margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
         }
 
         .course-section h3 {
@@ -39,6 +43,7 @@
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            max-height: 250px;
             width: 300px;
             display: flex;
             justify-content: space-between;
@@ -90,6 +95,7 @@
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <!-- Courses -->
+
     <div class="course-section">
         <h3 style="margin-left: 40px;">수강중인 학점은행제 강좌</h3>
         <div class="course-card" th:each="item, status:${courselist.content}">
