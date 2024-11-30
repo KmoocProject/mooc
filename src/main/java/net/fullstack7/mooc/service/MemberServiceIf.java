@@ -37,4 +37,5 @@ public interface MemberServiceIf {
 
     String modifyToCredit(String memberId);
 
+    int addCredit(String memberId);
 }

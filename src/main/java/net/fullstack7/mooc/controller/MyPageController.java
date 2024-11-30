@@ -172,6 +172,11 @@ public class MyPageController {
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {
 //        System.out.println("POST 요청 받음");
+        MemberDTO loginedMemberInfo = (MemberDTO)session.getAttribute("memberDTO");
+        if (loginedMemberInfo==null){
+            redirectAttributes.addFlashAttribute("errors", "로그인 후 이용");
+            return "redirect:/login/login";
+        }
         if (bindingResult.hasErrors()) {
             model.addAttribute("errors", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
@@ -182,6 +187,7 @@ public class MyPageController {
             if (memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
             }
+            memberDTO.setMemberId(loginedMemberInfo.getMemberId());
             session.setAttribute("memberDTO", memberDTO);
 //            System.out.println("Session memberDTO: " + session.getAttribute("memberDTO"));
             redirectAttributes.addFlashAttribute("errors", "회원 정보가 수정되었습니다.");
