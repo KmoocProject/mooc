@@ -35,6 +35,10 @@ public class NoticeSearchImpl extends QuerydslRepositorySupport implements Notic
                 case "content":
                     bb.and(noticeq.content.containsIgnoreCase(searchWord));
                     break;
+                default:
+                    bb.and(noticeq.title.containsIgnoreCase(searchWord));
+                    bb.and(noticeq.content.containsIgnoreCase(searchWord));
+                    break;
             }
         }
 
