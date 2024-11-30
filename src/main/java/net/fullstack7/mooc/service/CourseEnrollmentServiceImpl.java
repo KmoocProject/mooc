@@ -10,6 +10,8 @@ import net.fullstack7.mooc.repository.CourseEnrollmentRepository;
 import net.fullstack7.mooc.repository.CourseRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
+import net.fullstack7.mooc.domain.Member;
+import net.fullstack7.mooc.repository.MemberRepository;
 
 @Log4j2
 @Service
@@ -18,6 +20,7 @@ import org.springframework.stereotype.Service;
 public class CourseEnrollmentServiceImpl implements CourseEnrollmentServiceIf {
     private final CourseEnrollmentRepository courseEnrollmentRepository;
     private final CourseRepository courseRepository;
+    private final MemberRepository memberRepository;
     private final ModelMapper modelMapper;
 
     @Override
@@ -55,6 +58,14 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentServiceIf {
             return "수강 취소 실패";
         }
         return null;
+    }
+
+    @Override
+    public boolean checkAuthority(String memberId, int courseId) {
+        Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+        // 수강중인 강의인지 확인
+        return courseEnrollmentRepository.findByCourseAndMember(course, member).isPresent();
     }
 
 }
