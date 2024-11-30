@@ -35,4 +35,6 @@ public interface MemberRepository extends JpaRepository<Member, String>, MemberS
 
     int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
     int countByStatusIn(List<String> status);
+
+    Optional<Member> findByMemberId(String memberId);
 }

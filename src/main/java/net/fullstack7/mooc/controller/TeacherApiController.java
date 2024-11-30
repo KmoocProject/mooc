@@ -57,6 +57,9 @@ public class TeacherApiController {
             if (!courseService.checkAuthority(courseId, teacher, "course")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
             }
+            if (courseService.checkPublished(courseId, "course")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 수정할 수 없습니다."));
+            }
             courseService.updateCourse(courseId, dto, teacher);
             return ResponseEntity.ok(ApiResponse.success("강좌가 수정되었습니다."));
         } catch (Exception e) {
@@ -105,6 +108,9 @@ public class TeacherApiController {
             if (!courseService.checkAuthority(contentId, teacher, "content")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
             }
+            if (courseService.checkPublished(contentId, "content")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 삭제할 수 없습니다."));
+            }
             courseService.deleteContent(contentId);
             return ResponseEntity.ok(ApiResponse.success("콘텐츠가 성공적으로 삭제되었습니다."));
         } catch (Exception e) {
@@ -141,6 +147,9 @@ public class TeacherApiController {
             if (!courseService.checkAuthority(quizId, teacher, "quiz")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
             }
+            if (courseService.checkPublished(quizId, "quiz")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 수정할 수 없습니다."));
+            }
             courseService.updateQuiz(quizId, dto);
             return ResponseEntity.ok(ApiResponse.success("퀴즈가 수정되었습니다."));
         } catch (Exception e) {
@@ -157,6 +166,9 @@ public class TeacherApiController {
             Teacher teacher = (Teacher) session.getAttribute("teacher");
             if (!courseService.checkAuthority(quizId, teacher, "quiz")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
+            if (courseService.checkPublished(quizId, "quiz")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 삭제할 수 없습니다."));
             }
             courseService.deleteQuiz(quizId);
             return ResponseEntity.ok(ApiResponse.success("퀴즈가 삭제되었습니다."));
@@ -193,6 +205,9 @@ public class TeacherApiController {
             if (!courseService.checkAuthority(lectureId, teacher, "lecture")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
             }
+            if (courseService.checkPublished(lectureId, "lecture")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 삭제할 수 없습니다."));
+            }
             courseService.deleteLecture(lectureId);
             return ResponseEntity.ok(ApiResponse.success("섹션이 삭제되었습니다."));
         } catch (Exception e) {
@@ -209,6 +224,9 @@ public class TeacherApiController {
             Teacher teacher = (Teacher) session.getAttribute("teacher");
             if (!courseService.checkAuthority(lectureId, teacher, "lecture")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
+            if (courseService.checkPublished(lectureId, "lecture")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 수정할 수 없습니다."));
             }
             courseService.updateLecture(lectureId, dto);
             return ResponseEntity.ok(ApiResponse.success("섹션이 수정되었습니다."));
@@ -227,6 +245,9 @@ public class TeacherApiController {
             if (!courseService.checkAuthority(contentId, teacher, "content")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
             }
+            if (courseService.checkPublished(contentId, "content")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 수정할 수 없습니다."));
+            }
             courseService.updateContent(contentId, dto);
             return ResponseEntity.ok(ApiResponse.success("콘텐츠가 수정되었습니다."));
         } catch (Exception e) {
@@ -241,6 +262,9 @@ public class TeacherApiController {
             Teacher teacher = (Teacher) session.getAttribute("teacher");
             if (!courseService.checkAuthority(courseId, teacher, "course")) {
                 return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(ApiResponse.error("권한이 없습니다."));
+            }
+            if (courseService.checkPublished(courseId, "course")) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).body(ApiResponse.error("강좌가 배포되어 삭제할 수 없습니다."));
             }
             courseService.deleteCourse(courseId);
             return ResponseEntity.ok(ApiResponse.success("강좌가 삭제되었습니다."));

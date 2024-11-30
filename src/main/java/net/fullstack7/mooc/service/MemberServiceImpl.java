@@ -212,4 +212,6 @@ public class MemberServiceImpl implements MemberServiceIf {
         return "다시 시도해주세요.";
     }
 
+
+
 }

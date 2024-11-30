@@ -403,4 +403,21 @@ public class CourseService {
     }
     courseRepository.delete(course);
   }
+
+//상태 체크
+  public boolean checkPublished(int Id,String type) {
+    switch (type) {
+      case "course":
+        return courseRepository.findById(Id).get().getStatus().equals("PUBLISHED");
+      case "lecture":
+        return lectureRepository.findById(Id).get().getCourse().getStatus().equals("PUBLISHED");
+      case "quiz":
+        return quizRepository.findById(Id).get().getLecture().getCourse().getStatus().equals("PUBLISHED");
+      case "content":
+        return lectureContentRepository.findById(Id).get().getLecture().getCourse().getStatus().equals("PUBLISHED");
+      default:
+        log.info("알맞은 상태 체크 타입이 아닙니다.");
+        return false;
+    }
+  }
 }

@@ -108,7 +108,7 @@
                         <a class="dropdown-btn1"><img th:src="@{/images/man.png}" style="width:65px;margin-left: -13px;"></a>
                         <ul class="dropdown-menu" style="width: 300px">
                             <img th:src="@{/images/man.png}">
-                            <h2 style="margin-left: 12px;color: black">ooo 님</h2>
+                            <h2 style="margin-left: 12px;color: black">[[${session.memberDTO.userName}]] 님</h2>
                             <hr>
                             <li><a href="/mypage/myclass"><i class="fas fa-chalkboard"></i><img th:src="@{/images/a3.png}" style="width: 30px; margin-right: 4px; margin-bottom: -8px;" /> 내 강의실</a></li>
                             <li><a href="#"><i class="fas fa-graduation-cap"></i><img th:src="@{/images/a2.png}" style="width: 30px; margin-right: 4px;margin-bottom: -8px;"/> K-MOOC 학점은행제</a></li>
