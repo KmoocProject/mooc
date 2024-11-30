@@ -191,6 +191,11 @@
             background: #007bff;
             color: white;
         }
+
+        a{
+            text-decoration: none;
+            color: black;
+        }
     </style>
 </head>
 
@@ -207,7 +212,8 @@
             <p>[[${course.description}]]</p>
             <p>수강 기간: [[${course.weeks}]]주</p>
             <p>학습 시간: [[${course.learningTime}]]분</p>
-            <p th:if="${course.language == 'KOREAN' : '강의 언어: 한국어' : '강의 언어: 영어'}"></p>
+            <p th:if="${course.language == 'KOREAN'}">언어: 한국어</p>
+            <p th:if="${course.language == 'ENGLISH'}">언어: 영어</p>
             <p th:if="${course.isCreditBank == 1}">과정 유형: 학점은행제 강의</p>
             <p th:if="${course.isCreditBank == 0}">과정 유형: 일반 강의</p>
             <p>강사: [[${course.teacherName}]]</p>
@@ -239,19 +245,28 @@
                                 <span th:text="${content.title}">콘텐츠 제목</span>
                             </div>
                             <div class="content-actions">
-                                <button th:if="${content.isVideo == 1 && content.file != null}"
+                                <a th:if="${content.isVideo == 1 && content.file != null}"
                                     th:data-video-path="${content.file?.filePath}" onclick="openVideoModal(this)"
                                     class="btn">동영상 보기</button>
                                 <a th:if="${content.isVideo == 0 && content.file != null}"
                                     th:href="@{${content.file?.filePath}}" class="btn" target="_blank">문서 보기</a>
                                 <a th:if="${content.isVideo == 0 && content.file != null}"
                                     th:href="@{/api/teacher/download(filePath=${content.file?.filePath})}" class="btn"
-                                    target="_blank">다운로드</a>"
+                                    target="_blank">다운로드</a>
+                            </div>
+                        </div>
+                        <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="content-item">
+                            <div class="content-title">
+                                <span>🧠</span>
+                                <span>퀴즈</span>
+                            </div>
+                            <div class="content-actions">
+                                <a class="btn" onclick="openQuizModal(this)">퀴즈 풀기</a>
                             </div>
                         </div>
 
                         <!-- 퀴즈 섹션 -->
-                        <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="quiz-section">
+                        <!-- <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="quiz-section">
                             <h3>퀴즈</h3>
                             <div th:each="quiz : ${lecture.quizzes}" class="content-item">
                                 <div>
@@ -259,7 +274,8 @@
                                     <p th:text="${quiz.answer}">퀴즈 답안</p>
                                 </div>
                             </div>
-                        </div>
+                        </div> -->
+                        
                     </div>
                 </div>
             </div>
