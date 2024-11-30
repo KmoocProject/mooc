@@ -111,6 +111,9 @@
                 </div>
             </div>
         </div>
+        <div th:if="${courselist.content.isEmpty()}">
+            수강 중인 강의가 없습니다.
+        </div>
     </div>
     <div>
         <script th:src="@{/js/unenroll.js}"></script>

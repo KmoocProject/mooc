@@ -5,7 +5,7 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
@@ -165,11 +165,19 @@
                 </td>
                 <td th:text="${item.adminName}"></td>
             </tr>
+            <tr th:if="${pageinfo.content.isEmpty()}">
+                <td colspan="3">검색 결과가 없습니다.</td>
+            </tr>
+            <tr>
+               <td colspan="3">
+                   <div th:replace="main/paging :: paging"></div>
+               </td>
+            </tr>
             </tbody>
             <button class="search-button" id="nRegist" style="font-size: 18px;">공지사항 등록</button>
         </table>
     </div>
-    <div th:replace="main/paging :: paging"></div>
+
 </section>
 
 <div th:replace="admin/footer :: footer"></div>

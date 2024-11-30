@@ -5,7 +5,7 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
@@ -184,6 +184,10 @@
                 <td th:text="${item.weeks}"></td>
                 <td th:text="${item.status}"></td>
                 <td><button class="reply-button" th:if="${item.status=='DRAFT'}" th:onclick="|location.href='@{/admin/courseApprove/{courseId}(courseId=${item.courseId})}'|">승인</button></td>
+            </tr>
+
+            <tr th:if="${pageinfo.content.isEmpty()}">
+                <td colspan="5">검색 결과가 없습니다.</td>
             </tr>
 
             <tr>

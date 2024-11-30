@@ -5,7 +5,7 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
@@ -183,6 +183,9 @@
                     <td th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></td>
                 </tr>
             </th:block>
+            <tr th:if="${pageinfo.content.isEmpty()}">
+                <td colspan="4">검색 결과가 없습니다.</td>
+            </tr>
             <tr>
                 <td colspan="4">
                     <div th:replace="main/paging :: paging"></div>
