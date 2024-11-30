@@ -188,7 +188,6 @@
                 <p th:text="${completed}"></p>
             </div>
         </div>
-
         <!-- Courses -->
         <div class="course-section">
             <h3>수강중인 강좌</h3>
@@ -201,18 +200,42 @@
                 </div>
                 <div class="course-actions">
                     <button class="learn-btn" id="learnGoBtn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
+                    <button class="cancel-btn" th:data-courseId="${item.courseId}" onclick="unenroll(this)">수강취소</button>
                 </div>
+                <script>
+                    async function unenroll(element){
+                        const courseId = element.getAttribute("data-courseId")
+                        try {
+                            const response = await fetch(`/courseEnrollment/delete/${courseId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+
+                            if (!response.ok) {
+                                console.log("response not ok");
+                                const error = await response.json();
+                                console.log(error.message);
+                                alert(error.message);
+                                return;
+                            }
+                            console.log("response ok");
+                            const result = await response.json();
+                            console.log(result);
+                            alert(result.message);
+                            location.reload();
+                        } catch (error) {
+                            console.error('수강취소 에러:', error);
+                            alert(error.message || '수강취소에 실패했습니다.');
+                        }
+                    }
+                </script>
             </div>
         </div>
     </div>
-
     <div th:replace="main/paging :: paging"></div>
-
     <form action="/mypage/myclass" method="get"></form>
 </section>
-
-<script th:src="@{/js/paging.js}" layout:fragment="pagingscript" th:inline="javascript"></script>
-
-
 </body>
 </html>

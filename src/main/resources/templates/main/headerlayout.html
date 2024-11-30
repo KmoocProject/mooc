@@ -78,9 +78,9 @@
 </head>
 <body>
 <script>
-    const error = [[${errors ?: ''}]];
-    if (error && error.trim() !== '') {
-        alert(error);
+    const errors = [[${errors ?: ''}]];
+    if (errors && errors.trim() !== '') {
+        alert(errors);
     }
     const error = [[${errorr ?: ''}]];
     if (error && error.trim() !== '') {
@@ -214,24 +214,6 @@
             behavior: "smooth" // Smooth scrolling effect
         });
     }
-
-    // JavaScript 코드 추가
-    document.getElementById('search-button').addEventListener('click', function (e) {
-        e.preventDefault();
-
-        // header 요소 가져오기
-        const headerElement = document.getElementById('main');
-
-        // 새로운 div 요소 생성
-        const modalDiv = document.createElement('div');
-        modalDiv.setAttribute('th:replace', 'main/modal :: modal');
-
-        // header 아래에 div 추가
-        headerElement.insertAdjacentElement('afterend', modalDiv);
-
-        // 확인용 (콘솔 출력)
-        console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
-    });
 
     function allBtn() {
         window.location.href = '/course/list/all';
