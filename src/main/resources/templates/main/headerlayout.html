@@ -7,6 +7,7 @@
 <!--    <link th:href="@{/css/modal.css}" rel="stylesheet"/>-->
     <link th:href="@{/css/footer.css}" rel="stylesheet"/>
     <link th:href="@{/css/main.css}" rel="stylesheet"/>
+    <link rel="icon" th:href="@{'/images/favicon.ico'}" type="image/x-icon">
     <style>
         * {
             margin: 0;
@@ -98,9 +99,6 @@
                 <button class="dropdown-btn dropdown-subject-btn" onclick="allBtn()">&#9776; 강좌</button>
                 <ul class="dropdown-menu dropdown-subject">
                     <li><a href="/course/list/all">전체 강좌 보기</a></li>
-<!--                    <li><a href="#">인문</a></li>-->
-<!--                    <li><a href="#">사회</a></li>-->
-<!--                    <li><a href="#">공학</a></li>-->
                 </ul>
             </div>
             <div class="menu-icon dropdown">
@@ -214,28 +212,6 @@
             behavior: "smooth" // Smooth scrolling effect
         });
     }
-
-    const searchBtn = document.getElementById('search-button');
-    if(searchBtn != null) {
-        // JavaScript 코드 추가
-        searchBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            // header 요소 가져오기
-            const headerElement = document.getElementById('main');
-
-            // 새로운 div 요소 생성
-            const modalDiv = document.createElement('div');
-            modalDiv.setAttribute('th:replace', 'main/modal :: modal');
-
-            // header 아래에 div 추가
-            headerElement.insertAdjacentElement('afterend', modalDiv);
-
-            // 확인용 (콘솔 출력)
-            console.log('<div th:replace="main/modal :: modal"></div> 추가 완료');
-        });
-    }
-
 
     function allBtn() {
         window.location.href = '/course/list/all';

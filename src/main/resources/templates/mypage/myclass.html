@@ -25,8 +25,6 @@
             color: #333;
         }
 
-
-
         /* User Info */
         .user-info {
             display: flex;
@@ -89,6 +87,10 @@
         /* Course Section */
         .course-section {
             margin-top: 30px;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 20px;
+            width: 100%;
         }
 
         .course-section h3 {
@@ -101,6 +103,7 @@
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
+            min-width: 300px;
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -154,6 +157,10 @@
             padding: 20px;
         }
 
+        .cancel-btn {
+            background-color: #e74c3c;
+            color: white;
+        }
 
     </style>
 </head>
@@ -188,10 +195,9 @@
                 <p th:text="${completed}"></p>
             </div>
         </div>
-
         <!-- Courses -->
+        <h3>수강중인 강좌</h3>
         <div class="course-section">
-            <h3>수강중인 강좌</h3>
             <div class="course-card" th:each="item, status:${courselist.content}">
                 <div class="course-details">
                     <h4 th:text="${item.title}"></h4>
@@ -201,18 +207,43 @@
                 </div>
                 <div class="course-actions">
                     <button class="learn-btn" id="learnGoBtn" th:onclick="|location.href='@{/learn/view/{courseId}(courseId=${item.courseId})}'|">학습하기</button>
+                    <button class="cancel-btn" th:data-courseId="${item.courseId}" onclick="unenroll(this)">수강취소</button>
                 </div>
+                <script>
+                    async function unenroll(element){
+                        const courseId = element.getAttribute("data-courseId")
+                        try {
+                            const response = await fetch(`/courseEnrollment/delete/${courseId}`, {
+                                method: 'DELETE',
+                                headers: {
+                                    'Content-Type': 'application/json'
+                                },
+                            });
+
+                            if (!response.ok) {
+                                console.log("response not ok");
+                                const error = await response.json();
+                                console.log(error.message);
+                                alert(error.message);
+                                return;
+                            }
+                            console.log("response ok");
+                            const result = await response.json();
+                            console.log(result);
+                            alert(result.message);
+                            location.reload();
+                        } catch (error) {
+                            console.error('수강취소 에러:', error);
+                            alert(error.message || '수강취소에 실패했습니다.');
+                        }
+                    }
+                </script>
             </div>
         </div>
+        <div th:replace="main/paging :: paging"></div>
     </div>
-
-    <div th:replace="main/paging :: paging"></div>
 
     <form action="/mypage/myclass" method="get"></form>
 </section>
-
-<script th:src="@{/js/paging.js}" layout:fragment="pagingscript" th:inline="javascript"></script>
-
-
 </body>
 </html>

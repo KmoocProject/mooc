@@ -59,7 +59,7 @@
                 <div class="course-image">
                     <img th:src="${item.thumbnail}" th:alt="${item.title}">
                     <span class="badge ongoing">진행중</span>
-                    <span class="badge popular" th:if="${item.isCreditBank==1}">이수중</span>
+                    <span class="badge popular" th:if="${item.isCreditBank==1}">학점은행제</span>
                 </div>
                 <div class="course-info">
                     <h3 th:text="${item.title}"></h3>

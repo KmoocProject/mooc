@@ -17,5 +17,6 @@ public class CourseEnrollmentDTO {
     private Member member;
     private Course course;
     private LocalDateTime enrollmentDate; // DATETIME NOT NULL DEFAULT NOW(), -- 수강신청일
-    private int isCompleted; // TINYINT(1) DEFAULT 0, -- 수강완료여부(80%이상 수강시 완료)
+    @Builder.Default
+    private int isCompleted=0; // TINYINT(1) DEFAULT 0, -- 수강완료여부(80%이상 수강시 완료)
 }
