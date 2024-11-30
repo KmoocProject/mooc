@@ -72,6 +72,7 @@ public class PageDTO<E> {
     private boolean prev;
     private boolean next;
     //@Pattern(regexp = "^(title|content|memberId)$", message = "싫은데요")
+    @Size(max = 100)
     private String searchField;
     @Size(max = 100)
     private String searchValue;
@@ -97,6 +98,19 @@ public class PageDTO<E> {
         if (this.searchField == null || this.searchField.isEmpty()) this.searchField = EMPTY;
         if (this.searchValue == null || this.searchValue.isEmpty()) this.searchValue = EMPTY;
         this.queryString = URLEncoder.encode("searchCategory=" + this.searchField + "&searchWord=" + this.searchValue + "&sortField=" + this.sortField + "&sortOrder=" + this.sortDirection, StandardCharsets.UTF_8);
+    }
+
+    public void setSearchField(String searchField) {
+        if(searchField != null && searchField.length() > 100) {
+            this.searchField = searchField.substring(0, 100);
+        }
+        this.searchField = searchField;
+    }
+    public void setSearchValue(String searchValue) {
+        if(searchValue != null && searchValue.length() > 100) {
+            this.searchValue = searchValue.substring(0, 100);
+        }
+        this.searchValue = searchValue;
     }
 
     /**

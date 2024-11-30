@@ -195,7 +195,7 @@
             <h1>강좌 검색</h1>
             <p>배우고 싶은 강좌를 찾아보세요.</p>
             <div class="search-bar">
-                <input type="text" name="searchValue" th:value="${pageDTO.searchValue}" placeholder="검색어를 입력하세요">
+                <input type="text" name="searchValue" th:value="${pageDTO.searchValue}" placeholder="검색어를 입력하세요" maxlength="100">
                 <button class="search-btn" type="submit">검색</button>
 <!--                <button class="view-all-btn">전체보기</button>-->
             </div>

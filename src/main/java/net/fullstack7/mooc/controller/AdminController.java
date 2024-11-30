@@ -74,7 +74,7 @@ public class AdminController {
                     .status(adminSearchDTO.getStatus())
                     .isApproved(adminSearchDTO.getIsApproved())
                     .memberType(adminSearchDTO.getMemberType())
-                    .searchId(adminSearchDTO.getSearchId())
+                    .searchId(adminSearchDTO.getSearchId().substring(0, Math.min(50, adminSearchDTO.getSearchId().length())))
                     .build();
         }
 
