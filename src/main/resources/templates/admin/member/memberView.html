@@ -219,6 +219,10 @@
                 <label >회원상태 : [[${item.status}]]</label>
             </div>
 
+            <div class="form-group">
+                <label >가입일 : [[${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+            </div>
+
             <th:block th:if="${type=='t'}">
                 <div class="form-group">
                     <label >승인상태 : [[${item.isApproved}]]</label>

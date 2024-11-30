@@ -7,6 +7,7 @@ import lombok.extern.log4j.Log4j2;
 import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.service.AdminServiceIf;
+import net.fullstack7.mooc.service.CourseService;
 import net.fullstack7.mooc.service.NoticeServiceIf;
 import net.fullstack7.mooc.service.SubjectServiceImpl;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,7 @@ public class AdminController {
     private final AdminServiceIf adminService;
     private final NoticeServiceIf noticeService;
     private final SubjectServiceImpl subjectService;
+    private final CourseService courseService;
 
     @GetMapping("/main")
     public String main(Model model) {
@@ -222,13 +224,36 @@ public class AdminController {
     }
 
     @GetMapping("/courseDelete")
-    public String courseDeleteGet(@RequestParam(defaultValue = "0") int courseId, Model model, RedirectAttributes redirectAttributes) {
-        if (courseId == 0) {
+    public String courseDeleteGet(@RequestParam(defaultValue = "0") String courseId, Model model, RedirectAttributes redirectAttributes) {
+        if (courseId.equals("0") || !courseId.matches("^\\d+$")) {
             redirectAttributes.addFlashAttribute("errors", "잘못된 강의 번호");
             return "redirect:/admin/courseList";
         }
 
-        redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("DELETED", courseId));
+        int id = Integer.parseInt(courseId);
+
+        Course course = adminService.getCourse(id);
+
+        if(course == null) {
+            redirectAttributes.addFlashAttribute("errors", "존재하지 않는 강의");
+            return "redirect:/admin/courseList";
+        }
+
+        if(course.getStatus().equals("DRAFT")){
+            try {
+                courseService.deleteCourse(id);
+                redirectAttributes.addFlashAttribute("errors", "삭제 완료");
+            } catch (Exception e) {
+                redirectAttributes.addFlashAttribute("errors", e.getMessage());
+            }
+        }
+        else if(course.getStatus().equals("PUBLISHED")) {
+            redirectAttributes.addFlashAttribute("errors", adminService.modifyCourseStatus("DELETED", id));
+        }
+        else if(course.getStatus().equals("DELETED")) {
+            redirectAttributes.addFlashAttribute("errors", "이미 삭제된 강의");
+        }
+
 
         return "redirect:/admin/courseList";
     }
