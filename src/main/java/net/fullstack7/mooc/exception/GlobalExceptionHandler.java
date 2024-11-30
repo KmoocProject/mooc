@@ -30,13 +30,13 @@ public class GlobalExceptionHandler {
     }
     
     redirectAttributes.addFlashAttribute("errors", errorMessage);
-    return "redirect:/main/error";
+    return "main/error";
   }
 
   @ExceptionHandler(Exception.class)
   public String handleException(Exception e, RedirectAttributes redirectAttributes) {
     log.error("Unexpected error occurred: ", e);
     redirectAttributes.addFlashAttribute("errors", "처리 중 오류가 발생했습니다.");
-    return "redirect:/main/error";
+    return "main/error";
   }
 }
