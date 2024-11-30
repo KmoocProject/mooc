@@ -192,9 +192,58 @@
             color: white;
         }
 
-        a{
+        a {
             text-decoration: none;
             color: black;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header button {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        #quizQuestion {
+            font-size: 1.2rem;
+            margin-bottom: 20px;
+        }
+
+        #quizAnswer {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 10px;
+        }
+
+        #resultMessage {
+            font-size: 1.2rem;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .btn {
+            cursor: pointer;
+            padding: 8px 16px;
+            border-radius: 4px;
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            color: white;
+            border: none;
+        }
+
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+            border: none;
         }
     </style>
 </head>
@@ -224,6 +273,7 @@
                                course.status == 'PUBLISHED' ? '공개' : '삭제'}">
                 </span>
             </p>
+            <p><button th:data-course-id="${course.courseId}" onclick="checkProgressRate(this)">내 진도율 확인하기</button></p>
         </div>
 
         <div class="course-content">
@@ -240,38 +290,36 @@
                         <!-- 콘텐츠 목록 -->
                         <div th:each="content : ${lecture.contents}" class="content-item">
                             <div class="content-title">
-                                <span th:if="${content.isVideo == 1}">🎥</span>
-                                <span th:if="${content.isVideo == 0}">📄</span>
+                                <span th:if="${content.isVideo == 1}">&#x1F3A5;</span>
+                                <!-- 🎥 -->
+                                <span th:if="${content.isVideo == 0}">&#x1F4C4;</span>
+                                <!-- 📄 -->
                                 <span th:text="${content.title}">콘텐츠 제목</span>
                             </div>
                             <div class="content-actions">
                                 <a th:if="${content.isVideo == 1 && content.file != null}"
-                                    th:data-video-path="${content.file?.filePath}" onclick="openVideoModal(this)"
-                                    class="btn">동영상 보기</button>
+                                    th:data-video-path="${content.file?.filePath}"
+                                    th:data-lecture-content-id="${content.lectureContentId}"
+                                    onclick="openVideoModal(this)" class="btn">동영상 보기</a>
                                 <a th:if="${content.isVideo == 0 && content.file != null}"
                                     th:href="@{${content.file?.filePath}}" class="btn" target="_blank">문서 보기</a>
                                 <a th:if="${content.isVideo == 0 && content.file != null}"
                                     th:href="@{/api/teacher/download(filePath=${content.file?.filePath})}" class="btn"
                                     target="_blank">다운로드</a>
                             </div>
+
                         </div>
                         <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="content-item">
                             <div class="content-title">
-                                <span>🧠</span>
+                                <span>&#x1F4A1;</span>
                                 <span>퀴즈</span>
                             </div>
                             <div class="content-actions">
-                                <a class="btn" onclick="openQuizModal(this)">퀴즈 풀기</a>
+                                <a class="btn" th:data-lecture-id="${lecture.lectureId}"
+                                    th:data-quiz-data="${#strings.arrayJoin(lecture.quizzes.![question + '|||' + answer], '|||')}"
+                                    onclick="openQuizModal(this)">퀴즈 풀기</a>
                             </div>
                         </div>
-
-                        <div class="quiz-section" style="display: none;">
-                            <div th:each="quiz : ${lecture.quizzes}" class="quiz-data">
-                                <p class="quiz-question" th:text="${quiz.question}">퀴즈 문제</p>
-                                <p class="quiz-answer" th:text="${quiz.answer}">퀴즈 답안</p>
-                            </div>
-                        </div>
-
                     </div>
                 </div>
             </div>
@@ -290,9 +338,32 @@
                 </video>
             </div>
         </div>
+        <!-- 퀴즈 모달 -->
+        <div id="quizModal"
+            style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); 
+background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index: 1000; width: 90%; max-width: 600px; border-radius: 8px;">
+            <div class="modal-header">
+                <h3>섹션 퀴즈</h3>
+                <button onclick="closeQuizModal()">×</button>
+            </div>
+            <div class="modal-body">
+                <div id="quizProgress" class="text-center mb-3">
+                    <span id="currentQuizNumber">1</span> / <span id="totalQuizCount">0</span>
+                </div>
+                <div id="quizContent">
+                    <p id="quizQuestion"></p>
+                    <input type="text" id="quizAnswer" class="form-control" placeholder="답을 입력하세요">
+                    <button onclick="submitQuizAnswer()" class="btn btn-primary mt-3">제출</button>
+                </div>
+                <div id="quizResult" style="display: none;">
+                    <p id="resultMessage"></p>
+                    <button id="nextQuizBtn" onclick="showNextQuiz()" class="btn btn-primary">다음 문제</button>
+                    <button onclick="closeQuizModal()" class="btn btn-secondary">종료</button>
+                </div>
+            </div>
+        </div>
 
         <script>
-
             function toggleAccordion(element) {
                 const lectureId = element.getAttribute('data-lecture-id');
                 const content = document.getElementById('lecture-' + lectureId);
@@ -300,12 +371,14 @@
             }
 
             function openVideoModal(button) {
+                const lectureContentId = button.getAttribute('data-lecture-content-id');
                 const videoPath = button.getAttribute('data-video-path');
                 const modal = document.getElementById('videoModal');
                 const videoPlayer = document.querySelector('#videoPlayer source');
                 videoPlayer.src = videoPath;
                 videoPlayer.parentElement.load();
                 modal.style.display = 'block';
+                updateLearnHistory(lectureContentId);
             }
 
             function closeVideoModal() {
@@ -314,6 +387,118 @@
                 videoPlayer.pause();
                 modal.style.display = 'none';
             }
+
+            async function updateLearnHistory(lectureContentId) {
+                try {
+                    const response = await fetch(`/api/learn-history/${lectureContentId}`, {
+                        method: "PUT"
+                    });
+                    const result = await response.json();
+
+                    if (result.creditAdded) {
+                        alert("축하합니다! 강의를 완료하여 학점이 추가되었습니다.");
+                    } else if (result.isCompleted) {
+                        alert("학습 진도가 저장되었습니다.");
+                    } else {
+                        alert("학습 진도를 저장하는 중 문제가 발생했습니다.");
+                    }
+
+                    return result.isCompleted;
+                } catch (error) {
+                    console.error("Error:", error);
+                    alert("오류가 발생했습니다.");
+                    return false;
+                }
+            }
+
+            async function checkProgressRate(button) {
+                const courseId = button.getAttribute('data-course-id');
+                console.log("courseId : " + courseId);
+                const response = await fetch(`/api/learn-history/${courseId}`, {
+                    method: "get"
+                });
+                const result = await response.json();
+                const progressRate = result.progressRate;
+                const percentage = Math.round(progressRate * 100);
+                alert(`현재 진도율: ${percentage}%`);
+            }
+            let quizzes = [];
+            let currentQuizIndex = 0;
+
+            function openQuizModal(button) {
+                const quizData = button.getAttribute('data-quiz-data').split('|||');
+                quizzes = [];
+                currentQuizIndex = 0;
+                
+                // 퀴즈 데이터 파싱
+                for (let i = 0; i < quizData.length; i += 2) {
+                    quizzes.push({
+                        question: quizData[i],
+                        answer: quizData[i + 1]
+                    });
+                }
+                
+                // 모달 초기화
+                document.getElementById('totalQuizCount').textContent = quizzes.length;
+                showCurrentQuiz();
+                document.getElementById('quizModal').style.display = 'block';
+            }
+
+            function showCurrentQuiz() {
+                const currentQuiz = quizzes[currentQuizIndex];
+                document.getElementById('currentQuizNumber').textContent = currentQuizIndex + 1;
+                document.getElementById('quizQuestion').textContent = currentQuiz.question;
+                document.getElementById('quizAnswer').value = '';
+                document.getElementById('quizContent').style.display = 'block';
+                document.getElementById('quizResult').style.display = 'none';
+            }
+
+            function submitQuizAnswer() {
+                const userAnswer = document.getElementById('quizAnswer').value.trim();
+                const currentQuiz = quizzes[currentQuizIndex];
+                const isCorrect = userAnswer === currentQuiz.answer;
+                
+                document.getElementById('quizContent').style.display = 'none';
+                document.getElementById('quizResult').style.display = 'block';
+                document.getElementById('resultMessage').textContent = isCorrect ? 
+                    '정답입니다! &#128079;' : 
+                    `틀렸습니다. 정답은 "${currentQuiz.answer}" 입니다.`;
+                    
+                // 마지막 문제인 경우 다음 문제 버튼 숨기기
+                const nextQuizBtn = document.getElementById('nextQuizBtn');
+                if (currentQuizIndex === quizzes.length - 1) {
+                    nextQuizBtn.style.display = 'none';
+                } else {
+                    nextQuizBtn.style.display = 'inline-block';
+                }
+            }
+
+            function showNextQuiz() {
+                if (currentQuizIndex < quizzes.length - 1) {
+                    currentQuizIndex++;
+                    showCurrentQuiz();
+                }
+            }
+
+            function closeQuizModal() {
+                document.getElementById('quizModal').style.display = 'none';
+                quizzes = [];
+                currentQuizIndex = 0;
+            }
+
+            // ESC 키로 모달 닫기
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape') {
+                    closeQuizModal();
+                }
+            });
+
+            // Enter 키로 답안 제출
+            document.getElementById('quizAnswer').addEventListener('keypress', function(event) {
+                if (event.key === 'Enter') {
+                    submitQuizAnswer();
+                }
+            });
         </script>
 
     </section>

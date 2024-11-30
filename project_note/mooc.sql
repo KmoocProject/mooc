@@ -174,3 +174,11 @@ insert into institution (institutionName) values ('신비대학교');
 insert into institution (institutionName) values ('환상적인대학교');
 insert into institution (institutionName) values ('비현실대학교');
 insert into institution (institutionName) values ('상상의대학교');
+
+select count(learningHistory.lectureContentId) as completedLectureContentCount, course.courseId
+from learningHistory
+         inner join lectureContent on learningHistory.lectureContentId = lectureContent.lectureContentId
+         inner join lecture on lectureContent.lectureId = lecture.lectureId
+         inner join course on lecture.courseId = course.courseId
+where learningHistory.isCompleted = 0 AND learningHistory.memberId="kgmksw" AND course.courseId = 20
+group by course.courseId;

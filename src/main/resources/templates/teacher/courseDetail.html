@@ -75,8 +75,8 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="mb-1">
-                                            <span th:if="${content.isVideo == 1}">🎥</span>
-                                            <span th:if="${content.isVideo == 0}">📄</span>
+                                            <span th:if="${content.isVideo == 1}">&#128270;</span>
+                                            <span th:if="${content.isVideo == 0}">&#128190;</span>
                                             <span th:text="${content.title}">콘텐츠 제목</span>
                                         </h5>
                                         <p class="mb-1" th:text="${content.description}">콘텐츠 설명</p>
@@ -87,19 +87,20 @@
                                             th:data-video-path="${content.file?.filePath}"
                                             onclick="openVideoModal(this.getAttribute('data-video-path'))"
                                             class="btn btn-sm btn-outline-primary">
-                                            <span>🎥</span> 동영상 보기
+                                            <span>&#128270;</span> 동영상 보기
+                                            <!--🎥-->
                                         </button>
                                         <!-- 문서 다운로드 버튼 -->
                                         <a th:if="${content.isVideo == 0 && content.file != null}"
                                             th:href="@{/api/teacher/download(filePath=${content.file?.filePath})}"
                                             class="btn btn-sm btn-outline-secondary">
-                                            <span>📄</span> 문서 다운로드
+                                            <span>&#128190;</span> 문서 다운로드
                                         </a>
                                         <a th:if="${content.isVideo == 0 && content.file != null}"
                                             th:href="@{${content.file?.filePath}}"
                                             class="btn btn-sm btn-outline-secondary"
                                             target="_blank">
-                                            <span>👀</span> 문서 보기
+                                            <span>&#128279;</span> 문서 보기
                                         </a>
                                         <!-- 파일이 없는 경우 메시지 표시 -->
                                         <span th:if="${content.file == null}" class="text-muted">

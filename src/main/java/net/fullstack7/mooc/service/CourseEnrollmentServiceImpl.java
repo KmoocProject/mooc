@@ -71,4 +71,33 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentServiceIf {
         return courseEnrollmentRepository.findByCourseAndMember(course, member).isPresent();
     }
 
+    @Override
+    public int updateCourseEnrollment(int courseId, String memberId) {
+        try{
+            Member member = memberRepository.findByMemberId(memberId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+            Course course = courseRepository.findById(courseId).orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+            CourseEnrollment courseEnrollment = courseEnrollmentRepository.findByCourseAndMember(course, member).orElseThrow(() -> new IllegalArgumentException("수강중인 강의가 아닙니다."));
+            courseEnrollment.setIsCompleted(1);
+            return courseEnrollmentRepository.updateCourseEnrollment(course, member);
+        }catch(Exception e){
+            return 0;
+        }
+    }
+
+    @Override
+    public boolean isAlreadyCompleted(int courseId, String memberId) {
+        try {
+            Member member = memberRepository.findByMemberId(memberId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 회원입니다."));
+            Course course = courseRepository.findById(courseId)
+                .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강의입니다."));
+            CourseEnrollment enrollment = courseEnrollmentRepository.findByCourseAndMember(course, member)
+                .orElseThrow(() -> new IllegalArgumentException("수강중인 강의가 아닙니다."));
+                
+            return enrollment.getIsCompleted() == 1;
+        } catch(Exception e) {
+            return false;
+        }
+    }
+
 }
