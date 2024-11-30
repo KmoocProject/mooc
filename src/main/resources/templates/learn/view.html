@@ -265,17 +265,13 @@
                             </div>
                         </div>
 
-                        <!-- 퀴즈 섹션 -->
-                        <!-- <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="quiz-section">
-                            <h3>퀴즈</h3>
-                            <div th:each="quiz : ${lecture.quizzes}" class="content-item">
-                                <div>
-                                    <p th:text="${quiz.question}">퀴즈 문제</p>
-                                    <p th:text="${quiz.answer}">퀴즈 답안</p>
-                                </div>
+                        <div class="quiz-section" style="display: none;">
+                            <div th:each="quiz : ${lecture.quizzes}" class="quiz-data">
+                                <p class="quiz-question" th:text="${quiz.question}">퀴즈 문제</p>
+                                <p class="quiz-answer" th:text="${quiz.answer}">퀴즈 답안</p>
                             </div>
-                        </div> -->
-                        
+                        </div>
+
                     </div>
                 </div>
             </div>
