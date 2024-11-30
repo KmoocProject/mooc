@@ -28,7 +28,7 @@ public class CourseEnrollmentServiceImpl implements CourseEnrollmentServiceIf {
             throw new IllegalArgumentException("이미 수강중인 강의");
         }
         if(course.getIsCreditBank()==1){
-            if(courseEnrollmentDTO.getMember().getCredit()==0){
+            if(courseEnrollmentDTO.getMember().getMemberType()==0){
                 throw new IllegalArgumentException("학점은행제 회원이 아님");
             }
         }
