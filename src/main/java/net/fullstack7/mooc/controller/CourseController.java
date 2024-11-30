@@ -59,35 +59,42 @@ public class CourseController {
 
     @GetMapping("/view")
     public String courseView(@RequestParam(required = false, defaultValue = "-1") int courseId, HttpSession session, Model model,RedirectAttributes redirectAttributes) {
-        if(courseId<=0){
-            redirectAttributes.addFlashAttribute("errors","유효하지 않은 값이 입력되었습니다.");
-            return "redirect:/course/list/all";
-        }
-        CourseViewDTO courseViewDTO = courseService.getCourseViewById(courseId);
-        if(courseViewDTO == null) {
-            redirectAttributes.addFlashAttribute("errors","존재하지 않는 강의입니다.");
+        try{
+            if(courseId<=0){
+                redirectAttributes.addFlashAttribute("errors","유효하지 않은 값이 입력되었습니다.");
+                return "redirect:/course/list/all";
+            }
+            CourseViewDTO courseViewDTO = courseService.getCourseViewById(courseId);
+            if(courseViewDTO == null) {
+                redirectAttributes.addFlashAttribute("errors","존재하지 않는 강의입니다.");
+                return "redirect:/course/list/all";
+            }
+
+            if(!courseViewDTO.getStatus().equals("PUBLISHED")) {
+                redirectAttributes.addFlashAttribute("errors","삭제 또는 준비중인 강의입니다.");
+                return "redirect:/course/list/all";
+            }
+
+            MemberDTO memberDTO = (MemberDTO)session.getAttribute("memberDTO");
+            if(memberDTO == null) {
+                memberDTO = MemberDTO.builder().memberId("").build();
+            }
+            CourseEnrollmentDTO courseEnrollmentDTO = courseEnrollmentService.isEnrolled(
+                    CourseEnrollmentDTO.builder()
+                            .course(Course.builder().courseId(courseId).build())
+                            .member(Member.builder().memberId(memberDTO.getMemberId()).build())
+                            .build()
+            );
+
+            log.info("courseViewDTO : {}", courseViewDTO);
+            model.addAttribute("courseViewDTO", courseViewDTO);
+            model.addAttribute("isEnrolled", courseEnrollmentDTO);
+            return "course/view";
+        }catch(Exception e){
+            log.error(e);
+            redirectAttributes.addFlashAttribute("errors", e.getMessage());
             return "redirect:/course/list/all";
         }
 
-        if(!courseViewDTO.getStatus().equals("PUBLISHED")) {
-            redirectAttributes.addFlashAttribute("errors","삭제 또는 준비중인 강의입니다.");
-            return "redirect:/course/list/all";
-        }
-
-        MemberDTO memberDTO = (MemberDTO)session.getAttribute("memberDTO");
-        if(memberDTO == null) {
-            memberDTO = MemberDTO.builder().memberId("").build();
-        }
-        CourseEnrollmentDTO courseEnrollmentDTO = courseEnrollmentService.isEnrolled(
-                CourseEnrollmentDTO.builder()
-                        .course(Course.builder().courseId(courseId).build())
-                        .member(Member.builder().memberId(memberDTO.getMemberId()).build())
-                        .build()
-        );
-
-        log.info("courseViewDTO : {}", courseViewDTO);
-        model.addAttribute("courseViewDTO", courseViewDTO);
-        model.addAttribute("isEnrolled", courseEnrollmentDTO);
-        return "course/view";
     }
 }
