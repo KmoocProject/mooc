@@ -182,6 +182,7 @@ public class MyPageController {
             if (memberDTO != null) {
                 memberServiceImpl.modifyMember(memberDTO);
             }
+
             session.setAttribute("memberDTO", memberDTO);
 //            System.out.println("Session memberDTO: " + session.getAttribute("memberDTO"));
             redirectAttributes.addFlashAttribute("errors", "회원 정보가 수정되었습니다.");
