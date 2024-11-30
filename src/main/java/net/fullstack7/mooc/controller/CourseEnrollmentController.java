@@ -17,6 +17,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/courseEnrollment")
@@ -32,7 +33,7 @@ public class CourseEnrollmentController {
         try{
             MemberDTO memberDTO = (MemberDTO) session.getAttribute("memberDTO");
             if (memberDTO == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("로그인이 필요합니다.");
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("message","로그인이 필요합니다."));
             }
             courseEnrollmentService.regist(
                     CourseEnrollmentDTO

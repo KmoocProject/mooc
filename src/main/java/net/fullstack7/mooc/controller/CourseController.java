@@ -65,7 +65,7 @@ public class CourseController {
 
         MemberDTO memberDTO = (MemberDTO)session.getAttribute("memberDTO");
         if(memberDTO == null) {
-            return "redirect:/login/login";
+            memberDTO = MemberDTO.builder().memberId("").build();
         }
         CourseEnrollmentDTO courseEnrollmentDTO = courseEnrollmentService.isEnrolled(
                 CourseEnrollmentDTO.builder()
