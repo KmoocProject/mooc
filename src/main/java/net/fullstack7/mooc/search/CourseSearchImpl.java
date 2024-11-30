@@ -118,33 +118,30 @@ public class CourseSearchImpl extends QuerydslRepositorySupport implements Cours
 
         builder.and(qCourse.status.eq("PUBLISHED"));
 
-        if (builder.hasValue())
+        if (builder.hasValue()) {
             query.where(builder);
-
+        }
 
         query.orderBy(qCourse.viewCount.desc());
         query.limit(n);
 
         List<Course> courses = query.fetch();
 
-        List<CourseResponseDTO> courses2 = courses.stream().map(entity -> CourseResponseDTO.builder()
-                .courseId(entity.getCourseId())
-                .isCreditBank(entity.getIsCreditBank())
-                .title(entity.getTitle())
-                .weeks(entity.getWeeks())
-                .thumbnail(entity.getThumbnail())
-                .learningTime(entity.getLearningTime())
-                .description(entity.getDescription())
-                .language(entity.getLanguage())
-                .status(entity.getStatus())
-                .teacherName(entity.getTeacher().getTeacherName())
-                .institutionName(entity.getTeacher().getInstitution().getInstitutionName())
-                .createdAt(entity.getCreatedAt())
-                .build()
+        return courses.stream().map(entity -> CourseResponseDTO.builder()
+               .courseId(entity.getCourseId())
+               .isCreditBank(entity.getIsCreditBank())
+               .title(entity.getTitle())
+               .weeks(entity.getWeeks())
+               .thumbnail(entity.getThumbnail())
+               .learningTime(entity.getLearningTime())
+               .description(entity.getDescription())
+               .language(entity.getLanguage())
+               .status(entity.getStatus())
+               .teacherName(entity.getTeacher().getTeacherName())
+               .institutionName(entity.getTeacher().getInstitution().getInstitutionName())
+               .createdAt(entity.getCreatedAt())
+               .build()
         ).toList();
-
-
-        return courses2;
     }
 
 

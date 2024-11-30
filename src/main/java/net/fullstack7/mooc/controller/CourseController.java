@@ -4,9 +4,11 @@ import jakarta.servlet.http.HttpSession;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import net.fullstack7.mooc.dto.CourseDTO;
-import net.fullstack7.mooc.dto.CourseSearchDTO;
-import net.fullstack7.mooc.dto.CourseViewDTO;
+import net.fullstack7.mooc.domain.Course;
+import net.fullstack7.mooc.domain.CourseEnrollment;
+import net.fullstack7.mooc.domain.Member;
+import net.fullstack7.mooc.dto.*;
+import net.fullstack7.mooc.service.CourseEnrollmentServiceIf;
 import net.fullstack7.mooc.service.CourseService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -23,7 +25,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Log4j2
 public class CourseController {
     private final CourseService courseService;
-
+    private final CourseEnrollmentServiceIf courseEnrollmentService;
     @GetMapping("/list/{type}")
     public String courseList(@PathVariable String type, Model model
             , @Valid CourseSearchDTO searchDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes) {
@@ -60,8 +62,21 @@ public class CourseController {
             redirectAttributes.addFlashAttribute("errors","존재하지 않는 강의입니다.");
             return "redirect:/course/list/all";
         }
+
+        MemberDTO memberDTO = (MemberDTO)session.getAttribute("memberDTO");
+        if(memberDTO == null) {
+            return "redirect:/login/login";
+        }
+        CourseEnrollmentDTO courseEnrollmentDTO = courseEnrollmentService.isEnrolled(
+                CourseEnrollmentDTO.builder()
+                        .course(Course.builder().courseId(courseId).build())
+                        .member(Member.builder().memberId(memberDTO.getMemberId()).build())
+                        .build()
+        );
+
         log.info("courseViewDTO : {}", courseViewDTO);
         model.addAttribute("courseViewDTO", courseViewDTO);
+        model.addAttribute("isEnrolled", courseEnrollmentDTO);
         return "course/view";
     }
 }

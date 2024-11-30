@@ -311,7 +311,7 @@ public class CourseService {
   public CourseViewDTO getCourseViewById(int courseId) {
     CourseViewDTO courseViewDTO = modelMapper.map(courseRepository.getReferenceById(courseId), CourseViewDTO.class);
     List<CourseDTO> recommendations = courseRepository
-        .findBySubjectOrderByCreatedAtDesc(courseViewDTO.getSubject(), PageRequest.of(0, 5))
+        .findBySubjectAndStatusOrderByCourseIdDesc(courseViewDTO.getSubject(),"PUBLISHED",PageRequest.of(0, 5))
         .stream().filter(c -> c.getCourseId() != courseViewDTO.getCourseId())
         .map(course -> modelMapper.map(course, CourseDTO.class)).toList();
     courseViewDTO.setRecommendations(recommendations);

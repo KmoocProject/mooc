@@ -1,8 +1,6 @@
 package net.fullstack7.mooc.repository;
 
-import net.fullstack7.mooc.domain.Course;
-import net.fullstack7.mooc.domain.Subject;
-import net.fullstack7.mooc.domain.Teacher;
+import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.search.CourseSearch;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -15,7 +13,6 @@ import java.util.Optional;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 @Repository
@@ -41,5 +38,5 @@ public interface CourseRepository extends JpaRepository<Course, Integer>, Course
     int countByCreatedAtIsBetween(LocalDateTime from, LocalDateTime to);
     int countByStatusIn(List<String> status);
 
-    Page<Course> findBySubjectOrderByCreatedAtDesc(Subject subject, Pageable pageable);
+    Page<Course> findBySubjectAndStatusOrderByCourseIdDesc(Subject subject, String status, Pageable pageable);
 }
