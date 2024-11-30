@@ -40,8 +40,9 @@
         </div>
 
         <div class="dropdown-icon">
-            <a>&#9660;</a>
+            <a href="javascript:void(0);">&#9660;</a>
         </div>
+
 
     </div>
     <section class="search">
@@ -135,13 +136,11 @@
     const notices = [[${notices}]];
     document.addEventListener("DOMContentLoaded", function () {
         const noticeDisplay = document.getElementById("notice-display");
+        const dropdownIcon = document.querySelector(".dropdown-icon a");
         let currentIndex = 0;
-
-
 
         // 공지사항 표시
         function displayNotice(notice) {
-
             // 기존 내용 숨기기
             noticeDisplay.classList.remove("active");
             noticeDisplay.classList.add("hide");
@@ -149,7 +148,10 @@
             // 슬라이드 전환 대기
             setTimeout(() => {
                 // 새 내용 삽입
-                noticeDisplay.innerHTML = '<p class="notice-text"><a href="/main/notice/view/'+notice.noticeId+'">'+notice.title+'</a></p><p class="notice-date">'+ (notice.createdAt.split("T"))[0] + '</p>';
+                noticeDisplay.innerHTML = `
+                    <p class="notice-text"><a href="/main/notice/view/${notice.noticeId}">${notice.title}</a></p>
+                    <p class="notice-date">${(notice.createdAt.split("T"))[0]}</p>
+                `;
 
                 // 새 내용 표시
                 noticeDisplay.classList.remove("hide");
@@ -165,6 +167,12 @@
             }, 5000); // 5초 간격
         }
 
+        // 공지사항 직접 전환 (드롭다운 아이콘 클릭 시)
+        dropdownIcon.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % notices.length; // 다음 인덱스
+            displayNotice(notices[currentIndex]); // 공지사항 업데이트
+        });
+
         // 초기화
         if (notices.length > 0) {
             noticeDisplay.classList.add("active"); // 첫 공지사항 표시
@@ -172,9 +180,9 @@
             rotateNotices();
         } else {
             noticeDisplay.innerHTML = `
-            <p class="notice-text">등록된 공지사항이 없습니다.</p>
-            <p class="notice-date"></p>
-        `;
+                <p class="notice-text">등록된 공지사항이 없습니다.</p>
+                <p class="notice-date"></p>
+            `;
         }
     });
 
