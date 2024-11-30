@@ -53,7 +53,6 @@ public class MyPageController {
         model.addAttribute("pageDTO", searchDTO);
         model.addAttribute("notcompleted", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 0));
         model.addAttribute("completed", memberServiceImpl.getMyCourseCount(memberDTO.getMemberId(), 1));
-//        model.addAttribute("pageInfo", searchDTO);
 
         return "mypage/myclass";
     }

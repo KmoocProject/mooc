@@ -222,7 +222,8 @@ public class AdminServiceImpl implements AdminServiceIf {
         LocalDateTime minus1month = now.toLocalDate().atStartOfDay().minusMonths(1);
         int newMemberOneMonth = memberRepository.countByCreatedAtIsBetween(minus1month, now)
                 + teacherRepository.countByCreatedAtIsBetween(minus1month, now);
-        int totalMemberCount = memberRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})));
+        int totalMemberCount = memberRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})))
+                + teacherRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})));
 
         int newCourseOneMonth = courseRepository.countByCreatedAtIsBetween(minus1month, now);
         int totalCourseCount = courseRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"PUBLISHED"})));

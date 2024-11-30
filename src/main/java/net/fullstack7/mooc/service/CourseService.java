@@ -306,6 +306,7 @@ public class CourseService {
     quizRepository.deleteById(quizId);
   }
 
+  @Transactional
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
     Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null,
         -1);

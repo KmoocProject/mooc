@@ -128,7 +128,6 @@
         <hr>
         <button class="back-modify" th:if="${item.status=='DRAFT'}" th:onclick="|location.href='@{/admin/courseApprove/{courseId}(courseId=${item.courseId})}'|">승인</button>
         <button class="back-delete" th:onclick="|location.href='@{/admin/courseDelete(courseId=${item.courseId})}'|">삭제</button>
-        <button class="back-button" id="backBtn">목록</button>
     </div>
 
 
@@ -137,13 +136,5 @@
 
 <div th:replace="admin/footer :: footer"></div>
 
-<script>
-    const backBtn = document.getElementById("backBtn")
-
-        backBtn.addEventListener("click", ()=>{
-            location.href='/admin/courseList'
-        });
-
-</script>
 </body>
 </html>
