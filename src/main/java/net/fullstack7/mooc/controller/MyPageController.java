@@ -178,7 +178,7 @@ public class MyPageController {
             return "redirect:/login/login";
         }
         if (bindingResult.hasErrors()) {
-            model.addAttribute("errors", bindingResult.getAllErrors());
+            model.addAttribute("fielderror", bindingResult.getAllErrors());
             model.addAttribute("member", memberDTO);
             return "mypage/memberView";
         }
@@ -189,10 +189,8 @@ public class MyPageController {
             }
             memberDTO.setMemberId(loginedMemberInfo.getMemberId());
             session.setAttribute("memberDTO", memberDTO);
-//            System.out.println("Session memberDTO: " + session.getAttribute("memberDTO"));
             redirectAttributes.addFlashAttribute("errors", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
-//            session.setAttribute("errorMessage", "회원 정보 수정에 실패했습니다.");
             redirectAttributes.addFlashAttribute("errors", "회원 정보 수정에 실패했습니다.");
             return "redirect:/mypage/memberView";
         }

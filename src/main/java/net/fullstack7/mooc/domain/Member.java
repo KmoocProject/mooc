@@ -38,4 +38,9 @@ public class Member {
     @CreatedDate
     @Column(name = "createdAt", columnDefinition = "datetime not null default now()")
     private LocalDateTime createdAt; //TIMESTAMP DEFAULT CURRENT_TIMESTAMP -- 생성일
+
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 }

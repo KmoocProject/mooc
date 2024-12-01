@@ -1,8 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
     <title>K-MOOC</title>
@@ -141,7 +138,7 @@
         <form action="/admin/noticeList">
             <div class="search-bar">
                 <select name="searchField" class="category-dropdown">
-                    <option value="">선택</option>
+                    <option value="">제목+내용</option>
                     <option th:selected="${pageDTO.searchField == 'title'}" value="title">제목</option>
                     <option th:selected="${pageDTO.searchField == 'content'}" value="content">내용</option>
                 </select>
