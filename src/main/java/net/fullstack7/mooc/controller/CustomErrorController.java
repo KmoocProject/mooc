@@ -12,6 +12,6 @@ public class CustomErrorController {
             MethodArgumentTypeMismatchException ex,
             RedirectAttributes redirectAttributes) {
         redirectAttributes.addFlashAttribute("errors", "유효하지 않은 값이 입력되었습니다.");
-        return "redirect:/course/list/all";
+        return "error/error";
     }
 }
