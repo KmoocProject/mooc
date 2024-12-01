@@ -397,8 +397,11 @@ background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index:
                     if (result.creditAdded) {
                         alert("축하합니다! 강의를 완료하여 학점이 추가되었습니다.");
                     } else if (result.isCompleted) {
-                        alert("학습 진도가 저장되었습니다.");
+                        alert("이미 완료된 강의입니다.");
+                    } else {
+                        alert("학습 진도가 저장되었습니다.")
                     }
+
                     return result.isCompleted;
                 } catch (error) {
                     console.error("Error:", error);
