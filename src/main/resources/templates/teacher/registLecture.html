@@ -369,7 +369,7 @@
             }));
 
             try {
-                const response = await fetch(`/api/teacher/courses/${courseData.courseId}/lectures`, {
+                const response = await fetch(`/api/teacher/courses/${courseData.courseId}/lectures/batch`, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
