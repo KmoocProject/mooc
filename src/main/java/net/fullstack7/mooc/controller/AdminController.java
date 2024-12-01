@@ -10,6 +10,7 @@ import net.fullstack7.mooc.service.AdminServiceIf;
 import net.fullstack7.mooc.service.CourseService;
 import net.fullstack7.mooc.service.NoticeServiceIf;
 import net.fullstack7.mooc.service.SubjectServiceImpl;
+import org.springframework.boot.autoconfigure.http.HttpMessageConverters;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -28,6 +29,7 @@ public class AdminController {
     private final NoticeServiceIf noticeService;
     private final SubjectServiceImpl subjectService;
     private final CourseService courseService;
+    private final HttpMessageConverters messageConverters;
 
     @GetMapping("/main")
     public String main(Model model) {
@@ -48,12 +50,12 @@ public class AdminController {
     public String loginPost(@Valid AdminLoginDTO adminLoginDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes
             , HttpSession session) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            redirectAttributes.addFlashAttribute("loginerror", bindingResult.getAllErrors().get(0).getDefaultMessage());
             return "redirect:/admin/login";
         }
         String result = adminService.login(adminLoginDTO);
         if (result == null) {
-            redirectAttributes.addFlashAttribute("errors", "비밀번호가 일치하지 않거나 존재하지 않는 회원입니다.");
+            redirectAttributes.addFlashAttribute("loginerror", "비밀번호가 일치하지 않거나 존재하지 않는 회원입니다.");
             return "redirect:/admin/login";
         }
         session.setAttribute("loginAdminId", result);
@@ -179,6 +181,7 @@ public class AdminController {
         }
 
         searchDTO.initialize();
+        searchDTO.setSortField("createdAt");
 
         model.addAttribute("pageinfo", adminService.getCourses(searchDTO));
         model.addAttribute("pageDTO", searchDTO);
@@ -306,7 +309,11 @@ public class AdminController {
     public String noticeRegistPost(@Valid NoticeDTO noticeDTO, BindingResult bindingResult, RedirectAttributes redirectAttributes
             , HttpSession session) {
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            if(message != null && message.startsWith("Failed")) {
+                message = "필드 값 오류";
+            }
+            redirectAttributes.addFlashAttribute("errors", message);
             redirectAttributes.addFlashAttribute("item", noticeDTO);
             return "redirect:/admin/noticeRegist";
         }
@@ -349,8 +356,13 @@ public class AdminController {
             return "redirect:/admin/noticeList";
         }
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors().get(0).getDefaultMessage());
-            return "redirect:/admin/noticeModify";
+            String message = bindingResult.getAllErrors().get(0).getDefaultMessage();
+            if(message != null && message.startsWith("Failed")) {
+                message = "필드 값 오류";
+            }
+            redirectAttributes.addFlashAttribute("errors", message);
+
+            return "redirect:/admin/noticeModify/"+noticeId;
         }
         noticeDTO.setAdminId((String) session.getAttribute("loginAdminId"));
 

@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Log4j2
 @Service
@@ -43,7 +44,6 @@ public class NoticeServiceImpl implements NoticeServiceIf {
 
     @Override
     public List<NoticeDTO> getNewestNotices() {
-
         return noticeRepository.findTop5ByOrderByCreatedAtDesc().stream().map(entity ->
                 NoticeDTO.builder()
                         .importance(entity.getImportance())
@@ -52,7 +52,7 @@ public class NoticeServiceImpl implements NoticeServiceIf {
                         .createdAt(entity.getCreatedAt())
                         .noticeId(entity.getNoticeId())
                         .build()
-        ).toList();
+        ).collect(Collectors.toList());
     }
 
 }
