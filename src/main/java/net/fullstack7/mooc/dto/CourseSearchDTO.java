@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 public class CourseSearchDTO extends PageDTO<CourseResponseDTO> {
     @Builder.Default
     private int isCreditBank = -1;
+    @Setter
     @Builder.Default
     private int subjectId = -1;
     private String status;
@@ -41,11 +42,17 @@ public class CourseSearchDTO extends PageDTO<CourseResponseDTO> {
     }
 
     public void setIsCreditBank(String isCreditBank) {
-        if(isCreditBank.matches("^\\d+$") && isCreditBank.length() <= 1) {
+        if(isCreditBank.matches("^\\d+$") && isCreditBank.length() == 1) {
             if(Integer.parseInt(isCreditBank) >= -1 && Integer.parseInt(isCreditBank) <= 1)
                 this.isCreditBank = Integer.parseInt(isCreditBank);
             else this.isCreditBank = -1;
         } else this.isCreditBank = -1;
+    }
+
+    public void setSubjectId(int subjectId) {
+
+            this.subjectId = subjectId;
+
     }
 
     public void setSubjectId(long subjectId) {
@@ -55,9 +62,14 @@ public class CourseSearchDTO extends PageDTO<CourseResponseDTO> {
     }
 
     public void setSubjectId(String subjectId) {
-        if(subjectId.matches("^\\d+$") && subjectId.length() <= 5) {
+        if(subjectId.matches("^\\d+$") && subjectId.length() <= 5 && !subjectId.isBlank()) {
             this.subjectId = Integer.parseInt(subjectId);
         } else this.subjectId = -1;
+    }
+
+    public void setInstitutionId(int institutionId) {
+        this.institutionId = institutionId;
+
     }
 
     public void setInstitutionId(long institutionId) {
