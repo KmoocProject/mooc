@@ -9,6 +9,7 @@
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
     <link th:href="@{/css/learnsidebar.css}" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         .content {
             max-width: 100%;
@@ -290,10 +291,8 @@
                         <!-- 콘텐츠 목록 -->
                         <div th:each="content : ${lecture.contents}" class="content-item">
                             <div class="content-title">
-                                <span th:if="${content.isVideo == 1}">&#x1F3A5;</span>
-                                <!-- 🎥 -->
-                                <span th:if="${content.isVideo == 0}">&#x1F4C4;</span>
-                                <!-- 📄 -->
+                                <span th:if="${content.isVideo == 1}"><i class="fas fa-video"></i></span>
+                                <span th:if="${content.isVideo == 0}"><i class="fas fa-file-alt"></i></span>
                                 <span th:text="${content.title}">콘텐츠 제목</span>
                             </div>
                             <div class="content-actions">
@@ -311,7 +310,7 @@
                         </div>
                         <div th:if="${lecture.quizzes != null && !lecture.quizzes.empty}" class="content-item">
                             <div class="content-title">
-                                <span>&#x1F4A1;</span>
+                                <span><i class="fas fa-question"></i></span>
                                 <span>퀴즈</span>
                             </div>
                             <div class="content-actions">
@@ -399,14 +398,11 @@ background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index:
                         alert("축하합니다! 강의를 완료하여 학점이 추가되었습니다.");
                     } else if (result.isCompleted) {
                         alert("학습 진도가 저장되었습니다.");
-                    } else {
-                        alert("학습 진도를 저장하는 중 문제가 발생했습니다.");
                     }
-
                     return result.isCompleted;
                 } catch (error) {
                     console.error("Error:", error);
-                    alert("오류가 발생했습니다.");
+                    alert("학습 진도 저장 중 오류가 발생했습니다.");
                     return false;
                 }
             }
@@ -461,7 +457,7 @@ background: white; padding: 20px; box-shadow: 0 0 10px rgba(0,0,0,0.5); z-index:
                 document.getElementById('quizContent').style.display = 'none';
                 document.getElementById('quizResult').style.display = 'block';
                 document.getElementById('resultMessage').textContent = isCorrect ? 
-                    '정답입니다! &#128079;' : 
+                    '정답입니다! 👏' : 
                     `틀렸습니다. 정답은 "${currentQuiz.answer}" 입니다.`;
                     
                 // 마지막 문제인 경우 다음 문제 버튼 숨기기
