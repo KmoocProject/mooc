@@ -167,7 +167,6 @@ public class MyPageController {
         return "mypage/memberView" ;
     }
 
-    //회원수정
     @PostMapping("/memberModify")
     public String modifyMember(@Valid MemberDTO memberDTO, BindingResult bindingResult,
                                RedirectAttributes redirectAttributes, HttpSession session, Model model) {

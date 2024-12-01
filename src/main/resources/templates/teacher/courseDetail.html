@@ -45,13 +45,13 @@
         <div class="card mb-4">
             <div class="card-body">
                 <img th:src="${course.thumbnail}" alt="강좌 썸네일" class="mb-3">
-                <h2 class="mb-3">[[${course.title}]]</h2>
-                <p class="mb-3">[[${course.description}]]</p>
-                <p class="mb-3">[[${course.weeks}]]주</p>
-                <p class="mb-3">[[${course.learningTime}]]분</p>
-                <p class="mb-3">[[${course.language}]]</p>
-                <p class="mb-3" th:if="${course.isCreditBank == 1 ? '학점은행제 강의' : '일반 강의'}">학점은행제 여부</p>
-                <p class="mb-3">[[${course.teacherName}]]</p>
+                <h2 class="mb-3"><span>강좌 제목 :</span>[[${course.title}]]</h2>
+                <p class="mb-3"><span>강좌 설명 :</span>[[${course.description}]]</p>
+                <p class="mb-3"><span>총 주차 :</span>[[${course.weeks}]]주</p>
+                <p class="mb-3"><span>총 학습시간 :</span>[[${course.learningTime}]]분</p>
+                <p class="mb-3"><span>언어 :</span>[[${course.language}]]</p>
+                <p class="mb-3" th:text="${course.isCreditBank == 1 ? '학점은행제 강의' : '일반 강의'}">학점은행제 여부</p>
+                <p class="mb-3"><span>강사 이름 :</span>[[${course.teacherName}]]</p>
                 <p class="mb-3" th:text="${course.status == 'DRAFT' ? '임시저장' : course.status == 'PUBLISHED' ? '공개' : '삭제'}">강좌 상태</p>
             </div>
         </div>
