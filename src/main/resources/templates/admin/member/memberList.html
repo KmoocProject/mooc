@@ -103,12 +103,9 @@
 
 </style>
 <body>
-<script th:if="${errors != null}">
-    alert(`[[${errors}]]`);
-</script>
+
 
 <div th:replace="admin/header :: header"></div>
-
 <section class="content">
     <div class="container">
         <h1>회원 검색</h1>
@@ -150,7 +147,7 @@
                 </select>
 
                 <label for="searchId">아이디:</label>
-                <input type="text" id="searchId" name="searchId" placeholder="아이디 검색" maxlength="50">
+                <input type="text" id="searchId" name="searchId" placeholder="아이디 검색" maxlength="50" th:value="${pageDTO.searchId}">
 
                 <button type="submit">검색</button>
             </div>

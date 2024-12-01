@@ -127,11 +127,11 @@
     <h1>로그인</h1>
     <div class="login-form">
         <form method="post" action="/admin/login">
-            <input type="text" placeholder="아이디를 입력하세요." name="adminId" class="input-field">
-            <input type="password" placeholder="비밀번호를 입력하세요." name="password" class="input-field">
+            <input type="text" placeholder="아이디를 입력하세요." name="adminId" class="input-field" required maxlength="20">
+            <input type="password" placeholder="비밀번호를 입력하세요." name="password" class="input-field" required maxlength="20">
             <button type="submit" class="login-button">로그인</button>
         </form>
-        <div id="error-message"  class="error" th:text="${errors}"></div>
+        <div id="error-message" class="error" th:text="${loginerror}"></div>
     </div>
 </div>
 

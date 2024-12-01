@@ -11,16 +11,16 @@
 </head>
 <body>
 <div th:fragment="header">
-<!--    <script>-->
-<!--        const errors = `[[${errors ?: ''}]]`;-->
-<!--        if (errors && errors.trim() !== '') {-->
-<!--            alert(errors);-->
-<!--        }-->
-<!--        const error = `[[${errorr ?: ''}]]`;-->
-<!--        if (error && error.trim() !== '') {-->
-<!--            alert(error);-->
-<!--        }-->
-<!--    </script>-->
+    <script>
+        const errors = `[[${errors ?: ''}]]`;
+        if (errors && errors.trim() !== '') {
+            alert(errors);
+        }
+        const error = `[[${errorr ?: ''}]]`;
+        if (error && error.trim() !== '') {
+            alert(error);
+        }
+    </script>
     <header class="header">
         <div class="logo">
             <a href="/admin/main"><img th:src="@{/images/logo.png}" alt="K-MOOC 로고"></a>

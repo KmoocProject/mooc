@@ -94,7 +94,7 @@ public class CourseController {
                             .member(Member.builder().memberId(memberDTO.getMemberId()).build())
                             .build()
             );
-
+            courseViewDTO.setDescription(courseViewDTO.getDescription().replaceAll("[\r\n]+","<br>"));
             log.info("courseViewDTO : {}", courseViewDTO);
             model.addAttribute("courseViewDTO", courseViewDTO);
             model.addAttribute("isEnrolled", courseEnrollmentDTO);

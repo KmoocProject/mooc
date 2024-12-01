@@ -67,25 +67,6 @@ public class TeacherApiController {
         }
     }
 
-    @PostMapping("/courses/{courseId}/sections")
-    public ResponseEntity<?> createSections(
-            @PathVariable Integer courseId,
-            @RequestBody List<LectureCreateDTO> sections) {
-        try {
-            List<Lecture> lectures = new ArrayList<>();
-            for (LectureCreateDTO section : sections) {
-                section.setCourseId(courseId);
-                lectures.add(courseService.createLecture(section));
-            }
-            List<LectureResponseDTO> responseDTOs = lectures.stream()
-                    .map(LectureResponseDTO::from)
-                    .collect(Collectors.toList());
-            return ResponseEntity.ok(responseDTOs);
-        } catch (Exception e) {
-            return ResponseEntity.badRequest().body(e.getMessage());
-        }
-    }
-
     @PostMapping("/lectures/{lectureId}/contents")
     public ResponseEntity<ApiResponse<Void>> createContent(
             @PathVariable int lectureId,

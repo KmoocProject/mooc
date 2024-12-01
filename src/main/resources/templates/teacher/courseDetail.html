@@ -45,13 +45,13 @@
         <div class="card mb-4">
             <div class="card-body">
                 <img th:src="${course.thumbnail}" alt="강좌 썸네일" class="mb-3">
-                <h2 class="mb-3">[[${course.title}]]</h2>
-                <p class="mb-3">[[${course.description}]]</p>
-                <p class="mb-3">[[${course.weeks}]]주</p>
-                <p class="mb-3">[[${course.learningTime}]]분</p>
-                <p class="mb-3">[[${course.language}]]</p>
-                <p class="mb-3" th:if="${course.isCreditBank == 1 ? '학점은행제 강의' : '일반 강의'}">학점은행제 여부</p>
-                <p class="mb-3">[[${course.teacherName}]]</p>
+                <h2 class="mb-3"><span>강좌 제목 :</span>[[${course.title}]]</h2>
+                <p class="mb-3"><span>강좌 설명 :</span>[[${course.description}]]</p>
+                <p class="mb-3"><span>총 주차 :</span>[[${course.weeks}]]주</p>
+                <p class="mb-3"><span>총 학습시간 :</span>[[${course.learningTime}]]분</p>
+                <p class="mb-3"><span>언어 :</span>[[${course.language}]]</p>
+                <p class="mb-3" th:text="${course.isCreditBank == 1 ? '학점은행제 강의' : '일반 강의'}">학점은행제 여부</p>
+                <p class="mb-3"><span>강사 이름 :</span>[[${course.teacherName}]]</p>
                 <p class="mb-3" th:text="${course.status == 'DRAFT' ? '임시저장' : course.status == 'PUBLISHED' ? '공개' : '삭제'}">강좌 상태</p>
             </div>
         </div>
@@ -75,8 +75,8 @@
                                 <div class="d-flex justify-content-between align-items-center">
                                     <div>
                                         <h5 class="mb-1">
-                                            <span th:if="${content.isVideo == 1}">&#128270;</span>
-                                            <span th:if="${content.isVideo == 0}">&#128190;</span>
+                                            <span th:if="${content.isVideo == 1}"><i class="fas fa-video"></i></span>
+                                            <span th:if="${content.isVideo == 0}"><i class="fas fa-file-alt"></i></span>
                                             <span th:text="${content.title}">콘텐츠 제목</span>
                                         </h5>
                                         <p class="mb-1" th:text="${content.description}">콘텐츠 설명</p>
@@ -87,20 +87,19 @@
                                             th:data-video-path="${content.file?.filePath}"
                                             onclick="openVideoModal(this.getAttribute('data-video-path'))"
                                             class="btn btn-sm btn-outline-primary">
-                                            <span>&#128270;</span> 동영상 보기
-                                            <!--🎥-->
+                                            <i class="fas fa-video"></i> 동영상 보기
                                         </button>
                                         <!-- 문서 다운로드 버튼 -->
                                         <a th:if="${content.isVideo == 0 && content.file != null}"
                                             th:href="@{/api/teacher/download(filePath=${content.file?.filePath})}"
                                             class="btn btn-sm btn-outline-secondary">
-                                            <span>&#128190;</span> 문서 다운로드
+                                            <i class="fas fa-file-download"></i> 문서 다운로드
                                         </a>
                                         <a th:if="${content.isVideo == 0 && content.file != null}"
                                             th:href="@{${content.file?.filePath}}"
                                             class="btn btn-sm btn-outline-secondary"
                                             target="_blank">
-                                            <span>&#128279;</span> 문서 보기
+                                            <i class="fas fa-external-link-alt"></i> 문서 보기
                                         </a>
                                         <!-- 파일이 없는 경우 메시지 표시 -->
                                         <span th:if="${content.file == null}" class="text-muted">

@@ -182,3 +182,9 @@ from learningHistory
          inner join course on lecture.courseId = course.courseId
 where learningHistory.isCompleted = 0 AND learningHistory.memberId="kgmksw" AND course.courseId = 20
 group by course.courseId;
+
+--썸네일 웹 접근경로 /uploads/thumbnails/thumbnail_0.jpg ( 더미데이터용 일반강좌 )
+--썸네일 웹 접근경로 /uploads/thumbnails/thumbnail_1.jpg ( 더미데이터용 학점은행강좌 )
+
+update course set thumbnail = '/uploads/thumbnails/thumbnail_0.jpg' where isCreditBank = 0;
+update course set thumbnail = '/uploads/thumbnails/thumbnail_1.jpg' where isCreditBank = 1;

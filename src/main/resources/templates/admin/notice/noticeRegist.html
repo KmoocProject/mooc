@@ -166,14 +166,14 @@
         <form method="post" action="/admin/noticeRegist">
             <h1>공지사항 등록</h1>
             <div class="report-header">
-                <h2><input type="text" name="title" value="" placeholder="제목"></h2>
+                <h2><input type="text" name="title" value="" placeholder="제목" maxlength="100" required></h2>
                 <div class="checkbox-container">
                     <input type="checkbox" name="importance" id="importance" value="0">
                     <label for="importance">중요</label>
                 </div>
             </div>
             <div class="report-content">
-                <textarea type="text" name="content" placeholder="내용"></textarea>
+                <textarea type="text" name="content" placeholder="내용" maxlength="2000" required></textarea>
             </div>
             <hr>
             <button class="back-modify" type="submit">등록</button>
