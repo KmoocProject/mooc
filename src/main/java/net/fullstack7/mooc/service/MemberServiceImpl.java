@@ -14,12 +14,16 @@ import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
 import org.apache.ibatis.session.SqlSession;
 import org.modelmapper.ModelMapper;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
 import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +37,8 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final MemberRepository memberRepository;
     private final CourseRepository courseRepository;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
+    @Autowired
+    private JavaMailSender mailSender;
 
 
     //로그인
@@ -60,12 +66,32 @@ public class MemberServiceImpl implements MemberServiceIf {
     //비밀번호 찾기
     public String findPwd(MemberDTO memberDTO) {
         Optional<Member> memberOptional = memberRepository.findByEmail(memberDTO.getEmail());
-        if(memberOptional.isPresent()) {
-            return memberOptional.get().getPassword();
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            String tempPassword = generateTempPassword();
+            member.setPassword(tempPassword);
+            memberRepository.save(member);
+            sendTempPasswordEmail(member.getEmail(), tempPassword);
+            return "success";
         } else {
             return "fail";
         }
     }
+
+    // 임시 비밀번호 생성
+    private String generateTempPassword() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    // 임시 비밀번호를 이메일로 전송
+    private void sendTempPasswordEmail(String email, String tempPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("임시 비밀번호 안내");
+        message.setText("고객님, 요청하신 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해주세요.");
+        mailSender.send(message);
+    }
+
 
     //회원조회
     @Override
