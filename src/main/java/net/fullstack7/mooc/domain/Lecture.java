@@ -26,15 +26,18 @@ public class Lecture {
 
     @ManyToOne
     @JoinColumn(name="courseId", nullable = false)
+    @ToString.Exclude
     private Course course;
 
     @OneToMany(mappedBy = "lecture", fetch = FetchType.LAZY)
     @OrderBy("lectureContentId ASC")
     @Builder.Default
+    @ToString.Exclude
     private List<LectureContent> contents = new ArrayList<>();
 
     @OneToMany(mappedBy = "lecture", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
+    @ToString.Exclude
     private List<Quiz> quizzes = new ArrayList<>();
 
     public void addQuiz(Quiz quiz) {

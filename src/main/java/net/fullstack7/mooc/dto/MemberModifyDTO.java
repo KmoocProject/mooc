@@ -29,7 +29,8 @@ public class MemberModifyDTO {
     private String password;
 
     // 이메일은 선택 사항이며, 있을 때만 검증
-    @Email(message = "유효한 이메일 형식으로 입력해주세요.", groups = {UpdateEmailGroup.class})  // 특정 그룹에서만 검증
+//    @Email(message = "유효한 이메일 형식으로 입력해주세요.", groups = {UpdateEmailGroup.class})  // 특정 그룹에서만 검증
+    @Pattern(regexp = "^[a-zA-Z0-9_+&*-]+(?:\\.[a-zA-Z0-9_+&*-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,7}$", message = "유효한 이메일 형식으로 입력해주세요.", groups = {UpdateEmailGroup.class})
     private String email;
 
     // Getters and Setters...

@@ -2,10 +2,10 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
-      xmlns="http://www.w3.org/1999/html">
+      xmlns="http://www.w3.org/1999/html"  layout:decorate="~{main/headerlayout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>마이페이지 레이아웃</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
@@ -78,10 +78,10 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
+
 <!-- Sidebar -->
 
-<section class="content" >
+<section class="content" layout:fragment="maincontent">
     <div th:replace="learn/sidebar :: sidebar"></div>
     <div class="grade-table-container">
         <table class="grade-table">
@@ -109,7 +109,7 @@
     </div>
 </section>
 
-<div th:replace="main/footer :: footer"></div>
+
 
 </body>
 </html>

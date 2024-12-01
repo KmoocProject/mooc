@@ -5,10 +5,11 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link rel="icon" th:href="@{'/images/favicon.ico'}" type="image/x-icon">
 </head>
 <style>
     * {
@@ -219,6 +220,10 @@
                 <label >회원상태 : [[${item.status}]]</label>
             </div>
 
+            <div class="form-group">
+                <label >가입일 : [[${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}]]</label>
+            </div>
+
             <th:block th:if="${type=='t'}">
                 <div class="form-group">
                     <label >승인상태 : [[${item.isApproved}]]</label>
@@ -246,7 +251,7 @@
                 </div>
 
                 <div class="form-group">
-                    <label>기관번호 : [[${item.institution.institutionId}]]</label>
+                    <label>기관번호 : [[${item.institution.institutionName}]]</label>
                 </div>
 
                 <div class="actions">

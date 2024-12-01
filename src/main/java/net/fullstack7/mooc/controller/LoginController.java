@@ -31,8 +31,6 @@ import java.io.PrintWriter;
 public class LoginController extends HttpServlet {
     @Autowired
     private final MemberServiceIf memberService;
-    private CookieUtil cUtil = new CookieUtil();
-    private JSFunc JSFunc = new JSFunc();
     private MemberRepository memberRepository;
     @Autowired
     private MemberMapper memberMapper;
@@ -41,7 +39,7 @@ public class LoginController extends HttpServlet {
     @ModelAttribute
     public void checkLoginStatus(HttpSession session, RedirectAttributes redirectAttributes) {
         if(session.getAttribute("memberDTO") != null) {
-            redirectAttributes.addFlashAttribute("errors", "이미 로그인 된 상태입니다. 다른 페이지로 이동합니다.");
+            redirectAttributes.addFlashAttribute("error", "이미 로그인 된 상태입니다. 다른 페이지로 이동합니다.");
         }
     }
 
@@ -68,7 +66,7 @@ public class LoginController extends HttpServlet {
             }
             return "redirect:/main/main";
         } else {
-            model.addAttribute("errors", "아이디 또는 비밀번호가 일치하지 않습니다.");
+            model.addAttribute("error", "아이디 또는 비밀번호가 일치하지 않습니다.");
             return "login/login";
         }
     }
@@ -85,7 +83,7 @@ public class LoginController extends HttpServlet {
     public String memberterms(HttpSession session, RedirectAttributes redirectAttributes) {
         String loginCheck = (String) session.getAttribute("memberId");
         if (loginCheck != null) {
-            redirectAttributes.addFlashAttribute("errors", "로그인 한 회원은 접근할 수 없습니다.");
+            redirectAttributes.addFlashAttribute("error", "로그인 한 회원은 접근할 수 없습니다.");
             return "redirect:/main/main";
         }
         session.removeAttribute("termsAgree");
@@ -98,7 +96,7 @@ public class LoginController extends HttpServlet {
             session.setAttribute("termsAgree", true);
             return "redirect:/login/regist";
         } else {
-            model.addAttribute("errors", "약관동의 후 회원가입이 가능합니다.");
+            model.addAttribute("error", "약관동의 후 회원가입이 가능합니다.");
             return "redirect:/login/memberterms";
         }
     }
@@ -126,7 +124,7 @@ public class LoginController extends HttpServlet {
     @PostMapping("/emailCheck")
     @ResponseBody
     public String checkEmail(@RequestParam String email) {
-        boolean available = memberService.emailCheck(email); // 이메일 중복 체크 로직
+        boolean available = memberService.emailCheck(email);
         JSONObject jsonResponse = new JSONObject();
         jsonResponse.put("available", available);
         return jsonResponse.toString();
@@ -134,29 +132,33 @@ public class LoginController extends HttpServlet {
 
     //회원 등록
     @PostMapping("/regist")
-    public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session) {
+    public String regist(@Valid MemberDTO memberDTO, BindingResult bindingResult, Model model, RedirectAttributes redirectAttributes, HttpSession session, @RequestParam(required = false)String idChecked, @RequestParam(required = false)String emailChecked) {
+        if (idChecked == null || idChecked.equals("false") || emailChecked == null || emailChecked.equals("false")) {
+            redirectAttributes.addFlashAttribute("error", "아이디와 이메일의 중복 확인을 먼저 해주세요.");
+            return "redirect:/login/regist";
+        }
         String email = memberDTO.getEmail();
         boolean isEmailAvailable = memberService.emailCheck(email);
         String memberId = memberDTO.getMemberId();
         boolean isMemberIdAvailable = memberService.memberIdCheck(memberId);
 
         if (!isEmailAvailable || !isMemberIdAvailable) {
-            redirectAttributes.addFlashAttribute("errors", "중복된 내용은 등록이 불가합니다.");
-            return "redirect:/login/regist";  // 중복된 이메일이 있으면 회원가입 페이지로 리다이렉트
+            redirectAttributes.addFlashAttribute("error", "중복된 내용은 등록이 불가합니다.");
+            return "redirect:/login/regist";
         }
 
         if (bindingResult.hasErrors()) {
-            redirectAttributes.addFlashAttribute("errors", bindingResult.getAllErrors());
+            redirectAttributes.addFlashAttribute("error", "회원가입에 실패했습니다.");
             redirectAttributes.addFlashAttribute("memberDTO", memberDTO);
             return "redirect:/login/regist";
         }
         int result = memberService.registMember(memberDTO);
 
         if (result > 0) {
-            redirectAttributes.addFlashAttribute("errors", "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
+            redirectAttributes.addFlashAttribute("message", "회원가입이 완료되었습니다. 로그인 페이지로 이동합니다.");
             return "redirect:/login/login";
         } else {
-            redirectAttributes.addFlashAttribute("errors", "회원가입에 실패했습니다.");
+            redirectAttributes.addFlashAttribute("error", "회원가입에 실패했습니다.");
             return "redirect:/login/regist";
         }
     }
@@ -223,35 +225,27 @@ public class LoginController extends HttpServlet {
     }
 
     @PostMapping("/findPwd")
-        public String findPwdPost (MemberDTO memberDTO, HttpServletResponse response){
-            String findPwd = memberService.findPwd(memberDTO);
-            if (!"fail".equals(findPwd)) {
-                try {
-                    response.setContentType("text/html;charset=UTF-8");
-                    PrintWriter w = response.getWriter();
-                    w.write("<script>alert('" + memberDTO.getEmail() + "님의 비밀번호는 [" + findPwd + "] 입니다.' );</script>");
-                    w.write("<script>location.href='/login/login';</script>");
-                    w.flush();
-                    w.close();
-                    return null;
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    return null;
-                }
+    public String findPwdPost(MemberDTO memberDTO, HttpServletResponse response) {
+        String result = memberService.findPwd(memberDTO);
+
+        try {
+            response.setContentType("text/html;charset=UTF-8");
+            PrintWriter w = response.getWriter();
+
+            if ("success".equals(result)) {
+                w.write("<script>alert('" + memberDTO.getEmail() + "님께 임시 비밀번호가 발송되었습니다. 이메일을 확인해주세요.');</script>");
+                w.write("<script>location.href='/login/login';</script>");
             } else {
-                try {
-                    response.setContentType("text/html;charset=UTF-8");
-                    PrintWriter w = response.getWriter();
-                    w.write("<script>alert('입력한 회원정보가 없습니다. 다시 확인해주세요.');</script>");
-                    w.write("<script>location.href='/login/findId';</script>");
-                    w.flush();
-                    w.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
+                w.write("<script>alert('입력한 이메일에 해당하는 계정이 없습니다. 다시 확인해주세요.');</script>");
+                w.write("<script>location.href='/login/findPwd';</script>");
             }
-            return null;
+
+            w.flush();
+            w.close();
+        } catch (IOException e) {
+            e.printStackTrace();
         }
 
+        return null;
+    }
 }

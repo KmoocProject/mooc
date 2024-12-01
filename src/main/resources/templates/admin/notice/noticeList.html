@@ -1,14 +1,12 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
-      xmlns:th="http://www.thymeleaf.org"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link rel="icon" th:href="@{'/images/favicon.ico'}" type="image/x-icon">
 </head>
 <style>
     * {
@@ -140,11 +138,11 @@
         <form action="/admin/noticeList">
             <div class="search-bar">
                 <select name="searchField" class="category-dropdown">
-                    <option value="">선택</option>
+                    <option value="">제목+내용</option>
                     <option th:selected="${pageDTO.searchField == 'title'}" value="title">제목</option>
                     <option th:selected="${pageDTO.searchField == 'content'}" value="content">내용</option>
                 </select>
-                <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}">
+                <input name="searchValue" type="text" class="search-input" placeholder="검색어를 입력하세요." th:value="${pageDTO.searchValue}" maxlength="100">
                 <button class="search-button">찾기</button>
             </div>
         </form>
@@ -165,11 +163,19 @@
                 </td>
                 <td th:text="${item.adminName}"></td>
             </tr>
+            <tr th:if="${pageinfo.content.isEmpty()}">
+                <td colspan="3">검색 결과가 없습니다.</td>
+            </tr>
+            <tr>
+               <td colspan="3">
+                   <div th:replace="main/paging :: paging"></div>
+               </td>
+            </tr>
             </tbody>
             <button class="search-button" id="nRegist" style="font-size: 18px;">공지사항 등록</button>
         </table>
     </div>
-    <div th:replace="main/paging :: paging"></div>
+
 </section>
 
 <div th:replace="admin/footer :: footer"></div>

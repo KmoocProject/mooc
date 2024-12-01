@@ -20,10 +20,8 @@ public class LectureContentUpdateDTO {
     
     private String description;
     
-    @Pattern(regexp = "^(video|file|quiz)$")
+    @Pattern(regexp = "^(video|file)$")
     private String type;
     
     private MultipartFile file;
-    
-    private List<QuizDTO> quizzes;
 }

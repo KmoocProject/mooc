@@ -23,25 +23,25 @@ import java.util.List;
  * 4. Service 객체의 List 반환하는 메서드의 해당 객체를 파라미터로 해서 받은 List 를 SetDtoList() 메서드로 입력함
  * 5. model 에 해당 객체를 담아서 전송함
  * 예시)
- *    public String list(@Valid PageDTO<BbsDTO> pageDTO
- *             , BindingResult bindingResult
- *             , RedirectAttributes redirectAttributes
- *             , Model model) {
- *         if(bindingResult.hasErrors()) {
- *             //에러 발생시 검색, 정렬 없이 1페이지로 초기화
- *             pageDTO = PageDTO.<BbsDTO>builder().build();
- *         }
- *         pageDTO.initialize();
- *         pageDTO.setTotalCount(bbsService.totalCount(pageDTO));
- *         pageDTO.setDtoList(bbsService.list(pageDTO));
- *         model.addAttribute("pageDTO", pageDTO);
- *         return "bbs/list";
- *     }
+ * public String list(@Valid PageDTO<BbsDTO> pageDTO
+ * , BindingResult bindingResult
+ * , RedirectAttributes redirectAttributes
+ * , Model model) {
+ * if(bindingResult.hasErrors()) {
+ * //에러 발생시 검색, 정렬 없이 1페이지로 초기화
+ * pageDTO = PageDTO.<BbsDTO>builder().build();
+ * }
+ * pageDTO.initialize();
+ * pageDTO.setTotalCount(bbsService.totalCount(pageDTO));
+ * pageDTO.setDtoList(bbsService.list(pageDTO));
+ * model.addAttribute("pageDTO", pageDTO);
+ * return "bbs/list";
+ * }
  *
+ * @param <E> dtoList 에 들어갈 객체
  * @author 강감찬
  * @version 1.0
  * @since 2024-11-25
- * @param <E> dtoList 에 들어갈 객체
  */
 @SuperBuilder
 @Data
@@ -53,18 +53,18 @@ public class PageDTO<E> {
     private static final String DEFAULT_SORT_ORDER = "desc";
     private static final String EMPTY = "";
     @Builder.Default
-    @Min(value=1)
-    @Max(value=100000)
+    @Min(value = 1)
+    @Max(value = 100000)
     private int pageNo = 1;
     @Builder.Default
-    @Min(value=1)
-    @Max(value=20)
+    @Min(value = 1)
+    @Max(value = 20)
     private int pageSize = 10;
     private int offset;
     private int totalCount;
     @Builder.Default
-    @Min(value=1)
-    @Max(value=30)
+    @Min(value = 1)
+    @Max(value = 30)
     private int blockSize = 10;
     private int blockStart;
     private int blockEnd;
@@ -72,8 +72,9 @@ public class PageDTO<E> {
     private boolean prev;
     private boolean next;
     //@Pattern(regexp = "^(title|content|memberId)$", message = "싫은데요")
+    @Size(max = 100)
     private String searchField;
-    @Size(max=100)
+    @Size(max = 100)
     private String searchValue;
     //@Pattern(regexp = "^(idx|title|regDate)$", message = "싫은데요")
     private String sortField;
@@ -88,15 +89,30 @@ public class PageDTO<E> {
      */
     public void initialize() {
         this.offset = (pageNo - 1) * pageSize;
-        this.blockStart = ((pageNo-1) / pageSize)*pageSize + 1;
+        this.blockStart = ((pageNo - 1) / pageSize) * pageSize + 1;
         this.blockEnd = blockStart + blockSize - 1;
         this.prev = this.blockStart > 1;
         this.next = this.blockEnd < totalPage;
-        if(this.sortField==null||this.sortField.isEmpty()) this.sortField = DEFAULT_SORT_FIELD;
-        if(this.sortDirection==null||this.sortDirection.isEmpty()) this.sortDirection = DEFAULT_SORT_ORDER;
-        if(this.searchField==null||this.searchField.isEmpty()) this.searchField = EMPTY;
-        if(this.searchValue==null||this.searchValue.isEmpty()) this.searchValue = EMPTY;
-        this.queryString = URLEncoder.encode("searchCategory="+this.searchField+"&searchWord="+this.searchValue+"&sortField="+this.sortField+"&sortOrder="+this.sortDirection, StandardCharsets.UTF_8);
+        if (this.sortField == null || this.sortField.isEmpty()) this.sortField = DEFAULT_SORT_FIELD;
+        if (this.sortDirection == null || this.sortDirection.isEmpty()) this.sortDirection = DEFAULT_SORT_ORDER;
+        if (this.searchField == null || this.searchField.isEmpty()) this.searchField = EMPTY;
+        if (this.searchValue == null || this.searchValue.isEmpty()) this.searchValue = EMPTY;
+        this.queryString = URLEncoder.encode("searchCategory=" + this.searchField + "&searchWord=" + this.searchValue + "&sortField=" + this.sortField + "&sortOrder=" + this.sortDirection, StandardCharsets.UTF_8);
+    }
+
+    public void setSearchField(String searchField) {
+        if(searchField != null && searchField.length() > 100) {
+            this.searchField = searchField.substring(0, 100);
+        } else {
+            this.searchField = searchField;
+        }
+    }
+    public void setSearchValue(String searchValue) {
+        if(searchValue != null && searchValue.length() > 100) {
+            this.searchValue = searchValue.substring(0, 100);
+        } else {
+            this.searchValue = searchValue;
+        }
     }
 
     /**
@@ -104,37 +120,43 @@ public class PageDTO<E> {
      * totalPage 보다 큰 pageNo 값이 입력될 경우 처리함
      * totalPage 보다 큰 blockEnd 값이 생성된 경우 처리함
      * 처리한 blockEnd 값으로 next 값을 최신화함
-     * @param totalCount Service 객체에서 받환받은 List 의 총 객체 수 
+     *
+     * @param totalCount Service 객체에서 받환받은 List 의 총 객체 수
      */
-    public void setTotalCount(int totalCount){
+    public void setTotalCount(int totalCount) {
         this.totalCount = totalCount;
-        this.totalPage = (totalCount-1) / pageSize + 1;
-        this.pageNo = pageNo>totalPage?totalPage:pageNo;
+        this.totalPage = (totalCount - 1) / pageSize + 1;
+        this.pageNo = pageNo > totalPage ? totalPage : pageNo;
+        this.blockStart = ((pageNo - 1) / pageSize) * pageSize + 1;
         this.blockEnd = Math.min(blockEnd, this.totalPage);
-        this.next = this.blockEnd < totalPage ;
+        this.prev = this.blockStart > 1;
+        this.next = this.blockEnd < totalPage;
     }
 
     /**
      * searchField, searchValue, sortField, sortDirection 으로 queryString 을 생성함
+     *
      * @return 페이징 링크에 사용할 queryString 값
      */
-    public String getQueryString(){
-        return this.queryString!=null? URLDecoder.decode(this.queryString, StandardCharsets.UTF_8):EMPTY;
+    public String getQueryString() {
+        return this.queryString != null ? URLDecoder.decode(this.queryString, StandardCharsets.UTF_8) : EMPTY;
     }
 
     /**
      * sortField 과 sortDirection 값에 따른 현재 페이지에 해당하는 Pageable 객체를 반환함
+     *
      * @return Pageable 객체
      */
-    public Pageable getSortPageable(){
-        return PageRequest.of(this.pageNo-1,this.pageSize, this.sortDirection.equals("desc")?Sort.by(this.sortField).descending():Sort.by(this.sortField).ascending());
+    public Pageable getSortPageable() {
+        return PageRequest.of(this.pageNo - 1, this.pageSize, this.sortDirection.equals("desc") ? Sort.by(this.sortField).descending() : Sort.by(this.sortField).ascending());
     }
 
     /**
      * 현재 페이지에 해당하는 Pageable 객체를 반환함
+     *
      * @return Pageable 객체
      */
-    public Pageable getPageable(){
-        return PageRequest.of(this.pageNo-1,this.pageSize);
+    public Pageable getPageable() {
+        return PageRequest.of(this.pageNo - 1, this.pageSize);
     }
 }

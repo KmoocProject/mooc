@@ -1,7 +1,8 @@
 package net.fullstack7.mooc.dto;
 
 import java.util.List;
-import net.fullstack7.mooc.dto.LectureDTO;
+
+import net.fullstack7.mooc.domain.Subject;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,5 +24,7 @@ public class CourseDetailDTO {
     private String teacherName;
     private String teacherId;
     private String status;
+    private int subjectId;
+//    private Subject subject;
     private List<LectureDTO> lectures;
 }

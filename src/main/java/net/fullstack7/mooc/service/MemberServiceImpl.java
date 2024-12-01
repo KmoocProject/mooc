@@ -12,14 +12,18 @@ import net.fullstack7.mooc.mapper.MemberMapper;
 import net.fullstack7.mooc.repository.CourseEnrollmentRepository;
 import net.fullstack7.mooc.repository.CourseRepository;
 import net.fullstack7.mooc.repository.MemberRepository;
+import org.apache.ibatis.session.SqlSession;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
 
+import java.util.HashMap;
 import java.util.Optional;
+import java.util.UUID;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,6 +37,9 @@ public class MemberServiceImpl implements MemberServiceIf {
     private final MemberRepository memberRepository;
     private final CourseRepository courseRepository;
     private final CourseEnrollmentRepository courseEnrollmentRepository;
+    @Autowired
+    private JavaMailSender mailSender;
+
 
     //로그인
     @Override
@@ -59,12 +66,32 @@ public class MemberServiceImpl implements MemberServiceIf {
     //비밀번호 찾기
     public String findPwd(MemberDTO memberDTO) {
         Optional<Member> memberOptional = memberRepository.findByEmail(memberDTO.getEmail());
-        if(memberOptional.isPresent()) {
-            return memberOptional.get().getPassword();
+        if (memberOptional.isPresent()) {
+            Member member = memberOptional.get();
+            String tempPassword = generateTempPassword();
+            member.setPassword(tempPassword);
+            memberRepository.save(member);
+            sendTempPasswordEmail(member.getEmail(), tempPassword);
+            return "success";
         } else {
             return "fail";
         }
     }
+
+    // 임시 비밀번호 생성
+    private String generateTempPassword() {
+        return UUID.randomUUID().toString().substring(0, 8);
+    }
+
+    // 임시 비밀번호를 이메일로 전송
+    private void sendTempPasswordEmail(String email, String tempPassword) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("임시 비밀번호 안내");
+        message.setText("고객님, 요청하신 임시 비밀번호는 " + tempPassword + " 입니다. 로그인 후 비밀번호를 변경해주세요.");
+        mailSender.send(message);
+    }
+
 
     //회원조회
     @Override
@@ -102,15 +129,28 @@ public class MemberServiceImpl implements MemberServiceIf {
 
     //비밀번호 확인
     @Override
-    public boolean pwdCheck(String memberId, String password) {
+    public boolean pwdCheck(String memberId, String currentPassword) {
         String result = memberMapper.pwdCheck(memberId);
-        return result != null && result.equals(password);
+        return result != null && result.equals(currentPassword);
+    }
+
+    //새 비밀번호
+    @Override
+    public void updatePassword(String memberId, String newPassword){
+//        memberMapper.updatePassword(memberId, newPassword);
+        int updatedRows = memberMapper.updatePassword(memberId, newPassword);
+//        System.out.println("Rows updated: " + updatedRows);
+        if(updatedRows == 0){
+            System.out.println("No rows were updated.");
+            throw new RuntimeException("업데이트안됨");
+        }
     }
 
     //회원수정
     @Override
     public int modifyMember(MemberDTO memberDTO) {
-        return 0;
+        Member member = modelMapper.map(memberDTO, Member.class);
+        return memberMapper.modifyMember(member);
     }
 
     //이메일 유효성 검사
@@ -143,7 +183,6 @@ public class MemberServiceImpl implements MemberServiceIf {
             return "mypage/memberView";
         }
         return "mypage/myclass";
-
     }
 
 
@@ -165,22 +204,26 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     public void deleteMember(String memberId) {
         try {
-            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
+//            log.info("회원 탈퇴 처리 시작, memberId: {}", memberId);
             int updatedRows = memberRepository.updateStatusByMemberId(memberId, "WITHDRAWN");
             if (updatedRows > 0) {
-                log.info("회원 탈퇴 처리 성공, memberId: {}", memberId);
+//                log.info("회원 탈퇴 처리 성공, memberId: {}", memberId);
             } else {
-                log.warn("회원 탈퇴 처리 실패, memberId: {}", memberId);
+//                log.warn("회원 탈퇴 처리 실패, memberId: {}", memberId);
             }
         } catch (Exception e) {
-            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
+//            log.error("회원 탈퇴 중 오류 발생, memberId: {}", memberId, e);
             throw new RuntimeException("회원 탈퇴 처리 중 오류 발생", e);
         }
     }
 
     @Override
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO, String memberId, int isCompleted) {
-        return courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+
+        Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+        searchDTO.setTotalCount((int)courses.getTotalElements());
+        courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, memberId, isCompleted);
+        return courses;
     }
 
     @Override
@@ -191,7 +234,12 @@ public class MemberServiceImpl implements MemberServiceIf {
     @Override
     public String modifyToCredit(String memberId) {
         int result = memberRepository.updateMemberTypeById(memberId);
-        if(result > 0) return "학점은행제 회원으로 전환 완료!";
+        if(result > 0) return null;
         return "다시 시도해주세요.";
+    }
+
+    @Override
+    public int addCredit(String memberId) {
+        return memberRepository.addCredit(memberId, 1);
     }
 }

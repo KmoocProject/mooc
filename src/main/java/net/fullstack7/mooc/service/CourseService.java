@@ -1,21 +1,26 @@
 package net.fullstack7.mooc.service;
 
+import jakarta.persistence.EntityNotFoundException;
 import net.fullstack7.mooc.domain.*;
 import net.fullstack7.mooc.dto.*;
 import net.fullstack7.mooc.util.FileUploadUtil;
 import org.apache.commons.io.FilenameUtils;
+import org.modelmapper.ModelMapper;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import net.fullstack7.mooc.repository.*;
+
+import java.util.Collections;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.web.multipart.MultipartFile;
-
 import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -32,7 +37,9 @@ public class CourseService {
   private final FileUploadUtil fileUploadUtil;
   private final InstitutionRepository institutionRepository;
   private final TeacherRepository teacherRepository;
+  private final ModelMapper modelMapper;
 
+  
   public Course createCourse(CourseCreateDTO dto, Teacher teacher) throws IOException {
     // 과목 조회
     Subject subject = subjectRepository.findBySubjectId(dto.getSubjectId())
@@ -49,7 +56,7 @@ public class CourseService {
         .language(dto.getLanguage())
         .description(dto.getDescription())
         .isCreditBank(dto.getIsCreditBank())
-        .thumbnail(thumbnailPath)
+        .thumbnail(thumbnailPath.replace("\\","/"))
         .teacher(teacher)
         .status("DRAFT")
         .viewCount(0)
@@ -58,6 +65,24 @@ public class CourseService {
 
     return courseRepository.save(course);
   }
+
+  //권한 체크
+  public boolean checkAuthority(int id, Teacher teacher,String type) {
+    switch (type) {
+      case "course":
+        return courseRepository.findById(id).get().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "lecture":
+        return lectureRepository.findById(id).get().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "content":
+        return lectureContentRepository.findById(id).get().getLecture().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      case "quiz":
+        return quizRepository.findById(id).get().getLecture().getCourse().getTeacher().getTeacherId().equals(teacher.getTeacherId());
+      default:
+        log.info("알맞은 권한 체크 타입이 아닙니다.");
+        return false;
+    }
+  }
+
 
   public Lecture createLecture(LectureCreateDTO dto) {
     Course course = courseRepository.findById(dto.getCourseId())
@@ -97,7 +122,7 @@ public class CourseService {
         ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
         : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
 
-    saveLectureFile(savedContent, dto.getFile(), filePath);
+    saveLectureFile(savedContent, dto.getFile(), filePath.replace("\\","/"));
 
     return savedContent;
   }
@@ -105,7 +130,7 @@ public class CourseService {
   private void saveLectureFile(LectureContent content, MultipartFile file, String filePath) {
     LectureFile lectureFile = LectureFile.builder()
         .fileName(file.getOriginalFilename())
-        .filePath(filePath)
+        .filePath(filePath.replace("\\","/"))
         .fileExtension(FilenameUtils.getExtension(file.getOriginalFilename()))
         .lectureContent(content)
         .build();
@@ -145,7 +170,7 @@ public class CourseService {
       String filePath = dto.getType().equals("video")
           ? fileUploadUtil.uploadVideoFile(dto.getFile(), "videos")
           : fileUploadUtil.uploadDocumentFile(dto.getFile(), "documents");
-      saveLectureFile(content, dto.getFile(), filePath);
+      saveLectureFile(content, dto.getFile(), filePath.replace("\\","/"));
     }
 
     lectureContentRepository.save(content);
@@ -170,10 +195,6 @@ public class CourseService {
     }
   }
 
-  public void deleteQuiz(int quizId) {
-    quizRepository.deleteByQuizId(quizId);
-  }
-
   public void deleteQuizzes(int lectureId) {
     Lecture lecture = lectureRepository.findByLectureId(lectureId)
         .orElseThrow(() -> new IllegalArgumentException("존제하지 않는 강좌입니다."));
@@ -183,62 +204,54 @@ public class CourseService {
   // 읽기 전용 트랜잭션 (CUD방지 및 내부최적화)
   @Transactional(readOnly = true)
   public CourseDetailDTO getCourseWithContents(int courseId) {
-    // 1. 기본 강좌 정보 조회
     Course course = courseRepository.findById(courseId)
         .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
-    // 2. 강좌의 모든 섹션(lectures) 조회
-    List<LectureDTO> lectureDTOs = new ArrayList<>();
-    List<Lecture> lectures = lectureRepository.findByCourseOrderByLectureIdAsc(course);
 
-    for (Lecture lecture : lectures) {
-      // 3. 각 섹션의 콘텐츠 조회
-      List<LectureContent> contents = lectureContentRepository.findByLectureOrderByLectureContentIdAsc(lecture);
-      List<LectureContentDTO> contentDTOs = new ArrayList<>();
+    List<LectureDTO> lectureDTOs = course.getLectures().stream()
+        .map(lecture -> {
 
-      for (LectureContent content : contents) {
-        LectureContentDTO contentDTO = LectureContentDTO.builder()
-            .lectureContentId(content.getLectureContentId())
-            .title(content.getTitle())
-            .description(content.getDescription())
-            .type(content.getIsVideo() == 1 ? "video" : content.getIsVideo() == 0 ? "quiz" : "file")
-            .build();
+          List<Quiz> quizzes = quizRepository.findByLectureOrderByQuizIdAsc(lecture);
+          log.info("Lecture ID: {}, Quizzes: {}", lecture.getLectureId(), quizzes);
+          log.info("QuizzesSize:{}", quizzes.size());
+          // 콘텐츠 매핑
+          List<LectureContentDTO> contentDTOs = Optional.ofNullable(lecture.getContents())
+              .orElse(Collections.emptyList())
+              .stream()
+              .map(content -> LectureContentDTO.builder()
+                  .lectureContentId(content.getLectureContentId())
+                  .title(content.getTitle())
+                  .description(content.getDescription())
+                  .isVideo(content.getIsVideo())
+                  .type(content.getIsVideo() == 1 ? "video" : "file")
+                  .file(content.getLectureFile() != null ? LectureFileDTO.builder()
+                      .lectureFileId(content.getLectureFile().getLectureFileId())
+                      .fileName(content.getLectureFile().getFileName())
+                      .filePath(content.getLectureFile().getFilePath())
+                      .fileExtension(content.getLectureFile().getFileExtension())
+                      .build()
+                      : null)
+                  .build())
+              .collect(Collectors.toList());
 
-        // 4. 파일이 있는 경우 파일 정보 조회
-        if (content.getIsVideo() != 0) {
-          lectureFileRepository.findByLectureContent(content)
-              .ifPresent(file -> contentDTO.setFile(
-                  LectureFileDTO.builder()
-                      .fileName(file.getFileName())
-                      .filePath(file.getFilePath())
-                      .fileExtension(file.getFileExtension())
-                      .build()));
-        }
-        contentDTOs.add(contentDTO);
-      }
+          // 퀴즈 매핑
+          List<QuizDTO> quizDTOs = quizzes.stream()
+              .map(quiz -> QuizDTO.builder()
+                  .quizId(quiz.getQuizId())
+                  .question(quiz.getQuestion())
+                  .answer(quiz.getAnswer())
+                  .build())
+              .collect(Collectors.toList());
 
-      // 5. 퀴즈 조회
-      List<Quiz> quizzes = quizRepository.findByLectureOrderByQuizIdAsc(lecture);
-      List<QuizDTO> quizDTOs = quizzes.stream()
-          .map(quiz -> QuizDTO.builder()
-              .quizId(quiz.getQuizId())
-              .question(quiz.getQuestion())
-              .answer(quiz.getAnswer())
-              .build())
-          .collect(Collectors.toList());
+          return LectureDTO.builder()
+              .lectureId(lecture.getLectureId())
+              .title(lecture.getTitle())
+              .description(lecture.getDescription())
+              .contents(contentDTOs)
+              .quizzes(quizDTOs)
+              .build();
+        })
+        .collect(Collectors.toList());
 
-      // 6. 섹션 DTO 생성
-      LectureDTO lectureDTO = LectureDTO.builder()
-          .lectureId(lecture.getLectureId())
-          .title(lecture.getTitle())
-          .description(lecture.getDescription())
-          .contents(contentDTOs)
-          .quizzes(quizDTOs)
-          .build();
-
-      lectureDTOs.add(lectureDTO);
-    }
-
-    // 7. 최종 CourseDetailDTO 생성
     return CourseDetailDTO.builder()
         .courseId(course.getCourseId())
         .title(course.getTitle())
@@ -250,6 +263,7 @@ public class CourseService {
         .isCreditBank(course.getIsCreditBank())
         .teacherId(course.getTeacher().getTeacherId())
         .teacherName(course.getTeacher().getTeacherName())
+        .subjectId(course.getSubject().getSubjectId())
         .status(course.getStatus())
         .lectures(lectureDTOs)
         .build();
@@ -264,8 +278,7 @@ public class CourseService {
       throw new IllegalArgumentException("최소 하나의 퀴즈는 필수입니다.");
     }
 
-    // 기존 퀴즈가 있다면 모두 삭제
-    quizRepository.deleteAllByLecture(lecture);
+    // quizRepository.deleteAllByLecture(lecture);
 
     // 새 퀴즈 생성
     dto.getQuizzes().forEach(quizDTO -> {
@@ -278,8 +291,29 @@ public class CourseService {
     });
   }
 
+  @Transactional
+  public void updateQuiz(int quizId, QuizDTO dto) {
+    Quiz quiz = quizRepository.findById(quizId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 퀴즈입니다."));
+
+    quiz.setQuestion(dto.getQuestion());
+    quiz.setAnswer(dto.getAnswer());
+
+    quizRepository.save(quiz);
+  }
+
+  @Transactional
+  public void deleteQuiz(int quizId) {
+    quizRepository.deleteById(quizId);
+  }
+
+  @Transactional
   public Page<CourseResponseDTO> getCourses(CourseSearchDTO courseSearchDTO) {
-    return courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    Page<CourseResponseDTO> courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null,
+        -1);
+    courseSearchDTO.setTotalCount((int) courses.getTotalElements());
+    courses = courseRepository.coursePage(courseSearchDTO.getPageable(), courseSearchDTO, null, -1);
+    return courses;
   }
 
   public List<Institution> getInstitutions() {
@@ -288,5 +322,117 @@ public class CourseService {
 
   public List<Subject> getSubjects() {
     return subjectRepository.findAll();
+  }
+
+  public CourseDTO getCourseById(int courseId) {
+    return modelMapper.map(courseRepository.getReferenceById(courseId), CourseDTO.class);
+  }
+
+  public CourseViewDTO getCourseViewById(int courseId) {
+    try {
+      Course course = courseRepository.getReferenceById(courseId);
+      CourseViewDTO courseViewDTO = modelMapper.map(course, CourseViewDTO.class);
+      List<CourseDTO> recommendations = courseRepository
+              .findBySubjectAndStatusOrderByCourseIdDesc(courseViewDTO.getSubject(), "PUBLISHED", PageRequest.of(0, 5))
+              .stream().filter(c -> c.getCourseId() != courseViewDTO.getCourseId())
+              .map(c -> modelMapper.map(c, CourseDTO.class)).toList();
+      courseViewDTO.setRecommendations(recommendations);
+      return courseViewDTO;
+    }catch(EntityNotFoundException e) {
+      log.info("데이터없음");
+      log.error(e.getMessage());
+      return null;
+    }catch(Exception e){
+      log.error(e.getMessage());
+      return null;
+    }
+  }
+
+  @Transactional
+  public void deleteLecture(int lectureId) {
+    Lecture lecture = lectureRepository.findById(lectureId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 섹션입니다."));
+
+    List<LectureContent> contents = lectureContentRepository.findByLecture(lecture);
+    // 콘텐츠 삭제
+    for (LectureContent content : contents) {
+      LectureFile file = lectureFileRepository.findByLectureContent(content).orElse(null);
+      //파일 삭제
+      if (file != null) {
+        fileUploadUtil.deleteFile(file.getFilePath());
+        lectureFileRepository.delete(file);
+      }
+      lectureContentRepository.delete(content);
+    }
+
+    // 퀴즈 삭제
+    quizRepository.deleteAllByLecture(lecture);
+    // 섹션 삭제
+    lectureRepository.delete(lecture);
+  }
+
+  @Transactional
+  public void updateCourse(int courseId, CourseUpdateDTO dto, Teacher teacher) throws IOException {
+    Course course = courseRepository.findById(courseId)
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+
+    if (!course.getTeacher().getTeacherId().equals(teacher.getTeacherId())) {
+      throw new IllegalArgumentException("수정 권한이 없습니다.");
+    }
+
+    Subject subject = subjectRepository.findById(dto.getSubjectId())
+            .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 과목입니다."));
+
+    if (dto.getThumbnail() != null) {
+      fileUploadUtil.deleteFile(course.getThumbnail());
+      String thumbnailPath = fileUploadUtil.uploadImageFile(dto.getThumbnail(), "thumbnails");
+      course.setThumbnail(thumbnailPath);
+    }
+
+    course.setTitle(dto.getTitle());
+    course.setDescription(dto.getDescription());
+    course.setSubject(subject);
+    course.setWeeks(dto.getWeeks());
+    course.setLearningTime(dto.getLearningTime());
+    course.setLanguage(dto.getLanguage());
+    course.setIsCreditBank(dto.getIsCreditBank());
+
+    courseRepository.save(course);
+  }
+
+  public List<CourseResponseDTO> mainCourseList(int n) {
+    return courseRepository.randomCourses(n);
+  }
+
+  @Transactional
+  public void deleteCourse(int courseId) {
+    Course course = courseRepository.findById(courseId)
+        .orElseThrow(() -> new IllegalArgumentException("존재하지 않는 강좌입니다."));
+
+    List<Lecture> lectures = lectureRepository.findAllByCourse(course);
+    for (Lecture lecture : lectures) {
+      deleteLecture(lecture.getLectureId());
+    }
+    courseRepository.delete(course);
+  }
+
+//상태 체크
+  public boolean checkPublished(int Id,String type) {
+    switch (type) {
+      case "course":
+        return courseRepository.findById(Id).get().getStatus().equals("PUBLISHED");
+      case "lecture":
+        return lectureRepository.findById(Id).get().getCourse().getStatus().equals("PUBLISHED");
+      case "quiz":
+        return quizRepository.findById(Id).get().getLecture().getCourse().getStatus().equals("PUBLISHED");
+      case "content":
+        return lectureContentRepository.findById(Id).get().getLecture().getCourse().getStatus().equals("PUBLISHED");
+      default:
+        log.info("알맞은 상태 체크 타입이 아닙니다.");
+        return false;
+    }
+  }
+  public Course getCourseByLectureContentId(int lectureContentId) {
+    return lectureContentRepository.findById(lectureContentId).get().getLecture().getCourse();
   }
 }

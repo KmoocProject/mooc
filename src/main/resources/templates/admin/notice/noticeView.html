@@ -5,10 +5,11 @@
 >
 <head>
     <meta charset="UTF-8">
-    <title>Layout Page</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <link rel="icon" th:href="@{'/images/favicon.ico'}" type="image/x-icon">
 </head>
 <style>
     * {
@@ -174,9 +175,8 @@
             </p>
         </div>
         <hr>
-        <button class="back-modify" id="btnModity">수정</button>
-        <button class="back-delete">삭제</button>
-        <button class="back-button" id="backBtn">목록</button>
+        <button class="back-modify" th:onclick="|location.href='@{/admin/noticeModify/{noticeId}(noticeId=${item.noticeId})'|">수정</button>
+        <button class="back-delete" th:onclick="|location.href='@{/admin/noticeDelete/{noticeId}(noticeId=${item.noticeId})'|">삭제</button>
     </div>
 
 
@@ -185,20 +185,5 @@
 
 <div th:replace="admin/footer :: footer"></div>
 
-<script>
-    const backBtn = document.getElementById("backBtn")
-
-        backBtn.addEventListener("click", ()=>{
-            location.href='/admin/noticeList'
-        });
-
-    // const btnModity = document.getElementById("btnModity")
-    //
-    // btnModity.addEventListener("click", ()=>{
-    //     location.href='/admin/noticeModify';
-    // });
-
-
-</script>
 </body>
 </html>

@@ -14,8 +14,12 @@ public interface MemberServiceIf {
     public String findId(MemberDTO memberDTO);
     public String findPwd(MemberDTO memberDTO);
     public MemberDTO viewMember(String memberId);
-    public boolean pwdCheck(String memberId, String password);
+    public boolean pwdCheck(String memberId, String currentPassword);
     public int registMember(MemberDTO memberDTO);
+
+    //새 비밀번호
+    void updatePassword(String memberId, String newPassword);
+
     public int modifyMember(MemberDTO memberDTO);
     public boolean memberIdCheck(String memberId);
     public boolean emailCheck(String email);
@@ -32,4 +36,6 @@ public interface MemberServiceIf {
     int getMyCourseCount(String memberId, int isCompleted);
 
     String modifyToCredit(String memberId);
+
+    int addCredit(String memberId);
 }

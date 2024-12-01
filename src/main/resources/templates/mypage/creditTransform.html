@@ -2,22 +2,25 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
-    <title>학점 은행제</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
     <link th:href="@{/css/mypagesidebar.css}" rel="stylesheet" />
     <style>
         .content {
+            display: flex; /* Flexbox로 변경 */
             max-width: 1500px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            align-items: stretch; /* 양쪽 높이를 동일하게 유지 */
         }
 
         .container {
@@ -112,10 +115,9 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
-<!-- Sidebar -->
 
-<section class="content">
+
+<section class="content" layout:fragment="maincontent">
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <div class="container">
@@ -151,9 +153,8 @@
     </div>
 </section>
 
-<div th:replace="main/footer :: footer"></div>
 
-<script>
+<script layout:fragment="script" th:inline="javascript">
     const next = document.getElementById("next")
     next.addEventListener("click", ()=>{
         const agree = document.getElementById("agree").checked;

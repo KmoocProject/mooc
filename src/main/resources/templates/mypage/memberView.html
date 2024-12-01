@@ -2,10 +2,11 @@
 <html lang="ko"
       xmlns:th="http://www.thymeleaf.org"
       xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}"
 >
 <head>
     <meta charset="UTF-8">
-    <title>개인정보 보기</title>
+    <title>K-MOOC</title>
     <link th:href="@{/css/main.css}" rel="stylesheet" />
     <link th:href="@{/css/header.css}" rel="stylesheet" />
     <link th:href="@{/css/footer.css}" rel="stylesheet" />
@@ -13,16 +14,18 @@
     <style>
         /* General Styles */
         .content {
+            display: flex; /* Flexbox로 변경 */
             max-width: 1500px;
             margin: 50px auto;
             padding: 20px;
             background-color: #fff;
             box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
             border-radius: 8px;
+            align-items: stretch; /* 양쪽 높이를 동일하게 유지 */
         }
 
         .container {
-            max-width: 800px;
+            width: 800px;
             margin: 30px auto;
             padding: 20px;
             background: #fff;
@@ -115,10 +118,8 @@
     </style>
 </head>
 <body>
-<div th:replace="main/header :: header"></div>
-<!-- Sidebar -->
 
-<section class="content">
+<section class="content" layout:fragment="maincontent">
     <div th:replace="mypage/sidebar ::sidebar"></div>
 
     <div class="container">
@@ -127,10 +128,10 @@
         <div th:if="${successMessage}" class="alert alert-success">
             <p th:text="${successMessage}"></p>
         </div>
-
         <div th:if="${errorMessage}" class="alert alert-danger">
             <p th:text="${errorMessage}"></p>
         </div>
+
         <!-- Basic Information Section -->
         <div class="section">
             <h2>기본정보</h2>
@@ -141,20 +142,25 @@
                 </div>
 
                 <div class="form-group">
-                    <label for="password">비밀번호 변경</label>
-                    <input type="password" id="password" th:value="${member.password}" th:field="${member.password}" >
-                    <button type="button" id="togglePassword" class="btn" style="margin-top: 10px">비밀번호 표시</button>
+                    <label>비밀번호 변경</label>
+                    <a th:href="@{/mypage/pwdCheck}" class="btn btn-secondary" style="margin-top: 10px; border-radius: 5px; display: inline-block; padding: 10px 20px; text-align: center; text-decoration: none; font-size: 16px; color: #333; background-color: #d6d6d6;">
+                        비밀번호 변경
+                    </a>
                 </div>
 
-
                 <div class="form-group">
-                    <label for="name">한글 이름</label>
-                    <input type="text" id="name" th:field="${member.userName}" readonly>
+                    <label >한글 이름</label>
+                    <p th:text="${member.userName}" readonly>
                 </div>
 
                 <div class="form-group">
                     <label for="email">이메일 주소</label>
-                    <input type="email" id="email" th:field="${member.email}">
+                    <input type="email" id="email" th:field="${member.email}" class="form-control">
+                </div>
+                <div th:if="${fielderror != null}">
+                    <ul>
+                        <li th:each="err : ${fielderror}" th:text="${err.defaultMessage}"></li>
+                    </ul>
                 </div>
 
                 <div class="form-group">
@@ -162,11 +168,6 @@
                     <input type="text" id="gender" th:value="${member.gender == 0 ? '남성' : '여성'}" readonly>
                 </div>
 
-<!--                <div th:if="${errors != null}">-->
-<!--                    <ul>-->
-<!--                        <li th:each="error : ${errors}" th:text="${error.defaultMessage}"></li>-->
-<!--                    </ul>-->
-<!--                </div>-->
 
                 <!-- Actions Section -->
                 <div class="actions">
@@ -175,32 +176,28 @@
                 </div>
             </form>
         </div>
-
     </div>
-
 </section>
 
-<div th:replace="main/footer :: footer"></div>
+<!--<script layout:fragment="script" th:inline="javascript">-->
+<!--    document.getElementById("togglePassword").addEventListener("click", function() {-->
+<!--        var passwordField = document.getElementById("password");-->
+<!--        var toggleButton = document.getElementById("togglePassword");-->
 
-<script>
-    document.getElementById("togglePassword").addEventListener("click", function() {
-        var passwordField = document.getElementById("password");
-        var toggleButton = document.getElementById("togglePassword");
-
-        if (passwordField.type === "password") {
-            // 비밀번호 표시
-            passwordField.type = "text";
-            toggleButton.textContent = "비밀번호 숨기기";
-        } else {
-            // 비밀번호 숨기기
-            passwordField.type = "password";
-            toggleButton.textContent = "비밀번호 표시";
-        }
-    });
-</script>
-
-<script>
+<!--        if (passwordField.type === "password") {-->
+<!--            // 비밀번호 표시-->
+<!--            passwordField.type = "text";-->
+<!--            toggleButton.textContent = "비밀번호 숨기기";-->
+<!--        } else {-->
+<!--            // 비밀번호 숨기기-->
+<!--            passwordField.type = "password";-->
+<!--            toggleButton.textContent = "비밀번호 표시";-->
+<!--        }-->
+<!--    });-->
+<!--</script>-->
+<script th:inline="javascript" layout:fragment="script">
     document.getElementById("deleteBtn").addEventListener("click", function () {
+        console.log(document.getElementById("deleteBtn"));
         if (confirm("정말로 회원 탈퇴하시겠습니까?")) {
             const memberId = this.getAttribute("data-member-id");
             console.log("삭제할 회원 ID: " + memberId);
@@ -211,13 +208,14 @@
                 },
                 body: `memberId=${memberId}`
             })
-                .then(response => response.json())  // 응답을 JSON으로 파싱
+                .then(response => response.json())
                 .then(data => {
+                    console.log("서버 응답:", data);
                     if (data.success) {
-                        alert(data.message);  // 성공 메시지
-                        window.location.href = '/main/main'; // 탈퇴 후 메인 페이지로 리다이렉트
+                        alert(data.message);  //성공 메시지
+                        window.location.href = '/main/main';
                     } else {
-                        alert(data.message);  // 실패 메시지
+                        alert(data.message);  //실패 메시지
                     }
                 })
                 .catch(error => {
@@ -226,7 +224,6 @@
                 });
         }
     });
-
 </script>
 
 </body>

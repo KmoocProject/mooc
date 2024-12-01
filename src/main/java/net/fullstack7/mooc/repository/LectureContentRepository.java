@@ -13,4 +13,6 @@ import java.util.Optional;
 public interface LectureContentRepository extends JpaRepository<LectureContent, Integer> {
     List<LectureContent> findByLectureOrderByLectureContentIdAsc(Lecture lecture);
     Optional<LectureContent> findByLectureContentId(int lectureContentId);
+    List<LectureContent> findByLecture(Lecture lecture);
+    List<LectureContent> findByLectureAndIsVideo(Lecture lecture, int isVideo);
 }

@@ -30,9 +30,9 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public String login(AdminLoginDTO adminLoginDTO) {
-        Optional<Admin> byAdminIdAndPassword = Optional.ofNullable(adminRepository.findByAdminIdAndPassword(adminLoginDTO.getAdminId(), adminLoginDTO.getPassword()));
+        Admin byAdminIdAndPassword = adminRepository.findByAdminIdAndPassword(adminLoginDTO.getAdminId(), adminLoginDTO.getPassword()).orElse(null);
 
-        if (byAdminIdAndPassword.isPresent()) {
+        if (byAdminIdAndPassword != null) {
             return adminLoginDTO.getAdminId();
         }
 
@@ -57,7 +57,13 @@ public class AdminServiceImpl implements AdminServiceIf {
             isApproved = -1;
         }
 
-        return teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
+
+        Page<Teacher> teachers = teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
+
+        adminSearchDTO.setTotalCount((int)teachers.getTotalElements());
+        teachers = teacherRepository.adminTeacherPage(adminSearchDTO.getPageable(), isApproved, status, searchId);
+
+        return teachers;
     }
 
     @Override
@@ -78,30 +84,40 @@ public class AdminServiceImpl implements AdminServiceIf {
             memberType = -1;
         }
 
-        return memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
+        Page<Member> members = memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
+
+        adminSearchDTO.setTotalCount((int)members.getTotalElements());
+        members = memberRepository.adminMemberPage(adminSearchDTO.getPageable(), memberType, status, searchId);
+
+        return members;
     }
 
     @Override
     public String modifyMemberStatus(String type, String userId) {
         String status = type.substring(0, type.length() -1);
         if(type.endsWith("t") && teacherRepository.existsByTeacherId(userId) ) {
-            teacherRepository.updateStatusByTeacherId(userId, status);
+            if(teacherRepository.updateStatusByTeacherId(userId, status) > 0) {
+                return "변경되었습니다.";
+            }
         }
-        else if(type.endsWith("s") && memberRepository.existsById(userId)) {
-            memberRepository.updateStatusByMemberId(userId, status);
+        if(type.endsWith("s") && memberRepository.existsById(userId)) {
+            if(memberRepository.updateStatusByMemberId(userId, status) > 0) {
+                return "변경되었습니다.";
+            }
         }
-        else {
-            return "변경 불가";
-        }
-        return "변경되었습니다.";
+
+        return "변경 불가";
+
     }
 
     @Override
     public String approveTeacherRegist(String teacherId) {
         if(teacherRepository.existsByTeacherId(teacherId)){
-            teacherRepository.updateIsApprovedByTeacherId(teacherId, 1);
-            teacherRepository.updateStatusByTeacherId(teacherId, "ACTIVE");
-            return teacherId + " 승인 완료";
+            if(teacherRepository.updateIsApprovedByTeacherId(teacherId, 1) > 0) {
+                if (teacherRepository.updateStatusByTeacherId(teacherId, "ACTIVE") > 0) {
+                    return teacherId + "승인 완료";
+                }
+            }
         }
         return "존재하지 않는 계정입니다.";
     }
@@ -122,25 +138,32 @@ public class AdminServiceImpl implements AdminServiceIf {
     public String deleteMember(String id, String typeSelect) {
 
         if(typeSelect.equals("s")) {
-            if(getMember(id) == null)
+            if(getMember(id) == null) {
                 return "존재하지 않는 회원입니다.";
-
-            memberRepository.updateStatusByMemberId(id, "WITHDRAWN");
+            }
+            if(memberRepository.updateStatusByMemberId(id, "WITHDRAWN") > 0) {
+                return "탈퇴 완료";
+            }
         }
 
         if(typeSelect.equals("t")) {
-            if(getTeacher(id) == null)
+            if(getTeacher(id) == null) {
                 return "존재하지 않는 회원입니다.";
+            }
 
-            teacherRepository.updateStatusByTeacherId(id, "WITHDRAWN");
+            if(teacherRepository.updateStatusByTeacherId(id, "WITHDRAWN") > 0) {
+                return "탈퇴 완료";
+            }
         }
 
-        return "탈퇴 완료";
+        return "탈퇴 처리 실패";
     }
 
     @Override
     public Page<CourseResponseDTO> getCourses(CourseSearchDTO searchDTO) {
         Page<CourseResponseDTO> courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null, -1);
+        searchDTO.setTotalCount((int)courses.getTotalElements());
+        courses = courseRepository.coursePage(searchDTO.getPageable(), searchDTO, null, -1);
         return courses;
     }
 
@@ -156,8 +179,10 @@ public class AdminServiceImpl implements AdminServiceIf {
         }
 
         if(courseRepository.existsById(courseId)) {
-            courseRepository.updateStatus(courseId, type);
-            return "변경 완료";
+            if(courseRepository.updateStatus(courseId, type) > 0){
+                return "변경 완료";
+            }
+            return "변경 실패(다시 시도)";
         }
         return "없는 강의";
     }
@@ -182,22 +207,26 @@ public class AdminServiceImpl implements AdminServiceIf {
 
     @Override
     public String modifyNotice(NoticeDTO dto) {
-        if(noticeRepository.findById(dto.getNoticeId()) == null) {
+        if(noticeRepository.findById(dto.getNoticeId()).orElse(null) == null) {
             return "존재하지 않는 게시글입니다.";
         }
         if(!adminRepository.existsById(dto.getAdminId())) {
             return "관리자 권한 계정만 수정 가능합니다.";
         }
-        noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent(), dto.getImportance());
-        return "수정 완료";
+        if(noticeRepository.updateNotice(dto.getNoticeId(), dto.getTitle(), dto.getContent(), dto.getImportance()) > 0) {
+            return "수정 완료";
+        }
+        return "수정 실패. 다시 시도해주세요.";
     }
 
     @Override
     public String deleteNotice(int noticeId, String adminId) {
         if(!adminRepository.existsById(adminId))
             return "관리자 권한 계정만 삭제 가능합니다.";
-        if(noticeRepository.existsById(noticeId)) {
-            noticeRepository.delete(noticeRepository.findById(noticeId).get());
+
+        Notice notice = noticeRepository.findById(noticeId).orElse(null);
+        if(notice != null) {
+            noticeRepository.delete(notice);
             return "삭제 완료";
         }
         return "존재하지 않는 게시글입니다.";
@@ -209,7 +238,8 @@ public class AdminServiceImpl implements AdminServiceIf {
         LocalDateTime minus1month = now.toLocalDate().atStartOfDay().minusMonths(1);
         int newMemberOneMonth = memberRepository.countByCreatedAtIsBetween(minus1month, now)
                 + teacherRepository.countByCreatedAtIsBetween(minus1month, now);
-        int totalMemberCount = memberRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})));
+        int totalMemberCount = memberRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})))
+                + teacherRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"ACTIVE", "INACTIVE"})));
 
         int newCourseOneMonth = courseRepository.countByCreatedAtIsBetween(minus1month, now);
         int totalCourseCount = courseRepository.countByStatusIn(new ArrayList<>(List.of(new String[]{"PUBLISHED"})));

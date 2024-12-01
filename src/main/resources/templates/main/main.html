@@ -1,140 +1,191 @@
 <!DOCTYPE html>
-<html lang="ko"
-      xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultrag.net.nz/thymeleaf/layout"
->
+<html lang="ko" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="https://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{main/headerlayout.html}">
 <head>
     <meta charset="UTF-8">
-    <title>메인 페이지</title>
-    <link th:href="@{/css/main.css}" rel="stylesheet" />
-    <link th:href="@{/css/header.css}" rel="stylesheet" />
-    <link th:href="@{/css/footer.css}" rel="stylesheet" />
+    <title>K-MOOC</title>
+    <style>
+        .notice-content {
+            display: block;
+            overflow: hidden;
+            height: 50px;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+
+        .notice-content.active {
+            opacity: 1;
+        }
+
+        .notice-content.hide {
+            opacity: 0;
+        }
+    </style>
 </head>
-
-<div th:replace="main/header :: header"></div>
-
 <body>
-<section class="banner">
-    <div class="main-banner" id="mainBanner" style="height: 400px; width: 100%">
-        <img th:src="@{/images/mainbanner1.png}" class="active" style="height: auto;width: 100%;"/>
-        <img th:src="@{/images/mainbanner2.png}" style="height:auto;width: 100%;"/>
-        <div class="banner-dots" id="bannerDots"></div>
-    </div>
-</section>
-<div class="notice-board">
-    <div class="notice-content">
-        <p class="notice-text">
-            2024년 하반기 한국형 온라인 공개강좌(K-MOOC) 사업 안내 영상 및 FAQ 공개
-        </p>
-        <p class="notice-date">2024.10.21</p>
-    </div>
-    <div class="dropdown-icon">
-        <span>&#9660;</span>
-    </div>
-</div>
-<section class="search">
-    <div class="search-container">
-        <div class="search-box">
-            <h2>검색</h2>
-            <div class="search-input">
-                <input type="text" placeholder="배우고 싶은 강좌를 찾아보세요.">
-                <button type="submit">
-                    <img th:src="@{/images/searchicon.png}" alt="search" />
-                </button>
-            </div>
+<div layout:fragment="maincontent">
+    <section class="banner">
+        <div class="main-banner" id="mainBanner" style="height: 500px; width: 100%">
+            <img th:src="@{/images/mainbanner1.png}" class="active" style="min-height: 500px;width: 100%;"/>
+            <img th:src="@{/images/mainbanner2.png}" style="min-height: 500px;width: 100%;"/>
+            <div class="banner-dots" id="bannerDots"></div>
         </div>
-        <div class="categories">
-            <a href="#">인공지능</a>
-            <a href="#">디자인</a>
-            <a href="#">프로그래밍</a>
-            <a href="#">영어</a>
-            <a href="#">통계</a>
-            <a href="#">취업대상</a>
-        </div>
-    </div>
-</section>
-<div class="course-container">
-    <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
-    <div class="course-list">
-        <div class="course-card">
-            <div class="course-image">
-                <img src="course1.jpg" alt="Course 1">
-                <span class="badge ongoing">진행중</span>
-                <span class="badge popular">이수중</span>
-            </div>
-            <div class="course-info">
-                <h3>창의적 문제해결을 위한 생각 프로세스 II</h3>
-                <p>최필렬<br>울산대학교</p>
-                <p class="course-date">2024.10.22 ~ 2024.12.09</p>
-                <div class="tags">
-                    <span>창의적</span>
-                    <span>문제해결</span>
-                    <span>생각도구</span>
-                </div>
-            </div>
-        </div>
-        <!-- Repeat for other courses -->
-        <div class="course-card">
-            <div class="course-image">
-                <img src="course2.jpg" alt="Course 2">
-                <span class="badge ongoing">진행중</span>
-                <span class="badge popular">이수중</span>
-            </div>
-            <div class="course-info">
-                <h3>셰익스피어</h3>
-                <p>박용남<br>고려대학교</p>
-                <p class="course-date">2024.09.10 ~ 2024.12.16</p>
-                <div class="tags">
-                    <span>문학</span>
-                    <span>작품해설</span>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-<div class="course-container">
-<div class="category-container">
-    <div class="category-item" style="background-color: #a13bbc;">
-        <div class="icon">📖</div>
-        <div class="text">인문</div>
-    </div>
-    <div class="category-item" style="background-color: #7a3bbf;">
-        <div class="icon">💬</div>
-        <div class="text">사회</div>
-    </div>
-    <div class="category-item" style="background-color: #289e2e;">
-        <div class="icon">💻</div>
-        <div class="text">교육</div>
-    </div>
-    <div class="category-item" style="background-color: #1d79ac;">
-        <div class="icon">🧬</div>
-        <div class="text">공학</div>
-    </div>
-    <div class="category-item" style="background-color: #009687;">
-        <div class="icon">🌱</div>
-        <div class="text">자연</div>
-    </div>
-    <div class="category-item" style="background-color: #3055a4;">
-        <div class="icon">🩺</div>
-        <div class="text">의약</div>
-    </div>
-    <div class="category-item" style="background-color: #e14a3a;">
-        <div class="icon">🎵</div>
-        <div class="text">예체능</div>
-    </div>
-    <div class="category-item" style="background-color: #e55c12;">
-        <div class="icon">🔬</div>
-        <div class="text">융·복합</div>
-    </div>
-    <div class="category-item" style="background-color: #d4145a;">
-        <div class="icon">🔲</div>
-        <div class="text">기타</div>
-    </div>
-</div>
-</div>
-<div th:replace="main/footer :: footer"></div>
+    </section>
+    <div class="notice-board">
 
-<script>
+        <div id="notice-display" class="notice-content">
+            <p class="notice-text">공지사항을 불러오는 중입니다...</p>
+            <p class="notice-date"></p>
+        </div>
+
+        <div class="dropdown-icon">
+            <a href="javascript:void(0);">&#9660;</a>
+        </div>
+
+
+    </div>
+    <section class="search">
+        <div class="search-container">
+            <form action="/course/list/all" method="get">
+                <div class="search-box">
+                    <h2>검색</h2>
+                    <div class="search-input">
+                        <input type="text" name="searchValue" placeholder="배우고 싶은 강좌를 찾아보세요." maxlength="100">
+                        <button type="submit">
+                            <img th:src="@{/images/searchicon.png}" alt="search"/>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <div class="categories">
+                <a href="/course/list/all?subjectId=1">인문</a>
+                <a href="/course/list/all?subjectId=2">사회</a>
+                <a href="/course/list/all?subjectId=4">공학</a>
+                <a href="/course/list/all?subjectId=3">교육</a>
+                <a href="/course/list/all?subjectId=5">자연</a>
+                <a href="/course/list/all">전체</a>
+            </div>
+
+        </div>
+    </section>
+    <div class="course-container">
+        <h2>K-MOOC에서 추천하는 강좌 리스트</h2>
+        <div class="course-list">
+            <th:block th:each="item, status:${mainCourseList}">
+                <div class="course-card pointer" th:attr="data-course_id=${item.courseId}">
+                    <div class="course-image">
+                        <img th:src="${item.thumbnail}" th:alt="${item.title}">
+                        <span class="badge ongoing">진행중</span>
+                        <span class="badge popular" th:if="${item.isCreditBank==1}">학점은행제</span>
+                    </div>
+                    <div class="course-info">
+                        <h3 th:text="${item.title}"></h3>
+                        <p><span th:text="${item.teacherName}"></span><br><span th:text="${item.institutionName}"></span></p>
+                        <p class="course-date" th:text="${#temporals.format(item.createdAt, 'yyyy-MM-dd HH:mm:ss')}"></p>
+                        <div class="tags">
+                        </div>
+                    </div>
+                </div>
+            </th:block>
+        </div>
+    </div>
+    <div class="course-container">
+        <div class="category-container">
+            <div class="category-item" style="background-color: #a13bbc;" data-subject="1">
+                <div class="icon">📖</div>
+                <div class="text">인문</div>
+            </div>
+            <div class="category-item" style="background-color: #7a3bbf;" data-subject="2">
+                <div class="icon">💬</div>
+                <div class="text">사회</div>
+            </div>
+            <div class="category-item" style="background-color: #289e2e;" data-subject="3">
+                <div class="icon">💻</div>
+                <div class="text">교육</div>
+            </div>
+            <div class="category-item" style="background-color: #1d79ac;" data-subject="4">
+                <div class="icon">🧬</div>
+                <div class="text">공학</div>
+            </div>
+            <div class="category-item" style="background-color: #009687;" data-subject="5">
+                <div class="icon">🌱</div>
+                <div class="text">자연</div>
+            </div>
+            <div class="category-item" style="background-color: #3055a4;" data-subject="6">
+                <div class="icon">🩺</div>
+                <div class="text">의약</div>
+            </div>
+            <div class="category-item" style="background-color: #e14a3a;" data-subject="7">
+                <div class="icon">🎵</div>
+                <div class="text">예체능</div>
+            </div>
+            <div class="category-item" style="background-color: #e55c12;" data-subject="8">
+                <div class="icon">🔬</div>
+                <div class="text">융·복합</div>
+            </div>
+            <div class="category-item" style="background-color: #d4145a;" data-subject="9">
+                <div class="icon">🔲</div>
+                <div class="text">기타</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script layout:fragment="script" th:inline="javascript">
+    const notices = [[${notices}]];
+    document.addEventListener("DOMContentLoaded", function () {
+        const noticeDisplay = document.getElementById("notice-display");
+        const dropdownIcon = document.querySelector(".dropdown-icon a");
+        let currentIndex = 0;
+
+        // 공지사항 표시
+        function displayNotice(notice) {
+            // 기존 내용 숨기기
+            noticeDisplay.classList.remove("active");
+            noticeDisplay.classList.add("hide");
+
+            // 슬라이드 전환 대기
+            setTimeout(() => {
+                // 새 내용 삽입
+                noticeDisplay.innerHTML = `
+                    <p class="notice-text"><a href="/main/notice/view/${notice.noticeId}">${notice.title}</a></p>
+                    <p class="notice-date">${(notice.createdAt.split("T"))[0]}</p>
+                `;
+
+                // 새 내용 표시
+                noticeDisplay.classList.remove("hide");
+                noticeDisplay.classList.add("active");
+            }, 500); // 이전 애니메이션 종료 후 새로운 내용 표시
+        }
+
+        // 공지사항 순환
+        function rotateNotices() {
+            setInterval(() => {
+                currentIndex = (currentIndex + 1) % notices.length; // 다음 인덱스
+                displayNotice(notices[currentIndex]); // 공지사항 업데이트
+            }, 5000); // 5초 간격
+        }
+
+        // 공지사항 직접 전환 (드롭다운 아이콘 클릭 시)
+        dropdownIcon.addEventListener("click", () => {
+            currentIndex = (currentIndex + 1) % notices.length; // 다음 인덱스
+            displayNotice(notices[currentIndex]); // 공지사항 업데이트
+        });
+
+        // 초기화
+        if (notices.length > 0) {
+            noticeDisplay.classList.add("active"); // 첫 공지사항 표시
+            displayNotice(notices[currentIndex]);
+            rotateNotices();
+        } else {
+            noticeDisplay.innerHTML = `
+                <p class="notice-text">등록된 공지사항이 없습니다.</p>
+                <p class="notice-date"></p>
+            `;
+        }
+    });
+
     const images = document.querySelectorAll('.main-banner img');
     const dotsContainer = document.getElementById('bannerDots');
     const prevBtn = document.getElementById('prevBtn');
@@ -174,20 +225,31 @@
     let slideInterval = setInterval(autoSlide, 3000);
 
     // Prev/Next button event listeners
-    if(prevBtn != null) {
+    if (prevBtn != null) {
         prevBtn.addEventListener('click', () => {
             clearInterval(slideInterval);
             showSlide(currentIndex - 1);
             slideInterval = setInterval(autoSlide, 3000);
         });
     }
-    if(nextBtn != null) {
+    if (nextBtn != null) {
         nextBtn.addEventListener('click', () => {
             clearInterval(slideInterval);
             showSlide(currentIndex + 1);
             slideInterval = setInterval(autoSlide, 3000);
         });
     }
+
+    document.querySelectorAll(".category-item").forEach(item => item.addEventListener("click", evt => {
+            location.href = '/course/list/all?subjectId=' + item.dataset.subject;
+        })
+    );
+
+    document.querySelectorAll(".course-card").forEach(value => {
+        value.addEventListener("click", evt => {
+            location.href='/course/view?courseId='+value.dataset.course_id;
+        })
+    });
 </script>
 </body>
 </html>
