@@ -43,6 +43,7 @@ public class LearnController {
             }
 
             CourseDetailDTO courseDetail = courseService.getCourseWithContents(courseId);
+            courseDetail.setDescription(courseDetail.getDescription().replaceAll("[\r\n]+","<br>"));
             model.addAttribute("course", courseDetail);
             return "learn/view";
 

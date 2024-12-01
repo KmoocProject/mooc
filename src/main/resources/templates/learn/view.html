@@ -259,7 +259,7 @@
         <div class="lecture-overview">
             <img th:src="${course.thumbnail}" alt="강좌 썸네일">
             <h2>[[${course.title}]]</h2>
-            <p>[[${course.description}]]</p>
+            <p th:utext="${course.description}"></p>
             <p>수강 기간: [[${course.weeks}]]주</p>
             <p>학습 시간: [[${course.learningTime}]]분</p>
             <p th:if="${course.language == 'KOREAN'}">언어: 한국어</p>
@@ -286,7 +286,7 @@
                         <span th:text="${lecture.title}">섹션 제목</span>
                     </div>
                     <div th:id="'lecture-' + ${lecture.lectureId}" class="accordion-content">
-                        <p th:text="${lecture.description}">섹션 설명</p>
+                        <p th:utext="${lecture.description}">섹션 설명</p>
 
                         <!-- 콘텐츠 목록 -->
                         <div th:each="content : ${lecture.contents}" class="content-item">
