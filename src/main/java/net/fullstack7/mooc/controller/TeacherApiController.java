@@ -177,6 +177,23 @@ public class TeacherApiController {
         }
     }
 
+    @PostMapping("/courses/{courseId}/lectures/batch")
+    public ResponseEntity<?> createLectures(
+            @PathVariable int courseId,
+            @RequestBody List<LectureCreateDTO> dtos) {
+        try {
+            List<Lecture> lectures = new ArrayList<>();
+            for (LectureCreateDTO dto : dtos) {
+                dto.setCourseId(courseId);
+                lectures.add(courseService.createLecture(dto));
+            }
+            return ResponseEntity.ok(lectures);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
+        }
+    }
+        
+
     @DeleteMapping("/lectures/{lectureId}")
     public ResponseEntity<ApiResponse<Void>> deleteLecture(
             @PathVariable int lectureId,
