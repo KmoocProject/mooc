@@ -182,12 +182,13 @@ public class TeacherApiController {
             @PathVariable int courseId,
             @RequestBody List<LectureCreateDTO> dtos) {
         try {
-            List<Lecture> lectures = new ArrayList<>();
+            List<LectureResponseDTO> responses = new ArrayList<>();
             for (LectureCreateDTO dto : dtos) {
                 dto.setCourseId(courseId);
-                lectures.add(courseService.createLecture(dto));
+                Lecture lecture = courseService.createLecture(dto);
+                responses.add(LectureResponseDTO.from(lecture));
             }
-            return ResponseEntity.ok(lectures);
+            return ResponseEntity.ok(responses);
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(ApiResponse.error(e.getMessage()));
         }
