@@ -16,8 +16,6 @@ import java.nio.charset.StandardCharsets;
 @NoArgsConstructor
 @ToString
 public class AdminSearchDTO extends PageDTO<Member> {
-
-
     @Builder.Default
     private int memberType = -1;
     @Builder.Default

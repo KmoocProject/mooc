@@ -31,4 +31,6 @@ public interface TeacherRepository extends JpaRepository<Teacher, String>, Teach
 
     @Query("select T.teacherName from Teacher T where T.teacherId = :teacherId")
     String findTeacherNameByTeacherId(String teacherId);
+
+    boolean existsByTeacherIdAndIsApprovedAndStatus(String id, int isApproved, String status);
 }
