@@ -2,16 +2,13 @@ package net.fullstack7.mooc.dto;
 
 import java.util.List;
 
+import lombok.*;
 import net.fullstack7.mooc.domain.Subject;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
+@Data
 public class CourseDetailDTO {
     private int courseId;
     private String title;
