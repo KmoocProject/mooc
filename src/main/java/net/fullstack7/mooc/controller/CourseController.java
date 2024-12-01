@@ -45,6 +45,8 @@ public class CourseController {
         }
 
         searchDTO.setStatus("PUBLISHED");
+        searchDTO.setSortField("createdAt");
+        searchDTO.setPageSize(8);
         
         searchDTO.initialize();
 
