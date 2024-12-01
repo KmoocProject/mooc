@@ -188,7 +188,16 @@ public class MyPageController {
                 memberServiceImpl.modifyMember(memberDTO);
             }
             memberDTO.setMemberId(loginedMemberInfo.getMemberId());
-            session.setAttribute("memberDTO", memberDTO);
+
+            MemberDTO originDto = (MemberDTO) session.getAttribute("memberDTO");
+
+            if(memberDTO.getPassword() != null)
+                originDto.setPassword(memberDTO.getPassword());
+            if(memberDTO.getEmail() != null)
+                originDto.setEmail(memberDTO.getEmail());
+
+            session.setAttribute("memberDTO", originDto);
+            
             redirectAttributes.addFlashAttribute("errors", "회원 정보가 수정되었습니다.");
         } catch (Exception e) {
             redirectAttributes.addFlashAttribute("errors", "회원 정보 수정에 실패했습니다.");
