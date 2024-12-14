@@ -224,7 +224,7 @@
     let flag = 0;
     const dropdown_subject = document.querySelector(".dropdown-subject");
     document.querySelector(".dropdown-subject-btn").addEventListener("mouseover", async evt => {
-        const url = "http://localhost:8080/api/main/subjects";
+        const url = "/api/main/subjects";
 
         if(flag === 1)
             return;
@@ -236,10 +236,6 @@
             }
 
             const subjects = await response.json();
-
-            console.log(subjects);
-            //
-            // const subjects = response_json.map(subject => { return {"subjectId":subject.subjectId, "subjectName":subject.subjectName} });
 
             flag = 1;
 
