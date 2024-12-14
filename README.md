@@ -10,7 +10,7 @@
 |최사랑|팀장|• 프론트엔드 퍼블리싱<br>• 공통영역 레이아웃|[@GitHub](https://github.com/coeisarang)|
 |강경민|팀원|• 선생님 페이지<br>• DB 설계<br>• 강의 관련<br>• 파일 업로드|[@GitHub](https://github.com/GyeongMin2)|
 |강감찬|팀원|• 강의 신청 프로세스<br>• MOOC 프로젝트 전반 문서작업<br>• 페이징 유틸|[@GitHub](https://github.com/kangkamchan)|
-|공미경|팀원|• 관리자 페이지<br>• 관리자 강의관리<br>• 관리자 회원관리<br>• 관리자 공지사항 관리|[@GitHub](https://github.com/qoiol)|
+|공미경|팀원|• 관리자 페이지<br>• 관리자 강의관리<br>• 관리자 회원관리<br>• 강의 목록 페이지|[@GitHub](https://github.com/qoiol)|
 |이원희|팀원|• 회원 관련<br>• 로그인/로그아웃 <br>• 임시 비밀번호 발급|[@GitHub](https://github.com/wonheeLee95)|
 
 ## 📅 프로젝트 일정
