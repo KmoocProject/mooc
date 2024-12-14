@@ -73,6 +73,9 @@
 - 허용 파일 형식 제한
 
 ## api 문서
+[api 문서](https://github.com/KmoocProject/mooc/blob/main/project_note/api/api.md)
+![api-image-1](https://github.com/KmoocProject/mooc/blob/main/project_note/api/api1.png)
+![api-image-2](https://github.com/KmoocProject/mooc/blob/main/project_note/api/api2.png)
 
 
 ## 💻 주요 코드
