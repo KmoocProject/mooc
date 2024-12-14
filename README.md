@@ -2,6 +2,7 @@
 
 ## 📝 프로젝트 소개
 > 학점은행제를 지원하는 온라인 교육 플랫폼
+- KMOOC 사이트를 참고하여 만든 프로젝트
 
 ## 👥 팀원 소개
 |이름|역할|담당 기능|GitHub|
@@ -118,9 +119,9 @@ public ResponseEntity<?> createLecture(@PathVariable int courseId, @RequestBody 
 ```
 **콘텐츠 등록**
 - 다양한 유형의 콘텐츠 지원
-  - 📹 동영상 (mp4, mov)
-  - 📄 문서 (pdf, ppt, pptx, doc, docx 등)
-  - ✍️ 퀴즈
+  - 동영상 (mp4, mov)
+  - 문서 (pdf, ppt, pptx, doc, docx 등)
+  - 퀴즈
 - 섹션별 자유로운 콘텐츠 구성
 - 실시간 파일 업로드 상태 확인
 - 안전한 파일 저장 및 관리 (UUID 기반 파일명 자동 생성)
